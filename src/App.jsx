@@ -1,34 +1,47 @@
-import { useState } from 'react';
+import { Fragment } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { UserRouter } from '~/routers';
+import { DefaultLayout } from '~/layouts';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-    const [images, setimages] = useState([]);
-
-    const handleUploadFilesImage = (e) => {
-        const files = e.target.files;
-        const images = [];
-        for (let i = 0; i < files.length; i++) {
-            images.push(URL.createObjectURL(files[i]));
-        }
-        setimages(images);
-    };
-
-    const handleReviewImage = () => {
-        return [...images].map((image, index) => (
-            <div key={index}>
-                <img src={image} className='size-52' />
-            </div>
-        ));
-    };
-
     return (
-        <div className='py-60 px-10 text-center bg-slate-600 text-white h-screen'>
-            <h1 className='text-3xl font-bold'>Test upload and review image</h1>
-            <div className='text-2xl my-10'>Choose image: </div>
-            <input type='file' multiple accept='image/*' onChange={handleUploadFilesImage} />
-            <div className='flex justify-center items-center w-full my-10 gap-5'>
-                {handleReviewImage()}
-            </div>
-        </div>
+        <Fragment>
+            <Routes>
+                {UserRouter.map((route, index) => {
+                    const Page = route.component;
+
+                    let Layout = DefaultLayout;
+
+                    if (route.layout) {
+                        Layout = route.layout;
+                    } else if (route.layout === null) {
+                        Layout = Fragment;
+                    }
+
+                    return (
+                        <Route
+                            key={index}
+                            path={route.path}
+                            element={
+                                <Layout>
+                                    <Page />
+                                </Layout>
+                            }
+                        />
+                    );
+                })}
+            </Routes>
+            <ToastContainer
+                position='top-right'
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnHover
+            />
+        </Fragment>
     );
 }
 
