@@ -4,11 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FormOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Input, Spin } from 'antd';
-import { Button } from 'antd';
 import backGround from '~/assets/images/bg-auth.jpg';
 import { authActions } from '~/redux/slice/authSlice';
 import { getAuth } from '~/utils/token';
 import { getUser } from '~/services/userService';
+import { WrapperButton } from '~/pages/Auth/style';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -94,13 +94,14 @@ const Login = () => {
                             />
                         </div>
                     </div>
-                    <Button
-                        type='primary'
-                        className='text-2xl font-bold h-14'
+                    <WrapperButton
+                        disabled={!email.length || !password.length}
+                        type='light'
+                        className='h-16 text-2xl font-bold'
                         onClick={() => loginHandler()}
                     >
                         Login
-                    </Button>
+                    </WrapperButton>
                     <span className='text-center'>
                         {`Don't have an account?`}{' '}
                         <Link to={'/register'} className='text-blue-300 underline'>

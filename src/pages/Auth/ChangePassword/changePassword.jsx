@@ -77,6 +77,11 @@ const ChangePassword = () => {
                         />
                     </div>
                     <Button
+                        disabled={
+                            !currentPassword.length ||
+                            !newPassword.length ||
+                            !confirmPassword.length
+                        }
                         type='primary'
                         className='mt-5 text-2xl font-bold h-14'
                         onClick={handleChangePassword}
