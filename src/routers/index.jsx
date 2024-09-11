@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
+
 import { DefaultLayout, ProfileLayout, AdminLayout } from '~/layouts';
+
 import Home from '~/pages/Home/home.jsx';
 
 import Login from '~/pages/Auth/Login/login.jsx';
@@ -16,6 +18,8 @@ import Maintenances from '~/pages/Admin/Maintenance/maintenances';
 import Users from '~/pages/Admin/User/users';
 import Staffs from '~/pages/Admin/Staff/staffs';
 import Supervisors from '~/pages/Admin/Supervisor/supervisors';
+
+import ProtectedRoute from '~/routers/protectedRoute';
 
 export const router = createBrowserRouter([
     {
@@ -56,7 +60,11 @@ export const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <AdminLayout />,
+        element: (
+            <ProtectedRoute roleRequired={['ADMIN', 'STAFF', 'TECH', 'CASHIER']}>
+                <AdminLayout />
+            </ProtectedRoute>
+        ),
         children: [
             {
                 path: 'dashboard',
@@ -89,6 +97,10 @@ export const router = createBrowserRouter([
             {
                 path: 'supervisor',
                 element: <Supervisors />
+            },
+            {
+                path: 'admin-profile',
+                element: <Profile />
             }
         ]
     }
