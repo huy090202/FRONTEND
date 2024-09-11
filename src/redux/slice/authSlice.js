@@ -40,6 +40,7 @@ const authSlice = createSlice({
         },
         logoutUser: (state) => {
             removeAuth('auth');
+            removeAuth('user');
             state.auth = initialState.auth;
             state.isAuthenticated = false;
         },

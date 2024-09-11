@@ -15,7 +15,7 @@ const SectionNav = () => {
         },
         {
             id: 3,
-            name: 'Order history',
+            name: 'Maintenance history',
             path: 'history'
         }
     ];
