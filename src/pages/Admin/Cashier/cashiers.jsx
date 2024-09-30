@@ -10,24 +10,24 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 import { Input } from 'antd';
-import { getAllAdmins, changeUserStatus } from '~/services/userService';
+import { getAllCashiers, changeUserStatus } from '~/services/userService';
 import { getToken } from '~/utils/token';
 import ModalCreate from '~/components/shared/ModalCreate/modalCreate';
 import Switch from '~/components/shared/Switch/switch';
-import SupervisorModalDetail from '~/pages/Admin/Supervisor/supervisorModalDetail';
+import CashierModalDetail from '~/pages/Admin/Cashier/cashierModalDetail';
 
-const Supervisors = () => {
+const Cashiers = () => {
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalCreate, setIsModalCreate] = useState(false);
-    const [selectedAdmin, setSelectedAdmin] = useState(null);
+    const [selectedCashier, setSelectedCashier] = useState(null);
     const [filterInput, setFilterInput] = useState('');
     const limit = 5;
 
-    const showModal = (admin) => {
-        setSelectedAdmin(admin);
+    const showModal = (cashier) => {
+        setSelectedCashier(cashier);
         setIsModalVisible(true);
     };
 
@@ -108,7 +108,7 @@ const Supervisors = () => {
                 return;
             }
             try {
-                const response = await getAllAdmins(token, { page, limit });
+                const response = await getAllCashiers(token, { page, limit });
                 setData(response.data);
                 setTotalPages(Math.ceil(response.total / limit));
             } catch (error) {
@@ -154,7 +154,7 @@ const Supervisors = () => {
     return (
         <div className='flex flex-col w-full'>
             <div className='flex items-center justify-between my-10'>
-                <h1 className='text-4xl font-bold '>Supervisors</h1>
+                <h1 className='text-4xl font-bold '>Cashiers</h1>
                 <button
                     className='px-6 py-5 mr-2 text-xl text-white bg-green-600 rounded-2xl'
                     onClick={showModalCreate}
@@ -264,10 +264,10 @@ const Supervisors = () => {
                     </div>
                 </div>
                 {/* Modal */}
-                <SupervisorModalDetail
+                <CashierModalDetail
                     isVisible={isModalVisible}
                     onCancel={handleCancel}
-                    supervisor={selectedAdmin}
+                    cashier={selectedCashier}
                 />
 
                 <ModalCreate isVisible={isModalCreate} onCancel={handleCancel} />
@@ -276,4 +276,4 @@ const Supervisors = () => {
     );
 };
 
-export default Supervisors;
+export default Cashiers;

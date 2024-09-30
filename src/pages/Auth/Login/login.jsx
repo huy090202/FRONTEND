@@ -6,7 +6,7 @@ import { FormOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Input, Spin } from 'antd';
 import backGround from '~/assets/images/bg-auth.jpg';
 import { authActions } from '~/redux/slice/authSlice';
-import { getAuth } from '~/utils/token';
+import { getToken } from '~/utils/token';
 import { getUser } from '~/services/userService';
 import { WrapperButton } from '~/pages/Auth/style';
 
@@ -33,7 +33,7 @@ const Login = () => {
 
         setLoading(true);
         setTimeout(async () => {
-            const dataAuth = getAuth('auth');
+            const dataAuth = getToken('auth');
             const token = dataAuth?.auth?.access_token;
             try {
                 const user = await getUser(token);
@@ -77,7 +77,7 @@ const Login = () => {
                             autoFocus
                             size='large'
                             prefix={<FormOutlined />}
-                            placeholder='Email'
+                            placeholder='Enter your email'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -88,7 +88,7 @@ const Login = () => {
                             <Input.Password
                                 size='large'
                                 prefix={<SafetyOutlined />}
-                                placeholder='Password'
+                                placeholder='Enter your password'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />

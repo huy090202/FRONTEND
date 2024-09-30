@@ -5,7 +5,7 @@ const SectionNav = () => {
     const nav = [
         {
             id: 1,
-            name: 'Profile',
+            name: 'Profile settings',
             path: 'profile'
         },
         {

@@ -11,10 +11,10 @@ function* loginUserSaga(action) {
                 message: response.message
             }));
         } else {
-            yield put(authActions.loginUserFailure(response.message || 'Login failed'));
+            yield put(authActions.loginUserFailure(response.message || 'Đăng nhập thất bại'));
         }
     } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong. Please try again.';
+        const errorMessage = error.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.';
         yield put(authActions.loginUserFailure(errorMessage));
     }
 }

@@ -6,38 +6,30 @@ import {
     RightOutlined,
     LeftOutlined,
     DoubleLeftOutlined,
-    DoubleRightOutlined,
-    PlusOutlined
+    DoubleRightOutlined
 } from '@ant-design/icons';
 import { Input } from 'antd';
-import { getAllAdmins, changeUserStatus } from '~/services/userService';
+import { getAllUsers, changeUserStatus } from '~/services/userService';
 import { getToken } from '~/utils/token';
-import ModalCreate from '~/components/shared/ModalCreate/modalCreate';
 import Switch from '~/components/shared/Switch/switch';
-import SupervisorModalDetail from '~/pages/Admin/Supervisor/supervisorModalDetail';
+import CustomerModalDetail from '~/pages/Admin/Customer/customerModalDetail';
 
-const Supervisors = () => {
+const Customers = () => {
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isModalCreate, setIsModalCreate] = useState(false);
-    const [selectedAdmin, setSelectedAdmin] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [filterInput, setFilterInput] = useState('');
     const limit = 5;
 
-    const showModal = (admin) => {
-        setSelectedAdmin(admin);
+    const showModal = (user) => {
+        setSelectedUser(user);
         setIsModalVisible(true);
-    };
-
-    const showModalCreate = () => {
-        setIsModalCreate(true);
     };
 
     const handleCancel = () => {
         setIsModalVisible(false);
-        setIsModalCreate(false);
     };
 
     const columns = useMemo(
@@ -108,7 +100,7 @@ const Supervisors = () => {
                 return;
             }
             try {
-                const response = await getAllAdmins(token, { page, limit });
+                const response = await getAllUsers(token, { page, limit });
                 setData(response.data);
                 setTotalPages(Math.ceil(response.total / limit));
             } catch (error) {
@@ -153,22 +145,13 @@ const Supervisors = () => {
 
     return (
         <div className='flex flex-col w-full'>
-            <div className='flex items-center justify-between my-10'>
-                <h1 className='text-4xl font-bold '>Supervisors</h1>
-                <button
-                    className='px-6 py-5 mr-2 text-xl text-white bg-green-600 rounded-2xl'
-                    onClick={showModalCreate}
-                >
-                    <PlusOutlined /> {'  '}
-                    Create
-                </button>
-            </div>
+            <h1 className='text-4xl font-bold my-14'>Customers</h1>
             <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
                 {/* Filter */}
                 <div className='flex gap-4 px-10 mb-4'>
                     <Input
                         size='large'
-                        className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
+                        className='w-1/4 px-4 py-5 text-2xl border rounded-2xl'
                         type='text'
                         placeholder='Filter...'
                         value={filterInput}
@@ -264,16 +247,14 @@ const Supervisors = () => {
                     </div>
                 </div>
                 {/* Modal */}
-                <SupervisorModalDetail
+                <CustomerModalDetail
                     isVisible={isModalVisible}
                     onCancel={handleCancel}
-                    supervisor={selectedAdmin}
+                    user={selectedUser}
                 />
-
-                <ModalCreate isVisible={isModalCreate} onCancel={handleCancel} />
             </div>
         </div>
     );
 };
 
-export default Supervisors;
+export default Customers;

@@ -78,7 +78,7 @@ const Register = () => {
                                 autoFocus
                                 size='large'
                                 prefix={<UserOutlined />}
-                                placeholder='First name'
+                                placeholder='Enter your first name'
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
                             />
@@ -88,7 +88,7 @@ const Register = () => {
                             <Input
                                 size='large'
                                 prefix={<UserOutlined />}
-                                placeholder='Last name'
+                                placeholder='Enter your last name'
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
                             />
@@ -99,7 +99,7 @@ const Register = () => {
                         <Input
                             size='large'
                             prefix={<FormOutlined />}
-                            placeholder='Email'
+                            placeholder='Enter your email'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -109,7 +109,7 @@ const Register = () => {
                         <Input
                             size='large'
                             prefix={<PhoneOutlined />}
-                            placeholder='Phone number'
+                            placeholder='Enter your phone number'
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                         />
@@ -119,7 +119,7 @@ const Register = () => {
                         <Input.Password
                             size='large'
                             prefix={<SafetyOutlined />}
-                            placeholder='password'
+                            placeholder='Enter your password'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
