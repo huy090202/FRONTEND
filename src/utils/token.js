@@ -1,14 +1,14 @@
-export const setAuth = (name, auth) => {
+export const setToken = (name, auth) => {
     // localStorage.setItem('auth', JSON.stringify(auth));
     sessionStorage.setItem(name, JSON.stringify(auth));
 };
 
-export const getAuth = (name) => {
+export const getToken = (name) => {
     // return JSON.parse(localStorage.getItem('auth'));
     return JSON.parse(sessionStorage.getItem(name));
 };
 
-export const removeAuth = (name) => {
+export const removeToken = (name) => {
     // localStorage.removeItem('auth');
     sessionStorage.removeItem(name);
 };

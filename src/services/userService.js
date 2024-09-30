@@ -32,3 +32,59 @@ export const changePassword = async (accessToken, data) => {
         },
     });
 };
+
+export const changeUserStatus = async (accessToken, id, { active }) => {
+    return await axios.patch(`user/update-status/${id}`, { active }, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export const getAllUsers = async (accessToken, { page, limit }) => {
+    return await axios.get(`user/all?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export const getAllStaffs = async (accessToken, { page, limit }) => {
+    return await axios.get(`user/all-staff?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export const getAllTechs = async (accessToken, { page, limit }) => {
+    return await axios.get(`user/all-tech?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export const getAllCashiers = async (accessToken, { page, limit }) => {
+    return await axios.get(`user/all-cashier?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export const getAllAdmins = async (accessToken, { page, limit }) => {
+    return await axios.get(`user/all-admin?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+export const createStaff = async (accessToken, { firstName, lastName, email, phoneNumber, password, role }) => {
+    return await axios.post(`user/create-staff`, { firstName, lastName, email, phoneNumber, password, role }, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};

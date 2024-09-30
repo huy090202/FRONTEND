@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { removeAuth, setAuth } from '~/utils/token';
+import { removeToken, setToken } from '~/utils/token';
 
 const initialState = {
     auth: {
@@ -28,19 +28,28 @@ const authSlice = createSlice({
             state.auth.email = data?.email;
             state.auth.access_token = data?.access_token;
             state.isAuthenticated = true;
-            setAuth('auth', {
+            setToken('auth', {
                 auth: state.auth,
                 isAuthenticated: state.isAuthenticated,
             });
             toast.success(message);
+        },
+        // Khôi phục trạng thái auth từ session storage
+        restoreAuthState: (state, action) => {
+            const storedAuth = action.payload;
+            if (storedAuth) {
+                state.auth = storedAuth.auth;
+                state.isAuthenticated = storedAuth.isAuthenticated;
+            }
         },
         loginUserFailure: (state, action) => {
             state.isAuthenticated = false;
             toast.error(action?.payload);
         },
         logoutUser: (state) => {
-            removeAuth('auth');
-            removeAuth('user');
+            removeToken('auth');
+            removeToken('user');
+            removeToken('activeId');
             state.auth = initialState.auth;
             state.isAuthenticated = false;
         },

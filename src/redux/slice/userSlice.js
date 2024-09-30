@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { removeAuth, setAuth } from '~/utils/token';
+import { removeToken, setToken } from '~/utils/token';
 
 const initialState = {
     user: {
@@ -23,19 +23,24 @@ const userSlice = createSlice({
             const error = action.payload;
             toast.error(error);
         },
-        getUser: (state) => {
-            state.user = initialState.user;
-        },
+        getUser: (state) => { },
         getUserSuccess: (state, action) => {
             state.user = { ...action.payload };
-            setAuth('user', state.user);
+            setToken('user', state.user);
+        },
+        // Khôi phục trạng thái user từ session storage
+        restoreUserState: (state, action) => {
+            const storedUser = action.payload;
+            if (storedUser) {
+                state.user = storedUser;
+            }
         },
         updateUser: (state, action) => {
             state.user = { ...action.payload.data };
         },
         updateUserSuccess: (state, action) => {
             state.user = { ...action.payload.data };
-            setAuth('user', state.user);
+            setToken('user', state.user);
             toast.success(action.payload.message);
         },
         updateUserFailure: (state, action) => {
@@ -48,10 +53,9 @@ const userSlice = createSlice({
             state.user = { ...action.payload.data };
             toast.success(action.payload.message);
         },
-        logoutUser: (state) => {
-            removeAuth('user');
-            state.user = initialState.user;
-        },
+        changePasswordFailure: (state, action) => {
+            toast.error(action.payload);
+        }
     },
 });
 

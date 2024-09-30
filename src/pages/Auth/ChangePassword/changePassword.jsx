@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Input, Button, Spin } from 'antd';
 import { SafetyOutlined } from '@ant-design/icons';
 import { toast } from 'react-toastify';
-import { getAuth } from '~/utils/token';
+import { getToken } from '~/utils/token';
 import { userActions } from '~/redux/slice/userSlice';
 
 const ChangePassword = () => {
@@ -25,10 +25,11 @@ const ChangePassword = () => {
         setLoading(true);
         if (newPassword !== confirmPassword) {
             toast.error('New password and confirm password do not match');
+            setLoading(false);
             return;
         }
 
-        const token = getAuth('auth').auth.access_token;
+        const token = getToken('auth').auth.access_token;
         setTimeout(() => {
             dispatch(userActions.changePassword({ token, data: { currentPassword, newPassword } }));
             clearHandler();
@@ -43,7 +44,7 @@ const ChangePassword = () => {
                     <Spin size='large' />
                 </div>
             )}
-            <div className='w-[60%] my-5 text-center border-2 border-[#eeefee] rounded-2xl p-5'>
+            <div className='w-[60%] my-5 text-center border-2 border-[#eeefee] rounded-2xl p-5 bg-white shadow-xl'>
                 <form className='flex flex-col justify-center gap-5 p-5'>
                     <div className='flex items-center gap-10'>
                         <label className='text-2xl w-[30%] text-left'>Password:</label>
@@ -51,7 +52,7 @@ const ChangePassword = () => {
                             autoFocus
                             size='large'
                             prefix={<SafetyOutlined />}
-                            placeholder='password'
+                            placeholder='Enter your password'
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                         />
@@ -61,7 +62,7 @@ const ChangePassword = () => {
                         <Input.Password
                             size='large'
                             prefix={<SafetyOutlined />}
-                            placeholder='New password'
+                            placeholder='Enter your new password'
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                         />
@@ -71,7 +72,7 @@ const ChangePassword = () => {
                         <Input.Password
                             size='large'
                             prefix={<SafetyOutlined />}
-                            placeholder='Confirm password'
+                            placeholder='Enter your confirm password'
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
