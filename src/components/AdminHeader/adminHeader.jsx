@@ -5,23 +5,22 @@ import { Popover } from 'antd';
 import logo from '~/assets/images/logo.png';
 import defaultAvatar from '~/assets/images/avatar.jpg';
 import { authActions } from '~/redux/slice/authSlice';
+import { removeToken } from '~/utils/token';
 
 const AdminHeader = () => {
     const navList = [
         {
             id: 1,
-            name: 'Profile',
+            name: 'Thông tin tài khoản',
             path: 'admin-profile'
         },
         {
             id: 2,
-            name: 'Change Password',
+            name: 'Thay đổi mật khẩu',
             path: 'admin-change-password'
         }
     ];
     const user = useSelector((state) => state.user.user);
-
-    let urlImage = import.meta.env.URL_IMAGE || 'http://localhost:3001/images/';
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -38,6 +37,7 @@ const AdminHeader = () => {
 
     const handleOnClick = () => {
         navigate('/');
+        removeToken('activeId');
     };
 
     const handleClick = (path) => {
@@ -55,7 +55,10 @@ const AdminHeader = () => {
             </div>
             <Popover
                 content={
-                    <div className='flex flex-col gap-2 w-60 '>
+                    <div
+                        className='flex flex-col gap-2 w-60 '
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
+                    >
                         <span className='text-2xl font-bold'>
                             {user.lastName + ' ' + user.firstName}
                         </span>
@@ -75,7 +78,7 @@ const AdminHeader = () => {
                             className='my-2 text-2xl text-red-500 cursor-pointer'
                             onClick={handleLogout}
                         >
-                            Log Out
+                            Đăng xuất
                         </span>
                     </div>
                 }
@@ -84,7 +87,7 @@ const AdminHeader = () => {
                 onOpenChange={handleOpenChange}
             >
                 <img
-                    src={user.avatar ? urlImage + user.avatar : defaultAvatar}
+                    src={user.avatar ? `/minio${user.avatar}` : defaultAvatar}
                     className='-bottom-7 size-20 rounded-full left-10 border-2 border-[#e2e3e2]'
                 />
             </Popover>

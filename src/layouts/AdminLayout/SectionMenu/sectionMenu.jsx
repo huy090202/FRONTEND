@@ -7,7 +7,8 @@ import {
     HomeOutlined,
     ContainerOutlined,
     SettingOutlined,
-    TeamOutlined
+    TeamOutlined,
+    InboxOutlined
 } from '@ant-design/icons';
 import { WrapperMenuScroll } from './style';
 import { getToken, setToken } from '~/utils/token';
@@ -16,7 +17,7 @@ const SectionMenu = () => {
     const overview = [
         {
             id: 1,
-            name: 'Dashboard',
+            name: 'Thống kê',
             path: 'dashboard',
             element: <LineChartOutlined />
         }
@@ -24,63 +25,69 @@ const SectionMenu = () => {
     const application = [
         {
             id: 2,
-            name: 'Parts',
+            name: 'Danh sách linh kiện',
             path: 'part',
             element: <ProductOutlined />
         },
         {
             id: 3,
-            name: 'Categories',
+            name: 'Danh mục linh kiện',
             path: 'category',
             element: <MenuUnfoldOutlined />
         },
         {
             id: 4,
-            name: 'Manufacturers',
+            name: 'Nhà sản xuất',
             path: 'manufacturer',
             element: <HomeOutlined />
         },
         {
             id: 5,
-            name: 'Warehouses',
+            name: 'Kho hàng',
             path: 'warehouse',
             element: <ContainerOutlined />
         },
         {
             id: 6,
-            name: 'Maintenances',
+            name: 'Danh sách lịch hẹn',
+            path: 'appointment',
+            element: <InboxOutlined />
+        },
+        {
+            id: 7,
+            name: 'Danh sách bảo dưỡng',
             path: 'maintenance',
             element: <SettingOutlined />
         }
     ];
     const account = [
         {
-            id: 7,
-            name: 'Customers',
+            id: 8,
+            name: 'Khách hàng',
             path: 'customer',
             element: <TeamOutlined />
         },
         {
-            id: 8,
-            name: 'Staffs',
+            id: 9,
+            name: 'Nhân viên cửa hàng',
             path: 'staff',
             element: <TeamOutlined />
         },
         {
-            id: 9,
-            name: 'Technicians',
+            id: 10,
+            name: 'Kỹ thuật viên',
             path: 'technician',
             element: <TeamOutlined />
         },
         {
-            id: 10,
-            name: 'Cashiers',
+            id: 11,
+            name: 'Thu ngân',
             path: 'cashier',
             element: <TeamOutlined />
         },
         {
-            id: 11,
-            name: 'Supervisors',
+            id: 12,
+            name: 'Quản lý',
             path: 'supervisor',
             element: <TeamOutlined />
         }
@@ -103,7 +110,7 @@ const SectionMenu = () => {
                 <div className='w-full h-fit'>
                     <div className='flex flex-col items-start justify-start gap-3 pt-10 pb-4'>
                         <span className='px-5 text-2xl font-bold text-gray-600 uppercase'>
-                            Overview
+                            Tổng quan
                         </span>
                         {overview.map((item) => (
                             <div
@@ -124,7 +131,7 @@ const SectionMenu = () => {
                 <div className='w-full h-fit'>
                     <div className='flex flex-col items-start justify-start gap-3 py-4'>
                         <span className='px-5 text-2xl font-bold text-gray-600 uppercase'>
-                            Application
+                            Danh mục quản lý
                         </span>
                         {application.map((item) => (
                             <div
@@ -145,7 +152,7 @@ const SectionMenu = () => {
                 <div className='w-full h-fit'>
                     <div className='flex flex-col items-start justify-start gap-3 py-4'>
                         <span className='px-5 text-2xl font-bold text-gray-600 uppercase'>
-                            Account
+                            Tài khoản
                         </span>
                         {account.map((item) => (
                             <div

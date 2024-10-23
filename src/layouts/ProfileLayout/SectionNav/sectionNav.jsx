@@ -1,30 +1,44 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getToken, setToken } from '~/utils/token';
 
 const SectionNav = () => {
     const nav = [
         {
             id: 1,
-            name: 'Profile settings',
+            name: 'Cài đặt tài khoản',
             path: 'profile'
         },
         {
             id: 2,
-            name: 'Change password',
+            name: 'Đổi mật khẩu',
             path: 'change-password'
         },
         {
             id: 3,
-            name: 'Maintenance history',
+            name: 'Lịch sử bảo dưỡng',
             path: 'history'
+        },
+        {
+            id: 4,
+            name: 'Xe của bạn',
+            path: 'motor'
+        },
+        {
+            id: 5,
+            name: 'Lịch sử đặt lịch',
+            path: 'history-appointment'
         }
     ];
 
-    const [activeId, setActiveId] = useState(1);
+    const [activeProfileId, setActiveProfileId] = useState(() => {
+        return getToken('activeProfileId') ? Number(getToken('activeProfileId')) : 1;
+    });
     const navigate = useNavigate();
 
     const handleClick = (id, path) => {
-        setActiveId(id);
+        setActiveProfileId(id);
+        setToken('activeProfileId', id);
         navigate(path);
     };
 
@@ -35,7 +49,7 @@ const SectionNav = () => {
                     <div
                         key={item.id}
                         className={`p-5 rounded-xl text-2xl font-bold cursor-pointer ${
-                            activeId === item.id ? 'bg-[#f1f1f1] text-black' : 'text-black'
+                            activeProfileId === item.id ? 'bg-[#f1f1f1] text-black' : 'text-black'
                         }`}
                         onClick={() => handleClick(item.id, item.path)}
                     >

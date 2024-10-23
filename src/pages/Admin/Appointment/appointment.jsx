@@ -1,71 +1,71 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from 'react';
-import { useTable, useGlobalFilter } from 'react-table';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
     RightOutlined,
     LeftOutlined,
     DoubleLeftOutlined,
-    DoubleRightOutlined,
-    PlusOutlined,
-    DeleteOutlined
+    DoubleRightOutlined
 } from '@ant-design/icons';
-import { Input } from 'antd';
-import Switch from '~/components/shared/Switch/switch';
-import {
-    changeManufacturerStatus,
-    deleteManufacturer,
-    getAllManufacturers
-} from '~/services/manufacturerService';
-import ManufacturerModalDetail from './manufacturerModalDetail';
-import ManufacturerModalCreate from './manufacturerModalCreate';
+import { getAllAppoinmentsUser, updateAppoinmentStatus } from '~/services/appoinmentService';
+import { useGlobalFilter, useTable } from 'react-table';
+import { allMotors } from '~/services/motorService';
+import AppointmentModalDetail from '~/pages/Appointment/HistoryAppointment/appointmentModalDetail';
+import { Input, Select } from 'antd';
+import { getAllTechs } from '~/services/userService';
 
-const Manufacturers = () => {
+const Appointment = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
-    const [data, setData] = useState([]);
+    const [dataAppointment, setDataAppointment] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isModalCreate, setIsModalCreate] = useState(false);
-    const [selectedManufacturer, setSelectedManufacturer] = useState(null);
     const [filterInput, setFilterInput] = useState('');
     const limit = 5;
 
-    const showModal = (manufacturer) => {
-        setSelectedManufacturer(manufacturer);
-        setIsModalVisible(true);
-    };
+    const [selectedAppoint, setSelectedAppoint] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const showModalCreate = () => {
-        setIsModalCreate(true);
+    const showModal = (appoint) => {
+        setSelectedAppoint(appoint);
+        setIsModalVisible(true);
     };
 
     const handleCancel = () => {
         setIsModalVisible(false);
-        setIsModalCreate(false);
     };
 
-    const handleDeleteManufacturer = async (manufacturerId) => {
-        try {
-            const res = await deleteManufacturer(token, manufacturerId);
-            if (res.status) {
-                toast.success(res.message);
-                setData(data.filter((manufacturer) => manufacturer.id !== manufacturerId));
-            } else {
-                toast.error(res.message);
+    const statusOptions = [
+        { value: 'PENDING', label: 'Đang chờ' },
+        { value: 'CONFIRMED', label: 'Đã xác nhận' },
+        { value: 'COMPLETED', label: 'Đã hoàn thành' }
+    ];
+
+    const [technicians, setTechnicians] = useState([]);
+
+    useEffect(() => {
+        const fetchTechnicians = async () => {
+            try {
+                const response = await getAllTechs(token, { page, limit: 30 });
+                if (response.status === true) {
+                    setTechnicians(response.data);
+                } else {
+                    toast.error(response.message);
+                }
+            } catch (error) {
+                toast.error('Không thể tải danh sách KTV');
             }
-        } catch (error) {
-            toast.error('Xóa nhà sản xuất thất bại');
-        }
-    };
+        };
+
+        fetchTechnicians();
+    }, []);
 
     const columns = useMemo(
         () => [
             {
-                Header: 'Tên nhà sản xuất',
-                accessor: 'name',
+                Header: 'Tên xe',
+                accessor: 'motor_name',
                 Cell: ({ value, row }) => (
                     <span
                         className='text-gray-500 cursor-pointer hover:underline'
@@ -76,63 +76,120 @@ const Manufacturers = () => {
                 )
             },
             {
-                Header: 'Quốc gia',
-                accessor: 'country'
+                Header: 'Ngày hẹn',
+                accessor: 'appointment_date'
+            },
+            {
+                Header: 'Giờ bắt đầu',
+                accessor: 'appointment_time'
+            },
+            {
+                Header: 'Giờ kết thúc',
+                accessor: 'appointment_end_time'
+            },
+            {
+                Header: 'Ghi chú',
+                accessor: 'content'
             },
             {
                 Header: 'Trạng thái',
-                accessor: 'active',
-                Cell: ({ row }) => (
-                    <Switch
-                        checked={row.original.active}
-                        onChange={async (checked) => {
-                            if (!token) {
-                                toast.error('Token không tồn tại');
-                                return;
-                            }
+                accessor: 'status',
+                Cell: ({ value, row }) => (
+                    <Select
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
+                        value={value}
+                        onChange={async (newStatus) => {
+                            const appointmentId = row.original.id;
                             try {
-                                const res = await changeManufacturerStatus(token, row.original.id, {
-                                    active: checked
-                                });
-                                const updatedData = data.map((manufacturer) =>
-                                    manufacturer.id === row.original.id
-                                        ? { ...manufacturer, active: checked }
-                                        : manufacturer
+                                const response = await updateAppoinmentStatus(
+                                    token,
+                                    appointmentId,
+                                    newStatus
                                 );
-                                toast.success(res.message);
-                                setData(updatedData);
+                                if (response.status === true) {
+                                    toast.success(response.message);
+                                } else {
+                                    toast.error(response.message);
+                                }
                             } catch (error) {
-                                toast.error(error.response?.data?.message);
+                                toast.error('Cập nhật trạng thái thất bại!');
                             }
                         }}
-                    />
+                        disabled={value === 'COMPLETED'}
+                    >
+                        {statusOptions.map((option) => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 )
             },
             {
-                Header: 'Hành động',
-                Cell: ({ row }) => (
-                    <div className='flex items-center w-full'>
-                        <DeleteOutlined
-                            className='text-3xl'
-                            onClick={() => handleDeleteManufacturer(row.original.id)}
-                            style={{ cursor: 'pointer', color: 'red' }}
-                        />
-                    </div>
+                Header: 'Người phụ trách',
+                accessor: 'technician_name',
+                Cell: ({ value, row }) => (
+                    <Select
+                        style={{ width: '100%' }}
+                        value={value}
+                        defaultValue={row.original.technicianId}
+                        onChange={async (newTechnicianId) => {
+                            const appointmentId = row.original.id;
+                            // try {
+                            //     const response = await updateTechnician(
+                            //         token,
+                            //         appointmentId,
+                            //         newTechnicianId
+                            //     );
+                            //     if (response.status === true) {
+                            //         toast.success(response.message);
+                            //     } else {
+                            //         toast.error(response.message);
+                            //     }
+                            // } catch (error) {
+                            //     toast.error('Cập nhật kỹ thuật viên thất bại!');
+                            // }
+                        }}
+                    >
+                        {technicians.map((technician) => (
+                            <Select.Option key={technician.id} value={technician.id}>
+                                {technician.lastName} {technician.firstName}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 )
             }
         ],
-        [token, data]
+        [token, technicians]
     );
 
     useEffect(() => {
         const fetchData = async () => {
             if (!token) {
-                toast.error('Token không tồn tại');
                 return;
             }
             try {
-                const response = await getAllManufacturers(token, { page, limit });
-                setData(response.data);
+                const motorsResponse = await allMotors(token);
+                const motors = motorsResponse.data;
+
+                const response = await getAllAppoinmentsUser(token, { page, limit });
+                const appointments = response.data;
+
+                const technicianMap = {};
+                technicians.forEach((technician) => {
+                    technicianMap[technician.id] = `${technician.lastName} ${technician.firstName}`;
+                });
+
+                const appointmentsWithMotorName = appointments.map((appointment) => {
+                    const motor = motors.find((m) => m.id === appointment.motor_id);
+                    return {
+                        ...appointment,
+                        motor_name: motor ? motor.motor_name : 'Không có tên xe',
+                        technician_name:
+                            technicianMap[appointment.technicianId] || 'Chưa có kỹ thuật viên'
+                    };
+                });
+                setDataAppointment(appointmentsWithMotorName);
                 setTotalPages(Math.ceil(response.total / limit));
             } catch (error) {
                 toast.error(error.response?.data?.message);
@@ -145,7 +202,7 @@ const Manufacturers = () => {
         useTable(
             {
                 columns,
-                data
+                data: dataAppointment
             },
             useGlobalFilter
         );
@@ -176,18 +233,8 @@ const Manufacturers = () => {
 
     return (
         <div className='flex flex-col w-full'>
-            <div className='flex items-center justify-between my-10'>
-                <h1 className='text-4xl font-bold '>Danh sách nhà sản xuất</h1>
-                <button
-                    className='px-6 py-5 mr-2 text-xl text-white bg-green-600 rounded-2xl'
-                    onClick={showModalCreate}
-                >
-                    <PlusOutlined /> {'  '}
-                    Thêm
-                </button>
-            </div>
+            <h1 className='text-4xl font-bold my-14'>Danh sách lịch hẹn</h1>
             <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
-                {/* Filter */}
                 <div className='flex gap-4 px-10 mb-4'>
                     <Input
                         size='large'
@@ -212,7 +259,6 @@ const Manufacturers = () => {
                         </button>
                     )}
                 </div>
-                {/* Table */}
                 <table {...getTableProps()} className='w-full'>
                     <thead>
                         {headerGroups.map((headerGroup) => (
@@ -246,7 +292,6 @@ const Manufacturers = () => {
                         })}
                     </tbody>
                 </table>
-                {/* Page */}
                 <div className='flex items-center justify-between px-10 mt-5 text-2xl'>
                     <span className='text-black'>
                         Trang {page} / {totalPages}
@@ -285,18 +330,16 @@ const Manufacturers = () => {
                             }`}
                         />
                     </div>
+                    {/* Modal */}
                 </div>
-                {/* Modal */}
-                <ManufacturerModalDetail
+                <AppointmentModalDetail
                     isVisible={isModalVisible}
                     onCancel={handleCancel}
-                    manufacturer={selectedManufacturer}
+                    appoint={selectedAppoint}
                 />
-
-                <ManufacturerModalCreate isVisible={isModalCreate} onCancel={handleCancel} />
             </div>
         </div>
     );
 };
 
-export default Manufacturers;
+export default Appointment;

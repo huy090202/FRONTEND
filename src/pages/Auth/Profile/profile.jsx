@@ -28,26 +28,6 @@ const Profile = () => {
 
     const [loading, setLoading] = useState(false);
 
-    let urlImage = import.meta.env.URL_IMAGE || 'http://localhost:3001/images/';
-
-    useEffect(() => {
-        const authData = getToken('auth');
-        const userData = getToken('user');
-        if (userData) {
-            setAvatar(userData.avatar || null);
-            setGender(userData.gender || 'OTHER');
-            setFirstName(userData.firstName || '');
-            setLastName(userData.lastName || '');
-            setEmail(userData.email || '');
-            setPhoneNumber(userData.phoneNumber || '');
-            setAddress(userData.address || '');
-        }
-
-        if (authData && authData.auth && authData.auth.access_token) {
-            dispatch(userActions.getUser(authData.auth.access_token));
-        }
-    }, [dispatch]);
-
     useEffect(() => {
         setAvatar(user.avatar || null);
         setGender(user.gender || 'OTHER');
@@ -71,7 +51,7 @@ const Profile = () => {
             return (
                 <div>
                     <img
-                        src={avatar.includes('blob') ? avatar : `${urlImage}${avatar}`}
+                        src={avatar.includes('blob') ? avatar : `/minio${avatar}`}
                         className='object-cover rounded-full size-60'
                         alt='User Avatar'
                     />
@@ -134,26 +114,26 @@ const Profile = () => {
                             />
                             <div className='flex items-center justify-center px-4 py-2 font-semibold text-white transition-all bg-blue-500 rounded-md shadow-md cursor-pointer hover:bg-blue-600'>
                                 <PictureOutlined className='mr-2' />
-                                Upload Avatar
+                                Chọn ảnh đại diện
                             </div>
                         </div>
                     </div>
                     <div className='flex items-center gap-10'>
-                        <label className='text-2xl w-[30%] text-left'>First name:</label>
+                        <label className='text-2xl w-[30%] text-left'>Tên:</label>
                         <Input
                             size='large'
                             prefix={<UserOutlined />}
-                            placeholder='First name'
+                            placeholder='Tên của bạn'
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                         />
                     </div>
                     <div className='flex items-center gap-10'>
-                        <label className='text-2xl w-[30%] text-left'>Last name:</label>
+                        <label className='text-2xl w-[30%] text-left'>Họ:</label>
                         <Input
                             size='large'
                             prefix={<UserOutlined />}
-                            placeholder='Last name'
+                            placeholder='Họ của bạn'
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                         />
@@ -164,33 +144,33 @@ const Profile = () => {
                             size='large'
                             disabled
                             prefix={<FormOutlined />}
-                            placeholder='Email'
+                            placeholder='Email của bạn'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div className='flex items-center gap-10'>
-                        <label className='text-2xl w-[30%] text-left'>Phone number:</label>
+                        <label className='text-2xl w-[30%] text-left'>Số điện thoại:</label>
                         <Input
                             size='large'
                             prefix={<PhoneOutlined />}
-                            placeholder='Phone number'
+                            placeholder='Số điện thoại'
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                         />
                     </div>
                     <div className='flex items-center gap-10'>
-                        <label className='text-2xl w-[30%] text-left'>Address:</label>
+                        <label className='text-2xl w-[30%] text-left'>Địa chỉ:</label>
                         <Input
                             size='large'
                             prefix={<HomeOutlined />}
-                            placeholder='Address'
+                            placeholder='Địa chỉ của bạn'
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                         />
                     </div>
                     <div className='flex items-center gap-10'>
-                        <label className='text-2xl w-[30%] text-left'>Gender:</label>
+                        <label className='text-2xl w-[30%] text-left'>Giới tính:</label>
                         <Select
                             size='large'
                             value={gender}
@@ -207,7 +187,7 @@ const Profile = () => {
                         className='mt-5 text-2xl font-bold h-14'
                         onClick={handleUpdateProfile}
                     >
-                        Save changes
+                        Lưu những thay đổi
                     </Button>
                 </form>
             </div>
