@@ -6,7 +6,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'LXGW WenKai TC', cursive;
 }
 
 html {
@@ -14,14 +14,14 @@ html {
 }
 
 .Toastify__toast {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'LXGW WenKai TC', cursive;
     font-size: 16px;
     color: #333;
 }
 
 /* Toast body */
 .Toastify__toast-body {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'LXGW WenKai TC', cursive;
     font-size: 14px;
     color: gray;
 }

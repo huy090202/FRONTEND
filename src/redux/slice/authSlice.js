@@ -50,6 +50,9 @@ const authSlice = createSlice({
             removeToken('auth');
             removeToken('user');
             removeToken('activeId');
+            removeToken('activeProfileId');
+            removeToken('activeHomeId');
+            removeToken('initialized');
             state.auth = initialState.auth;
             state.isAuthenticated = false;
         },

@@ -35,7 +35,7 @@ const Customers = () => {
     const columns = useMemo(
         () => [
             {
-                Header: 'First Name',
+                Header: 'Tên người dùng',
                 accessor: 'firstName',
                 Cell: ({ value, row }) => (
                     <span
@@ -47,7 +47,7 @@ const Customers = () => {
                 )
             },
             {
-                Header: 'Last Name',
+                Header: 'Họ người dùng',
                 accessor: 'lastName'
             },
             {
@@ -55,11 +55,11 @@ const Customers = () => {
                 accessor: 'email'
             },
             {
-                Header: 'Phone Number',
+                Header: 'Số điện thoại',
                 accessor: 'phoneNumber'
             },
             {
-                Header: 'Active',
+                Header: 'Trạng thái',
                 accessor: 'active',
                 Cell: ({ row }) => (
                     <Switch
@@ -67,7 +67,7 @@ const Customers = () => {
                         onChange={async (checked) => {
                             const token = getToken('auth')?.auth?.access_token;
                             if (!token) {
-                                toast.error('Unauthorized access');
+                                toast.error('Token không tồn tại');
                                 return;
                             }
                             try {
@@ -96,7 +96,7 @@ const Customers = () => {
         const fetchData = async () => {
             const token = getToken('auth')?.auth?.access_token;
             if (!token) {
-                toast.error('Unauthorized access');
+                toast.error('Token không tồn tại');
                 return;
             }
             try {
@@ -145,7 +145,7 @@ const Customers = () => {
 
     return (
         <div className='flex flex-col w-full'>
-            <h1 className='text-4xl font-bold my-14'>Customers</h1>
+            <h1 className='text-4xl font-bold my-14'>Khách hàng</h1>
             <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
                 {/* Filter */}
                 <div className='flex gap-4 px-10 mb-4'>
@@ -153,7 +153,7 @@ const Customers = () => {
                         size='large'
                         className='w-1/4 px-4 py-5 text-2xl border rounded-2xl'
                         type='text'
-                        placeholder='Filter...'
+                        placeholder='Từ khóa tìm kiếm...'
                         value={filterInput}
                         onChange={handleFilterChange}
                     />
@@ -161,14 +161,14 @@ const Customers = () => {
                         className='px-6 py-1 mr-2 text-xl text-white bg-black rounded-2xl'
                         onClick={handleApplyFilter}
                     >
-                        Apply
+                        Tìm kiếm
                     </button>
                     {filterInput && (
                         <button
                             className='px-6 py-1 mr-2 text-xl text-white bg-red-600 rounded-2xl'
                             onClick={handleClearFilter}
                         >
-                            Clear
+                            Xóa
                         </button>
                     )}
                 </div>
@@ -209,7 +209,7 @@ const Customers = () => {
                 {/* Page */}
                 <div className='flex items-center justify-between px-10 mt-5 text-2xl'>
                     <span className='text-black'>
-                        Page {page} / {totalPages}
+                        Trang {page} / {totalPages}
                     </span>
                     <div className='flex gap-4 text-gray-500'>
                         <DoubleLeftOutlined

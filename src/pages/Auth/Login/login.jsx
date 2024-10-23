@@ -25,7 +25,7 @@ const Login = () => {
 
     const loginHandler = async () => {
         if (!email || !password) {
-            toast.error('All fields are required');
+            toast.error('Các trường không được để trống');
             return;
         }
         dispatch(authActions.loginUser({ email, password }));
@@ -70,25 +70,25 @@ const Login = () => {
                     className='w-1/3 h-fit bg-[rgba(0,0,0,0.57)] text-white rounded-xl flex flex-col justify-center py-32 px-10 gap-10'
                     style={{ backdropFilter: 'blur(19px) saturate(180%)' }}
                 >
-                    <div className='text-4xl font-bold text-center uppercase'>Login</div>
+                    <div className='text-4xl font-bold text-center uppercase'>Đăng nhập</div>
                     <div className='flex flex-col'>
-                        <label className='text-2xl'>Email:</label>
+                        <label className='text-2xl'>Tài khoản:</label>
                         <Input
                             autoFocus
                             size='large'
                             prefix={<FormOutlined />}
-                            placeholder='Enter your email'
+                            placeholder='Nhập vào email của bạn'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div className='flex flex-col'>
                         <div className='flex flex-col'>
-                            <label className='text-2xl'>Password:</label>
+                            <label className='text-2xl'>Mật khẩu:</label>
                             <Input.Password
                                 size='large'
                                 prefix={<SafetyOutlined />}
-                                placeholder='Enter your password'
+                                placeholder='Nhập vào mật khẩu của bạn'
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -100,12 +100,12 @@ const Login = () => {
                         className='h-16 text-2xl font-bold'
                         onClick={() => loginHandler()}
                     >
-                        Login
+                        Đăng nhập
                     </WrapperButton>
                     <span className='text-center'>
-                        {`Don't have an account?`}{' '}
+                        {`Bạn chưa có tài khoản?`}{' '}
                         <Link to={'/register'} className='text-blue-300 underline'>
-                            Register
+                            Đăng ký ngay
                         </Link>
                     </span>
                 </form>

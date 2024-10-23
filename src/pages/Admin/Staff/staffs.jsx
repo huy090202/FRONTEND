@@ -43,7 +43,7 @@ const Staffs = () => {
     const columns = useMemo(
         () => [
             {
-                Header: 'First Name',
+                Header: 'Tên nhân viên',
                 accessor: 'firstName',
                 Cell: ({ value, row }) => (
                     <span
@@ -55,7 +55,7 @@ const Staffs = () => {
                 )
             },
             {
-                Header: 'Last Name',
+                Header: 'Họ nhân viên',
                 accessor: 'lastName'
             },
             {
@@ -63,11 +63,11 @@ const Staffs = () => {
                 accessor: 'email'
             },
             {
-                Header: 'Phone Number',
+                Header: 'Số điện thoại',
                 accessor: 'phoneNumber'
             },
             {
-                Header: 'Active',
+                Header: 'Trạng thái',
                 accessor: 'active',
                 Cell: ({ row }) => (
                     <Switch
@@ -75,7 +75,7 @@ const Staffs = () => {
                         onChange={async (checked) => {
                             const token = getToken('auth')?.auth?.access_token;
                             if (!token) {
-                                toast.error('Unauthorized access');
+                                toast.error('Token không tồn tại');
                                 return;
                             }
                             try {
@@ -104,7 +104,7 @@ const Staffs = () => {
         const fetchData = async () => {
             const token = getToken('auth')?.auth?.access_token;
             if (!token) {
-                toast.error('Unauthorized access');
+                toast.error('Token không tồn tại');
                 return;
             }
             try {
@@ -154,13 +154,13 @@ const Staffs = () => {
     return (
         <div className='flex flex-col w-full'>
             <div className='flex items-center justify-between my-10'>
-                <h1 className='text-4xl font-bold '>Staffs</h1>
+                <h1 className='text-4xl font-bold '>Nhân viên</h1>
                 <button
                     className='px-6 py-5 mr-2 text-xl text-white bg-green-600 rounded-2xl'
                     onClick={showModalCreate}
                 >
                     <PlusOutlined /> {'  '}
-                    Create
+                    Thêm
                 </button>
             </div>
             <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
@@ -170,7 +170,7 @@ const Staffs = () => {
                         size='large'
                         className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
                         type='text'
-                        placeholder='Filter...'
+                        placeholder='Từ khóa tìm kiếm...'
                         value={filterInput}
                         onChange={handleFilterChange}
                     />
@@ -178,14 +178,14 @@ const Staffs = () => {
                         className='px-6 py-1 mr-2 text-xl text-white bg-black rounded-2xl'
                         onClick={handleApplyFilter}
                     >
-                        Apply
+                        Tìm kiếm
                     </button>
                     {filterInput && (
                         <button
                             className='px-6 py-1 mr-2 text-xl text-white bg-red-600 rounded-2xl'
                             onClick={handleClearFilter}
                         >
-                            Clear
+                            Xóa
                         </button>
                     )}
                 </div>
@@ -226,7 +226,7 @@ const Staffs = () => {
                 {/* Page */}
                 <div className='flex items-center justify-between px-10 mt-5 text-2xl'>
                     <span className='text-black'>
-                        Page {page} / {totalPages}
+                        Trang {page} / {totalPages}
                     </span>
                     <div className='flex gap-4 text-gray-500'>
                         <DoubleLeftOutlined

@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children, roleRequired }) => {
                     const userData = await getUser(storedAuth.auth.access_token);
                     dispatch(userActions.getUserSuccess(userData.data));
                 } catch (error) {
-                    console.error('Retrieving user information failed:', error);
+                    console.error('Truy xuất thông tin người dùng không thành công:', error);
                     dispatch(authActions.logoutUser());
                 }
             }

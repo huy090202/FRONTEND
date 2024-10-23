@@ -27,11 +27,9 @@ const ModalCreate = ({ isVisible, onCancel }) => {
     const createHandler = async () => {
         try {
             if (!firstName || !lastName || !email || !phoneNumber || !password || !role) {
-                toast.error('All fields are required');
+                toast.error('Các trường bắc buộc không được để trống');
                 return;
             }
-
-            console.log('input', firstName, lastName, email, phoneNumber, password, role);
 
             const token = getToken('auth').auth.access_token;
 
@@ -43,16 +41,17 @@ const ModalCreate = ({ isVisible, onCancel }) => {
                 password,
                 role
             });
-            clearHandler();
 
             if (response.status === true) {
                 toast.success(response.message);
+                clearHandler();
+                onCancel();
             } else {
-                toast.error(response.message || 'Registration failed');
+                toast.error(response.message || 'Tạo nhân viên thất bại');
             }
         } catch (error) {
             const errorMessage =
-                error.response?.data?.message || 'Something went wrong. Please try again.';
+                error.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau';
             toast.error(errorMessage);
         }
     };
@@ -63,28 +62,27 @@ const ModalCreate = ({ isVisible, onCancel }) => {
             onCancel={onCancel}
             footer={null}
             maskClosable={true}
-            className='p-10'
-            style={{ fontFamily: 'JetBrains Mono, monospace' }}
+            style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
         >
-            <div className='mb-10 text-3xl font-semibold'>Create</div>
+            <div className='mb-10 text-4xl font-semibold'>Tạo nhân viên mới</div>
             <div className='flex flex-col items-start justify-center gap-5'>
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>First name:</label>
+                    <label className='text-2xl font-bold'>Tên nhân viên:</label>
                     <Input
                         autoFocus
                         size='large'
                         prefix={<UserOutlined />}
-                        placeholder='Enter your first name'
+                        placeholder='Nhập vào tên nhân viên'
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                     />
                 </div>
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Last name:</label>
+                    <label className='text-2xl font-bold'>Họ nhân viên:</label>
                     <Input
                         size='large'
                         prefix={<UserOutlined />}
-                        placeholder='Enter your last name'
+                        placeholder='Nhập vào họ nhân viên'
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                     />
@@ -94,43 +92,47 @@ const ModalCreate = ({ isVisible, onCancel }) => {
                     <Input
                         size='large'
                         prefix={<FormOutlined />}
-                        placeholder='Enter your email'
+                        placeholder='Nhập vào email của nhân viên'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Password:</label>
+                    <label className='text-2xl font-bold'>Mật khẩu:</label>
                     <Input.Password
                         size='large'
                         prefix={<SafetyOutlined />}
-                        placeholder='Enter your password'
+                        placeholder='Nhập vào mật khẩu'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Phone number:</label>
+                    <label className='text-2xl font-bold'>Số điện thoại:</label>
                     <Input
                         size='large'
                         prefix={<PhoneOutlined />}
-                        placeholder='Enter your phone number'
+                        placeholder='Nhập vào số điện thoại của nhân viên'
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                     />
                 </div>
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl w-[30%] text-left'>Role:</label>
+                    <label className='text-2xl w-[30%] text-left font-bold'>Vai trò:</label>
                     <Select
                         size='large'
                         value={role}
                         onChange={(value) => setRole(value)}
                         className='flex-2 w-[100%]'
+                        style={{
+                            fontFamily: 'LXGW WenKai TC',
+                            cursive: 'LXGW Wen'
+                        }}
                     >
-                        <Option value='STAFF'>STAFF</Option>
-                        <Option value='TECH'>TECH</Option>
-                        <Option value='CASHIER'>CASHIER</Option>
-                        <Option value='ADMIN'>ADMIN</Option>
+                        <Option value='STAFF'>Nhân viên</Option>
+                        <Option value='TECH'>Kỹ thuật viên</Option>
+                        <Option value='CASHIER'>Thu ngân</Option>
+                        <Option value='ADMIN'>Quản trị</Option>
                     </Select>
                 </div>
                 <div className='w-full text-right'>
@@ -146,8 +148,12 @@ const ModalCreate = ({ isVisible, onCancel }) => {
                         }
                         type='primary'
                         className='h-16 text-2xl text-right'
+                        style={{
+                            fontFamily: 'LXGW WenKai TC',
+                            cursive: 'LXGW Wen'
+                        }}
                     >
-                        Create
+                        Xác nhận
                     </Button>
                 </div>
             </div>

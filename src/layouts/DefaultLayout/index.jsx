@@ -7,7 +7,7 @@ const DefaultLayout = () => {
     return (
         <Fragment>
             <Header />
-            <main>
+            <main className='mt-28 bg-[#f4f6f8]'>
                 <Outlet />
             </main>
             <Footer />

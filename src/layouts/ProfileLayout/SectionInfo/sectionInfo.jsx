@@ -1,16 +1,27 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-    MailOutlined,
-    PhoneOutlined
-    // MoreOutlined
-} from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { Popover } from 'antd';
+import { MailOutlined, PhoneOutlined, MoreOutlined } from '@ant-design/icons';
 import backGround from '~/assets/images/bg-auth.jpg';
 import defaultAvatar from '~/assets/images/avatar.jpg';
+import { removeToken } from '~/utils/token';
 
 const SectionInfo = () => {
     const user = useSelector((state) => state.user.user);
 
-    let urlImage = import.meta.env.URL_IMAGE || 'http://localhost:3001/images/';
+    const navigate = useNavigate();
+
+    const [open, setOpen] = useState(false);
+
+    const goToHomeHandler = () => {
+        navigate('/');
+        removeToken('activeProfileId');
+    };
+
+    const handleOpenChange = (newOpen) => {
+        setOpen(newOpen);
+    };
 
     return (
         <div className='w-full h-fit border-2 border-[#eeefee] rounded-2xl px-3 pt-2'>
@@ -19,7 +30,7 @@ const SectionInfo = () => {
                 style={{ backgroundImage: `url(${backGround})` }}
             >
                 <img
-                    src={user.avatar ? urlImage + user.avatar : defaultAvatar}
+                    src={user.avatar ? `/minio${user.avatar}` : defaultAvatar}
                     className='absolute -bottom-7 size-60 rounded-full left-10 border-2 border-[#e2e3e2]'
                 />
             </div>
@@ -39,9 +50,24 @@ const SectionInfo = () => {
                         </span>
                     </div>
                 </div>
-                {/* <div className='border-2 border-[#e2e3e2] rounded-xl p-1 cursor-pointer'>
-                    <MoreOutlined className='text-5xl' />
-                </div> */}
+                <Popover
+                    content={
+                        <span
+                            className='my-2 text-2xl text-red-500 cursor-pointer'
+                            onClick={goToHomeHandler}
+                            style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
+                        >
+                            Về trang chủ
+                        </span>
+                    }
+                    trigger='click'
+                    open={open}
+                    onOpenChange={handleOpenChange}
+                >
+                    <div className='border-2 border-[#e2e3e2] rounded-xl p-1 cursor-pointer'>
+                        <MoreOutlined className='text-5xl' />
+                    </div>
+                </Popover>
             </div>
         </div>
     );

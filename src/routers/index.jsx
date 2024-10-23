@@ -2,27 +2,31 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { DefaultLayout, ProfileLayout, AdminLayout } from '~/layouts';
 
+import Motor from '~/pages/Motor/motor';
 import Home from '~/pages/Home/home.jsx';
+import Cashiers from '~/pages/Admin/Cashier/cashiers';
+import HistoryAppointment from '~/pages/Appointment/HistoryAppointment/historyAppointment';
+import CreateAppointment from '~/pages/Appointment/CreateAppointment/createAppointment';
 
 import Login from '~/pages/Auth/Login/login.jsx';
-import Register from '~/pages/Auth/Register/register.jsx';
-import Profile from '~/pages/Auth/Profile/profile.jsx';
-import ChangePassword from '~/pages/Auth/ChangePassword/changePassword';
 import History from '~/pages/Auth/History/history';
+import Profile from '~/pages/Auth/Profile/profile.jsx';
+import Register from '~/pages/Auth/Register/register.jsx';
+import ChangePassword from '~/pages/Auth/ChangePassword/changePassword';
 
-import Dashboard from '~/pages/Admin/Dashboard/dashboard';
 import Parts from '~/pages/Admin/Part/parts';
-import Categories from '~/pages/Admin/Category/categories';
-import Manufacturers from '~/pages/Admin/Manufacturer/manufacturers';
-import Warehouses from '~/pages/Admin/Warehouse/warehouse';
-import Maintenances from '~/pages/Admin/Maintenance/maintenances';
-import Customers from '~/pages/Admin/Customer/customers';
 import Staffs from '~/pages/Admin/Staff/staffs';
+import Customers from '~/pages/Admin/Customer/customers';
+import Dashboard from '~/pages/Admin/Dashboard/dashboard';
+import Warehouses from '~/pages/Admin/Warehouse/warehouse';
+import Categories from '~/pages/Admin/Category/categories';
 import Technicians from '~/pages/Admin/Technician/technicians';
 import Supervisors from '~/pages/Admin/Supervisor/supervisors';
+import Appointment from '~/pages/Admin/Appointment/appointment';
+import Maintenances from '~/pages/Admin/Maintenance/maintenances';
+import Manufacturers from '~/pages/Admin/Manufacturer/manufacturers';
 
 import ProtectedRoute from '~/routers/protectedRoute.jsx';
-import Cashiers from '~/pages/Admin/Cashier/cashiers';
 
 export const router = createBrowserRouter([
     {
@@ -32,6 +36,10 @@ export const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Home />
+            },
+            {
+                path: 'create-appointment',
+                element: <CreateAppointment />
             }
         ]
     },
@@ -58,6 +66,14 @@ export const router = createBrowserRouter([
             {
                 path: 'history',
                 element: <History />
+            },
+            {
+                path: 'motor',
+                element: <Motor />
+            },
+            {
+                path: 'history-appointment',
+                element: <HistoryAppointment />
             }
         ]
     },
@@ -88,6 +104,10 @@ export const router = createBrowserRouter([
             {
                 path: 'warehouse',
                 element: <Warehouses />
+            },
+            {
+                path: 'appointment',
+                element: <Appointment />
             },
             {
                 path: 'maintenance',
