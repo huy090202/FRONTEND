@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Button, Input, Modal } from 'antd';
+import { Input, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -61,18 +61,13 @@ const ManufacturerModalDetail = ({ isVisible, onCancel, manufacturer }) => {
                             onChange={(e) => setCountry(e.target.value)}
                         />
                     </div>
-                    <div className='w-full text-right'>
-                        <Button
+                    <div className='flex justify-end w-full'>
+                        <button
+                            className='px-6 py-3 mr-2 text-xl text-white bg-black rounded-2xl'
                             onClick={updateHandler}
-                            type='primary'
-                            className='h-16 text-2xl text-right'
-                            style={{
-                                fontFamily: 'LXGW WenKai TC',
-                                cursive: 'LXGW Wen'
-                            }}
                         >
-                            Xác nhận
-                        </Button>
+                            Lưu những thay đổi
+                        </button>
                     </div>
                 </div>
             )}
