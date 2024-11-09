@@ -9,12 +9,20 @@ export const getAllAppoinmentsUser = async (accessToken, { page, limit }) => {
     });
 };
 
+// Lấy danh sách lịch hẹn - Admin
+export const getAllAppoinmentsAdmin = async (accessToken, { page, limit }) => {
+    return await axios.get(`/appointment/all?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
 // Tạo lịch hẹn
-export const createAppoinment = async (accessToken, { appointmentDate, appointmentTime, appointmentEndTime, notes, motorId }) => {
+export const createAppoinment = async (accessToken, { appointmentDate, appointmentTime, notes, motorId }) => {
     return await axios.post('/appointment/create', {
         appointment_date: appointmentDate,
         appointment_time: appointmentTime,
-        appointment_end_time: appointmentEndTime,
         content: notes,
         motor_id: motorId
     }, {

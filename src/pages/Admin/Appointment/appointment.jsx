@@ -8,12 +8,13 @@ import {
     DoubleLeftOutlined,
     DoubleRightOutlined
 } from '@ant-design/icons';
-import { getAllAppoinmentsUser, updateAppoinmentStatus } from '~/services/appoinmentService';
+import { getAllAppoinmentsAdmin, updateAppoinmentStatus } from '~/services/appoinmentService';
 import { useGlobalFilter, useTable } from 'react-table';
 import { allMotors } from '~/services/motorService';
 import AppointmentModalDetail from '~/pages/Appointment/HistoryAppointment/appointmentModalDetail';
 import { Input, Select } from 'antd';
 import { getAllTechs } from '~/services/userService';
+import { FormatDate } from '~/utils/formatDate.js';
 
 const Appointment = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -37,9 +38,10 @@ const Appointment = () => {
     };
 
     const statusOptions = [
-        { value: 'PENDING', label: 'Đang chờ' },
-        { value: 'CONFIRMED', label: 'Đã xác nhận' },
-        { value: 'COMPLETED', label: 'Đã hoàn thành' }
+        { value: 'Chờ xác nhận', label: 'Chờ xác nhận' },
+        { value: 'Đã xác nhận', label: 'Đã xác nhận' },
+        { value: 'Đã hoàn thành', label: 'Đã hoàn thành' },
+        { value: 'Đã hủy', label: 'Đã hủy' }
     ];
 
     const [technicians, setTechnicians] = useState([]);
@@ -77,15 +79,12 @@ const Appointment = () => {
             },
             {
                 Header: 'Ngày hẹn',
-                accessor: 'appointment_date'
+                accessor: 'appointment_date',
+                Cell: ({ value }) => FormatDate(value)
             },
             {
                 Header: 'Giờ bắt đầu',
                 accessor: 'appointment_time'
-            },
-            {
-                Header: 'Giờ kết thúc',
-                accessor: 'appointment_end_time'
             },
             {
                 Header: 'Ghi chú',
@@ -115,7 +114,7 @@ const Appointment = () => {
                                 toast.error('Cập nhật trạng thái thất bại!');
                             }
                         }}
-                        disabled={value === 'COMPLETED'}
+                        disabled={value === 'Đã hoàn thành' || value === 'Đã hủy'}
                     >
                         {statusOptions.map((option) => (
                             <Select.Option key={option.value} value={option.value}>
@@ -172,8 +171,9 @@ const Appointment = () => {
                 const motorsResponse = await allMotors(token);
                 const motors = motorsResponse.data;
 
-                const response = await getAllAppoinmentsUser(token, { page, limit });
+                const response = await getAllAppoinmentsAdmin(token, { page, limit });
                 const appointments = response.data;
+                console.log(appointments);
 
                 const technicianMap = {};
                 technicians.forEach((technician) => {
@@ -181,10 +181,11 @@ const Appointment = () => {
                 });
 
                 const appointmentsWithMotorName = appointments.map((appointment) => {
-                    const motor = motors.find((m) => m.id === appointment.motor_id);
+                    console.log(appointment);
+                    // const motorName = motors.find((m) => m.id === appointment.motor_id);
                     return {
                         ...appointment,
-                        motor_name: motor ? motor.motor_name : 'Không có tên xe',
+                        motor_name: appointment ? appointment.motor.motor_name : 'Không có tên xe',
                         technician_name:
                             technicianMap[appointment.technicianId] || 'Chưa có kỹ thuật viên'
                     };

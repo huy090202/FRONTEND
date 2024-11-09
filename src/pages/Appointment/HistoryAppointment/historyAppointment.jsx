@@ -12,6 +12,7 @@ import { getAllAppoinmentsUser } from '~/services/appoinmentService';
 import { useTable } from 'react-table';
 import { allMotors } from '~/services/motorService';
 import AppointmentModalDetail from './appointmentModalDetail';
+import { FormatDate } from '~/utils/formatDate.js';
 
 const HistoryAppointment = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -49,15 +50,12 @@ const HistoryAppointment = () => {
             },
             {
                 Header: 'Ngày hẹn',
-                accessor: 'appointment_date'
+                accessor: 'appointment_date',
+                Cell: ({ value }) => FormatDate(value)
             },
             {
                 Header: 'Giờ bắt đầu',
                 accessor: 'appointment_time'
-            },
-            {
-                Header: 'Giờ kết thúc',
-                accessor: 'appointment_end_time'
             },
             {
                 Header: 'Ghi chú',

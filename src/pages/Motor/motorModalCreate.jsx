@@ -12,7 +12,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
     const [motorName, setmotorName] = useState('');
-    const [motorType, setmotorType] = useState('UNDERBONE');
+    const [motorType, setmotorType] = useState('Xe số');
     const [motorPlate, setmotorPlate] = useState('');
     const [motorEngine, setmotorEngine] = useState('');
     const [motorChassis, setmotorChassis] = useState('');
@@ -171,10 +171,11 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
                             cursive: 'LXGW Wen'
                         }}
                     >
-                        <Option value='UNDERBONE'>Xe số</Option>
-                        <Option value='SCOOTER'>Xe tay ga</Option>
-                        <Option value='MANUAL'>Xe tay côn</Option>
-                        <Option value='BIGBIKE'>Xe phân khối lớn</Option>
+                        <Option value='Xe số'>Xe số</Option>
+                        <Option value='Xe ga'>Xe tay ga</Option>
+                        <Option value='Xe côn'>Xe tay côn</Option>
+                        <Option value='Xe phân khối lớn'>Xe phân khối lớn</Option>
+                        <Option value='Xe khác'>Xe khác</Option>
                     </Select>
                 </div>
 

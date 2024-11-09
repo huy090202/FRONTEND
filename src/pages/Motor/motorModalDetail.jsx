@@ -219,10 +219,11 @@ const MotorModalDetail = ({ isVisible, onCancel, motor }) => {
                             onChange={(value) => setMotorType(value)}
                             className='flex-2 w-[100%]'
                         >
-                            <Option value='UNDERBONE'>Xe số</Option>
-                            <Option value='SCOOTER'>Xe tay ga</Option>
-                            <Option value='MANUAL'>Xe tay côn</Option>
-                            <Option value='BIGBIKE'>Xe phân khối lớn</Option>
+                            <Option value='Xe số'>Xe số</Option>
+                            <Option value='Xe ga'>Xe tay ga</Option>
+                            <Option value='Xe côn'>Xe tay côn</Option>
+                            <Option value='Xe phân khối lớn'>Xe phân khối lớn</Option>
+                            <Option value='Xe khác'>Xe khác</Option>
                         </Select>
                     </div>
 

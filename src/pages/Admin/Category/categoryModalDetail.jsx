@@ -3,7 +3,7 @@ import { Input, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { updateCategory } from '~/services/categorryService';
+import { updateCategory } from '~/services/categoryService.js';
 
 const CategoryModalDetail = ({ isVisible, onCancel, category }) => {
     const token = useSelector((state) => state.auth.auth.access_token);

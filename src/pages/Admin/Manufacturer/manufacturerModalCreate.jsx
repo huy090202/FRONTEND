@@ -50,14 +50,14 @@ const ManufacturerModalCreate = ({ isVisible, onCancel }) => {
             maskClosable={true}
             style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
         >
-            <div className='mb-10 text-4xl font-semibold'>Tạo nhà kho mới</div>
+            <div className='mb-10 text-4xl font-semibold'>Tạo nhà nhà sản xuất mới</div>
             <div className='flex flex-col items-start justify-center gap-5'>
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Tên nhà kho:</label>
+                    <label className='text-2xl font-bold'>Tên nhà sản xuất:</label>
                     <Input
                         autoFocus
                         size='large'
-                        placeholder='Nhập vào tên nhà kho'
+                        placeholder='Nhập vào tên nhà sản xuất'
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
@@ -75,8 +75,8 @@ const ManufacturerModalCreate = ({ isVisible, onCancel }) => {
                     <Button
                         onClick={createHandler}
                         disabled={!name.length || !country.length}
-                        type='primary'
-                        className='h-16 text-2xl text-right'
+                        type='light'
+                        className='h-16 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white'
                         style={{
                             fontFamily: 'LXGW WenKai TC',
                             cursive: 'LXGW Wen'

@@ -16,6 +16,14 @@ export const getAllMotors = async (accessToken, { page, limit }) => {
     });
 };
 
+export const getMotorById = async (accessToken, motorId) => {
+    return await axios.get(`/motor/get/${motorId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
+    });
+};
+
 export const getAllImages = async (accessToken, { motorId }) => {
     return await axios.get(`/motor-image/all?motor_id=${motorId}`, {
         headers: {

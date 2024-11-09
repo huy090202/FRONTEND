@@ -42,11 +42,11 @@ const ManufacturerModalDetail = ({ isVisible, onCancel, manufacturer }) => {
             maskClosable={true}
             style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
         >
-            <div className='mb-10 text-4xl font-semibold'>Chi tiết nhà kho</div>
+            <div className='mb-10 text-4xl font-semibold'>Chi tiết nhà sản xuất</div>
             {manufacturer && (
                 <div className='flex flex-col items-start justify-center gap-5'>
                     <div className='flex flex-col w-full gap-4 text-gray-800'>
-                        <label className='text-2xl font-bold'>Tên nhà kho:</label>
+                        <label className='text-2xl font-bold'>Tên nhà sản xuất:</label>
                         <Input
                             size='large'
                             value={name}

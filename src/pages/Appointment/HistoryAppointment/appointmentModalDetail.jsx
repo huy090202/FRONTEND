@@ -23,7 +23,6 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
     const [selectedMotor, setSelectedMotor] = useState(null);
     const [appointmentDate, setAppointmentDate] = useState(null);
     const [appointmentTime, setAppointmentTime] = useState(null);
-    const [appointmentEndTime, setAppointmentEndTime] = useState(null);
     const [content, setContent] = useState('');
     const [status, setStatus] = useState('');
     const [images, setimages] = useState([]);
@@ -74,7 +73,6 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
             );
             setAppointmentDate(dayjs(appoint.appointment_date));
             setAppointmentTime(dayjs(appoint.appointment_time, 'HH:mm:ss'));
-            setAppointmentEndTime(dayjs(appoint.appointment_end_time, 'HH:mm:ss'));
             setContent(appoint.content);
             setStatus(appoint.status);
         }
@@ -86,9 +84,6 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                 appointmentId: appoint.id,
                 appointment_date: appointmentDate,
                 appointment_time: appointmentTime ? appointmentTime.format('HH:mm:ss') : null,
-                appointment_end_time: appointmentEndTime
-                    ? appointmentEndTime.format('HH:mm:ss')
-                    : null,
                 content: content,
                 motor_id: selectedMotor.value
             };
@@ -198,7 +193,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                                       }))
                                     : []
                             }
-                            disabled={status !== 'PENDING'}
+                            disabled={status !== 'Chờ xác nhận'}
                         />
                     </div>
                     <div className='flex flex-col w-full gap-4 text-gray-800'>
@@ -206,7 +201,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                         <DatePicker
                             value={appointmentDate}
                             onChange={(date) => setAppointmentDate(date)}
-                            disabled={status !== 'PENDING'}
+                            disabled={status !== 'Chờ xác nhận'}
                         />
                     </div>
                     <div className='flex flex-col w-full gap-4 text-gray-800'>
@@ -214,15 +209,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                         <TimePicker
                             value={appointmentTime}
                             onChange={(time) => setAppointmentTime(time)}
-                            disabled={status !== 'PENDING'}
-                        />
-                    </div>
-                    <div className='flex flex-col w-full gap-4 text-gray-800'>
-                        <label className='text-2xl font-bold'>Giờ kết thúc bảo dưỡng:</label>
-                        <TimePicker
-                            value={appointmentEndTime}
-                            onChange={(time) => setAppointmentEndTime(time)}
-                            disabled={status !== 'PENDING'}
+                            disabled={status !== 'Chờ xác nhận'}
                         />
                     </div>
                     <div className='flex flex-col w-full gap-4 text-gray-800'>
@@ -231,7 +218,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                             rows={4}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            disabled={status !== 'PENDING'}
+                            disabled={status !== 'Chờ xác nhận'}
                         />
                     </div>
                     <div className='flex flex-col gap-2'>
@@ -240,7 +227,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                             <label
                                 htmlFor='file'
                                 className='text-5xl cursor-pointer'
-                                disabled={status !== 'PENDING'}
+                                disabled={status !== 'Chờ xác nhận'}
                             >
                                 <div className='flex items-center justify-center py-10 border-2 border-[#eeefee] mr-5 border-dashed rounded-lg size-52'>
                                     <PlusOutlined />
@@ -256,7 +243,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
                                 accept='image/*'
                                 onChange={handleUploadFilesImage}
                                 hidden
-                                disabled={status !== 'PENDING'}
+                                disabled={status !== 'Chờ xác nhận'}
                             />
                         </div>
                     </div>

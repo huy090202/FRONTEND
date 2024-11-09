@@ -14,7 +14,6 @@ const CreateAppointment = () => {
 
     const [appointDate, setAppointDate] = useState('');
     const [appointTime, setAppointTime] = useState('');
-    const [appointEndTime, setAppointEndTime] = useState('');
     const [appointNote, setAppointNote] = useState('');
 
     const [motorData, setMotorData] = useState([]);
@@ -45,22 +44,18 @@ const CreateAppointment = () => {
     const createAppointmentHandler = async () => {
         try {
             setLoading(true);
-            if (!appointDate || !appointTime || !appointEndTime || !selectedMotor) {
+            if (!appointDate || !appointTime || !selectedMotor) {
                 toast.error('Các bắc buộc trường không được để trống');
                 return;
             }
 
             // Chuyển đổi thời gian sang định dạng HH:mm:ss
             const formattedAppointTime = appointTime ? dayjs(appointTime).format('HH:mm:ss') : null;
-            const formattedAppointEndTime = appointEndTime
-                ? dayjs(appointEndTime).format('HH:mm:ss')
-                : null;
 
             // Tạo lịch hẹn
             const response = await createAppoinment(token, {
                 appointmentDate: appointDate,
                 appointmentTime: formattedAppointTime,
-                appointmentEndTime: formattedAppointEndTime,
                 notes: appointNote,
                 motorId: selectedMotor.value
             });
@@ -85,7 +80,6 @@ const CreateAppointment = () => {
                 // Reset form
                 setAppointDate('');
                 setAppointTime('');
-                setAppointEndTime('');
                 setAppointNote('');
                 setimages([]);
                 if (motorData.length > 0) {
@@ -184,22 +178,6 @@ const CreateAppointment = () => {
                                 <TimePicker
                                     value={appointTime}
                                     onChange={(time) => setAppointTime(time)}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        fontFamily: 'LXGW WenKai TC',
-                                        cursive: 'LXGW Wen'
-                                    }}
-                                    className='hover:border-[#d6d6d6]'
-                                />
-                            </div>
-                            <div className='flex flex-col flex-1 gap-2'>
-                                <label className='text-2xl'>
-                                    <span className='mr-2 text-red-500'>*</span>
-                                    Thời gian kết thúc:
-                                </label>
-                                <TimePicker
-                                    value={appointEndTime}
-                                    onChange={(time) => setAppointEndTime(time)}
                                     style={{
                                         backgroundColor: 'transparent',
                                         fontFamily: 'LXGW WenKai TC',

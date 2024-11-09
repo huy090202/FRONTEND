@@ -17,7 +17,7 @@ import {
     changeCategoryStatus,
     getAllCategories,
     deleteCategory
-} from '~/services/categorryService';
+} from '~/services/categoryService';
 import CategoryModalDetail from './categoryModalDetail';
 import CategoryModalCreate from './categoryModalCreate';
 

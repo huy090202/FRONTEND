@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { createCategory } from '~/services/categorryService';
+import { createCategory } from '~/services/categoryService.js';
 
 const CategoryModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -75,8 +75,8 @@ const CategoryModalCreate = ({ isVisible, onCancel }) => {
                     <Button
                         onClick={createHandler}
                         disabled={!name.length || !description.length}
-                        type='primary'
-                        className='h-16 text-2xl text-right'
+                        type="light"
+                        className="h-16 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white"
                         style={{
                             fontFamily: 'LXGW WenKai TC',
                             cursive: 'LXGW Wen'

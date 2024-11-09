@@ -75,8 +75,8 @@ const WarehouseModalCreate = ({ isVisible, onCancel }) => {
                     <Button
                         onClick={createHandler}
                         disabled={!name.length || !address.length}
-                        type='primary'
-                        className='h-16 text-2xl text-right'
+                        type="light"
+                        className="h-16 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white"
                         style={{
                             fontFamily: 'LXGW WenKai TC',
                             cursive: 'LXGW Wen'

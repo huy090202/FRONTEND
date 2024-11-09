@@ -26,8 +26,8 @@ const Staffs = () => {
     const [filterInput, setFilterInput] = useState('');
     const limit = 5;
 
-    const showModal = (cashier) => {
-        setSelectedStaff(cashier);
+    const showModal = (staff) => {
+        setSelectedStaff(staff);
         setIsModalVisible(true);
     };
 

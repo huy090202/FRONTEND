@@ -40,6 +40,15 @@ export const router = createBrowserRouter([
             {
                 path: 'create-appointment',
                 element: <CreateAppointment />
+            },
+            {
+                path: 'maintenance-list',
+
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <h1>Danh sách đơn cần bảo dưỡng</h1>
+                    </ProtectedRoute>
+                )
             }
         ]
     },
@@ -80,7 +89,7 @@ export const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <ProtectedRoute roleRequired={['ADMIN', 'STAFF', 'TECH', 'CASHIER']}>
+            <ProtectedRoute roleRequired={['Quản trị viên', 'Nhân viên', 'Thu ngân']}>
                 <AdminLayout />
             </ProtectedRoute>
         ),

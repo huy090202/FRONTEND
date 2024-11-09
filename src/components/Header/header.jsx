@@ -23,6 +23,11 @@ const Header = () => {
             id: 3,
             name: 'Đăng ký bảo dưỡng',
             path: '/create-appointment'
+        },
+        {
+            id: 4,
+            name: 'Danh sách đơn bảo dưỡng',
+            path: '/maintenance-list'
         }
     ];
 
@@ -79,21 +84,25 @@ const Header = () => {
                         <span className='mb-2 text-3xl font-bold uppercase'>HuyMotorbike</span>
                     </div>
                     <div className='flex items-center gap-4'>
-                        {nav.map((item) => (
-                            <div
-                                key={item.id}
-                                className={`px-5 py-2 text-2xl font-bold cursor-pointer ${
-                                    activeHomeId === item.id
-                                        ? 'border-b-2 border-[#6699bb] text-[#6699bb]'
-                                        : 'text-black'
-                                }`}
-                                onClick={() => handleClick(item.id, item.path)}
-                            >
-                                {item.name}
-                            </div>
-                        ))}
+                        {nav
+                            .filter(
+                                (item) => !(item.id === 4 && user && user.role !== 'Kỹ thuật viên') // Nếu không phải kỹ thuật viên thì không hiển thị danh sách đơn bảo dưỡng
+                            )
+                            .map((item) => (
+                                <div
+                                    key={item.id}
+                                    className={`px-5 py-2 text-2xl hover:text-[#6699bb] font-bold cursor-pointer ${
+                                        activeHomeId === item.id
+                                            ? 'border-b-2 border-[#6699bb] text-[#6699bb]'
+                                            : 'text-black'
+                                    }`}
+                                    onClick={() => handleClick(item.id, item.path)}
+                                >
+                                    {item.name}
+                                </div>
+                            ))}
                     </div>
-                    {isAuthenticated ? (
+                    {isAuthenticated && user ? (
                         <Popover
                             content={
                                 <div
@@ -111,7 +120,7 @@ const Header = () => {
                                         >
                                             Thông tin tài khoản
                                         </div>
-                                        {user.role === 'ADMIN' && (
+                                        {user.role === 'Quản trị viên' && (
                                             <div
                                                 className='text-2xl cursor-pointer py-2 hover:bg-[#f4f4f4]'
                                                 onClick={gotoAdmin}

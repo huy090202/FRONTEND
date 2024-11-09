@@ -7,7 +7,7 @@ import TextArea from 'antd/es/input/TextArea';
 import { PlusOutlined } from '@ant-design/icons';
 import { allWarehousesPublic } from '~/services/warehouseService';
 import { allManufacturersPublic } from '~/services/manufacturerService';
-import { allCategoriesPublic } from '~/services/categorryService';
+import { allCategoriesPublic } from '~/services/categoryService.js';
 import { WrapperSelect } from '~/pages/Appointment/CreateAppointment/style';
 import { createPart } from '~/services/partService';
 
@@ -22,6 +22,7 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
     const [manufacturerId, setManufacturerId] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [quantityPart, setQuantityPart] = useState('');
+    const [salePart, setSalePart] = useState('');
     const [warehouseId, setWarehouseId] = useState('');
 
     const [warehouseData, setWarehouseData] = useState([]);
@@ -38,6 +39,7 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
         setAverageLife('');
         setDescription('');
         setQuantityPart('');
+        setSalePart('');
         if (manufacturerData.length > 0)
             selectedManufacturer({
                 value: manufacturerData[0].id,
@@ -125,6 +127,7 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
 
         formData.append('part_name', partName);
         formData.append('part_price', partPrice);
+        formData.append('sale', salePart);
         formData.append('average_life', averageLife);
         formData.append('description', description);
         formData.append('manufacturer_id', manufacturerId);
@@ -170,105 +173,127 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
             onCancel={onCancel}
             footer={null}
             maskClosable={true}
+            width={900}
             style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
         >
-            <div className='mb-10 text-4xl font-semibold'>Thêm 1 linh kiện mới</div>
-            <div className='flex flex-col items-start justify-center gap-5'>
-                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Tên linh kiện:</label>
-                    <Input
-                        size='large'
-                        value={partName}
-                        onChange={(e) => setPartName(e.target.value)}
-                    />
+            <div className='mb-10 text-4xl font-semibold text-center'>Thêm 1 linh kiện mới</div>
+            <div className='flex flex-col gap-10'>
+                <div className='flex items-start justify-between gap-10'>
+                    <div
+                        className='w-[60%] flex flex-col bg-[#e5eaf3] border-2 p-5 rounded-xl gap-5
+                    '
+                    >
+                        <div className='flex flex-col w-full gap-4 text-gray-800'>
+                            <label className='text-2xl font-bold'>Tên linh kiện:</label>
+                            <Input
+                                size='large'
+                                value={partName}
+                                onChange={(e) => setPartName(e.target.value)}
+                            />
+                        </div>
+                        <div className='flex flex-col w-full gap-4 text-gray-800'>
+                            <label className='text-2xl font-bold'>
+                                Tuổi thọ linh kiện (tháng):
+                            </label>
+                            <Input
+                                size='large'
+                                value={averageLife}
+                                onChange={(e) => setAverageLife(e.target.value)}
+                            />
+                        </div>
+                        <div className='flex flex-col w-full gap-4 text-gray-800'>
+                            <label className='text-2xl font-bold'>Mô tả:</label>
+                            <TextArea
+                                rows={4}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    fontFamily: 'LXGW WenKai TC',
+                                    cursive: 'LXGW Wen'
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className='w-[40%] flex flex-col bg-[#e5eaf3] border-2 p-5 rounded-xl gap-5'>
+                        <div className='flex flex-col w-full gap-4 text-gray-800'>
+                            <label className='text-2xl font-bold'>Giá linh kiện (VNĐ):</label>
+                            <Input
+                                size='large'
+                                value={partPrice}
+                                onChange={(e) => setPartPrice(e.target.value)}
+                            />
+                        </div>
+                        <div className='flex flex-col w-full gap-4 text-gray-800'>
+                            <label className='text-2xl font-bold'>Giảm giá (%):</label>
+                            <Input
+                                size='large'
+                                value={salePart}
+                                onChange={(e) => setSalePart(e.target.value)}
+                            />
+                        </div>
+                        <div className='flex flex-col w-full gap-4 text-gray-800'>
+                            <label className='text-2xl font-bold'>Số lượng:</label>
+                            <Input
+                                size='large'
+                                value={quantityPart}
+                                onChange={(e) => setQuantityPart(e.target.value)}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Giá linh kiện:</label>
-                    <Input
-                        size='large'
-                        value={partPrice}
-                        onChange={(e) => setPartPrice(e.target.value)}
-                    />
+                <div className='flex items-center justify-between gap-5 bg-[#e5eaf3] border-2 p-5 rounded-xl'>
+                    <div className='flex flex-col w-full gap-4'>
+                        <label className='text-2xl font-bold'>Chọn danh mục:</label>
+                        <WrapperSelect
+                            style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
+                            labelInValue
+                            value={selectedCategory}
+                            onChange={(e) => {
+                                setSelectedCategory(e);
+                                setCategoryId(e.value);
+                            }}
+                            options={categoryData.map((category) => ({
+                                value: category.id,
+                                label: category.name
+                            }))}
+                        />
+                    </div>
+                    <div className='flex flex-col w-full gap-4'>
+                        <label className='text-2xl font-bold'>Chọn nhà kho:</label>
+                        <WrapperSelect
+                            style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
+                            labelInValue
+                            value={selectedWarehouse}
+                            onChange={(e) => {
+                                setSelectedWarehouse(e);
+                                setWarehouseId(e.value);
+                            }}
+                            options={warehouseData.map((warehouse) => ({
+                                value: warehouse.id,
+                                label: warehouse.name
+                            }))}
+                        />
+                    </div>
+                    <div className='flex flex-col w-full gap-4'>
+                        <label className='text-2xl font-bold'>Chọn nhà sản xuất:</label>
+                        <WrapperSelect
+                            style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
+                            labelInValue
+                            value={selectedManufacturer}
+                            onChange={(e) => {
+                                setSelectedManufacturer(e);
+                                setManufacturerId(e.value);
+                            }}
+                            options={manufacturerData.map((manufacturer) => ({
+                                value: manufacturer.id,
+                                label: manufacturer.name
+                            }))}
+                        />
+                    </div>
                 </div>
-                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Tuổi thọ linh kiện:</label>
-                    <Input
-                        size='large'
-                        value={averageLife}
-                        onChange={(e) => setAverageLife(e.target.value)}
-                    />
-                </div>
-                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Mô tả:</label>
-                    <TextArea
-                        rows={4}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        style={{
-                            backgroundColor: 'transparent',
-                            fontFamily: 'LXGW WenKai TC',
-                            cursive: 'LXGW Wen'
-                        }}
-                    />
-                </div>
-                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl font-bold'>Số lượng:</label>
-                    <Input
-                        size='large'
-                        value={quantityPart}
-                        onChange={(e) => setQuantityPart(e.target.value)}
-                    />
-                </div>
-                <div className='flex flex-col w-full gap-4'>
-                    <label className='text-2xl'>Chọn nhà kho:</label>
-                    <WrapperSelect
-                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
-                        labelInValue
-                        value={selectedWarehouse}
-                        onChange={(e) => {
-                            setSelectedWarehouse(e);
-                            setWarehouseId(e.value);
-                        }}
-                        options={warehouseData.map((warehouse) => ({
-                            value: warehouse.id,
-                            label: warehouse.name
-                        }))}
-                    />
-                </div>
-                <div className='flex flex-col w-full gap-4'>
-                    <label className='text-2xl'>Chọn nhà sản xuất:</label>
-                    <WrapperSelect
-                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
-                        labelInValue
-                        value={selectedManufacturer}
-                        onChange={(e) => {
-                            setSelectedManufacturer(e);
-                            setManufacturerId(e.value);
-                        }}
-                        options={manufacturerData.map((manufacturer) => ({
-                            value: manufacturer.id,
-                            label: manufacturer.name
-                        }))}
-                    />
-                </div>
-                <div className='flex flex-col w-full gap-4'>
-                    <label className='text-2xl'>Chọn danh mục:</label>
-                    <WrapperSelect
-                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
-                        labelInValue
-                        value={selectedCategory}
-                        onChange={(e) => {
-                            setSelectedCategory(e);
-                            setCategoryId(e.value);
-                        }}
-                        options={categoryData.map((category) => ({
-                            value: category.id,
-                            label: category.name
-                        }))}
-                    />
-                </div>
-                <div className='flex flex-col gap-2'>
-                    <span className='text-2xl'>Chọn ảnh (nếu có):</span>
+                <div className='flex flex-col gap-2 bg-[#e5eaf3] border-2 p-5 rounded-xl'>
+                    <span className='text-2xl font-bold'>Chọn ảnh (nếu có):</span>
                     <div className='flex'>
                         <label htmlFor='file' className='text-5xl cursor-pointer'>
                             <div className='flex items-center justify-center py-10 border-2 border-[#eeefee] mr-5 border-dashed rounded-lg size-60'>
@@ -291,8 +316,8 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
                     <Button
                         onClick={createHandler}
                         disabled={!partName.length || !partPrice.length || !quantityPart.length}
-                        type='primary'
-                        className='h-16 text-2xl text-right'
+                        type='light'
+                        className='h-16 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white'
                         style={{
                             fontFamily: 'LXGW WenKai TC',
                             cursive: 'LXGW Wen'

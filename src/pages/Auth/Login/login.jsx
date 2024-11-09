@@ -39,10 +39,10 @@ const Login = () => {
                 const user = await getUser(token);
                 const checkRole = user?.data?.role;
                 if (
-                    checkRole === 'ADMIN' ||
-                    checkRole === 'STAFF' ||
-                    checkRole === 'TECH' ||
-                    checkRole === 'CASHIER'
+                    checkRole === 'Quản trị viên' ||
+                    checkRole === 'Nhân viên' ||
+                    checkRole === 'Kỹ thuật viên' ||
+                    checkRole === 'Thu ngân'
                 ) {
                     navigate('/dashboard');
                 } else {

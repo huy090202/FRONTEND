@@ -19,7 +19,7 @@ const Profile = () => {
     const dispatch = useDispatch();
 
     const [avatar, setAvatar] = useState(user.avatar || null);
-    const [gender, setGender] = useState(user.gender || 'OTHER');
+    const [gender, setGender] = useState(user.gender || 'Khác');
     const [firstName, setFirstName] = useState(user.firstName || '');
     const [lastName, setLastName] = useState(user.lastName || '');
     const [email, setEmail] = useState(user.email || '');
@@ -30,7 +30,7 @@ const Profile = () => {
 
     useEffect(() => {
         setAvatar(user.avatar || null);
-        setGender(user.gender || 'OTHER');
+        setGender(user.gender || 'Khác');
         setFirstName(user.firstName || '');
         setLastName(user.lastName || '');
         setEmail(user.email || '');
@@ -177,9 +177,9 @@ const Profile = () => {
                             onChange={(value) => setGender(value)}
                             className='flex-2 w-[100%]'
                         >
-                            <Option value='MALE'>MALE</Option>
-                            <Option value='FEMALE'>FEMALE</Option>
-                            <Option value='OTHER'>OTHER</Option>
+                            <Option value='Nam'>Nam</Option>
+                            <Option value='Nữ'>Nữ</Option>
+                            <Option value='Khác'>Khác</Option>
                         </Select>
                     </div>
                     <Button
