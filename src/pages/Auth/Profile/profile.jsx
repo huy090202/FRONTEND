@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Input, Select, Spin } from 'antd';
+import { Button, Input, Select } from 'antd';
 import {
-    FormOutlined,
+    MailOutlined,
     UserOutlined,
     PhoneOutlined,
     HomeOutlined,
@@ -11,6 +11,7 @@ import {
 import { getToken } from '~/utils/token';
 import defaultAvatar from '~/assets/images/avatar.jpg';
 import { userActions } from '~/redux/slice/userSlice';
+import Loading from '~/components/shared/Loading/loading';
 
 const { Option } = Select;
 
@@ -96,7 +97,7 @@ const Profile = () => {
         <Fragment>
             {loading && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
-                    <Spin size='large' />
+                    <Loading />
                 </div>
             )}
             <div className='w-[60%] my-5 text-center border-2 border-[#eeefee] rounded-2xl p-5 bg-white shadow-xl'>
@@ -126,6 +127,7 @@ const Profile = () => {
                             placeholder='Tên của bạn'
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>
@@ -136,6 +138,7 @@ const Profile = () => {
                             placeholder='Họ của bạn'
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>
@@ -143,10 +146,11 @@ const Profile = () => {
                         <Input
                             size='large'
                             disabled
-                            prefix={<FormOutlined />}
+                            prefix={<MailOutlined />}
                             placeholder='Email của bạn'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>
@@ -157,6 +161,7 @@ const Profile = () => {
                             placeholder='Số điện thoại'
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>
@@ -167,6 +172,7 @@ const Profile = () => {
                             placeholder='Địa chỉ của bạn'
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>

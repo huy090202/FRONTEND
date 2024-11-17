@@ -92,3 +92,25 @@ export const deleteMotorImage = async (accessToken, imageId) => {
         },
     });
 }
+
+// Motor Temp Service
+// Lấy danh sách xe tạm
+export const allMotorTemps = async () => {
+    return await axios.get('/motorTemp/all',)
+}
+
+// Tạo xe tạm
+export const createMotorTemp = async ({ email, phone, motorName, motorType, motorPlate, motorEngine, motorChassis, motorModel, createdAt, motorColor }) => {
+    return await axios.post('/motorTemp/create', {
+        email,
+        phone,
+        motor_name: motorName,
+        motor_type: motorType,
+        license_plate: motorPlate,
+        engine_number: motorEngine,
+        chassis_number: motorChassis,
+        motor_model: motorModel,
+        created_at: createdAt,
+        motor_color: motorColor
+    })
+}

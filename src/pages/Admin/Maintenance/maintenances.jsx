@@ -11,7 +11,11 @@ import {
     DeleteOutlined
 } from '@ant-design/icons';
 import { Input, Select } from 'antd';
-import { changeMaintenanceStatus, getAllMaintenances } from '~/services/maintenanceService';
+import {
+    changeMaintenanceStatus,
+    deleteMaintenance,
+    getAllMaintenances
+} from '~/services/maintenanceService';
 import MaintenanceModalDetail from './maintenanceModalDetail';
 import { FormatDate } from '~/utils/formatDate.js';
 
@@ -22,7 +26,6 @@ const Maintenances = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isModalCreate, setIsModalCreate] = useState(false);
     const [selectedMaintenance, setSelectedMaintenance] = useState(null);
     const [filterInput, setFilterInput] = useState('');
     const limit = 5;
@@ -39,28 +42,21 @@ const Maintenances = () => {
         setIsModalVisible(true);
     };
 
-    const showModalCreate = () => {
-        setIsModalCreate(true);
-    };
-
     const handleCancel = () => {
         setIsModalVisible(false);
-        setIsModalCreate(false);
     };
 
     const handleDeletePart = async (maintenanceId) => {
-        alert(`Xóa đơn bảo dưỡng có id: ${maintenanceId}`);
-        // try {
-        //     const res = await deletePart(token, maintenanceId);
-        //     if (res.status) {
-        //         toast.success(res.message);
-        //         setData(data.filter((maintenance) => maintenance.id !== maintenanceId));
-        //     } else {
-        //         toast.error(res.message);
-        //     }
-        // } catch (error) {
-        //     toast.error('Xóa đơn bảo dưỡng thất bại');
-        // }
+        try {
+            const res = await deleteMaintenance(token, maintenanceId);
+            if (res.status === true) {
+                toast.success(res.message);
+            } else {
+                toast.error(res.message);
+            }
+        } catch (error) {
+            toast.error('Xóa đơn bảo dưỡng thất bại');
+        }
     };
 
     const columns = useMemo(
@@ -131,15 +127,16 @@ const Maintenances = () => {
             },
             {
                 Header: 'Hành động',
-                Cell: ({ row }) => (
-                    <div className='flex items-center w-full'>
-                        <DeleteOutlined
-                            className='text-3xl'
-                            onClick={() => handleDeletePart(row.original.id)}
-                            style={{ cursor: 'pointer', color: 'red' }}
-                        />
-                    </div>
-                )
+                Cell: ({ row }) =>
+                    row.original.status === 'Hoàn thành bảo dưỡng' && (
+                        <div className='flex items-center w-full'>
+                            <DeleteOutlined
+                                className='text-3xl'
+                                onClick={() => handleDeletePart(row.original.id)}
+                                style={{ cursor: 'pointer', color: 'red' }}
+                            />
+                        </div>
+                    )
             }
         ],
         [token, data]
@@ -193,7 +190,7 @@ const Maintenances = () => {
     };
 
     const isFirstPage = page === 1;
-    const isLastPage = page === totalPages + 1;
+    const isLastPage = page === totalPages;
 
     return (
         <div className='flex flex-col w-full'>

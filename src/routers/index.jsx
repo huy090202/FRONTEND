@@ -26,6 +26,8 @@ import Appointment from '~/pages/Admin/Appointment/appointment';
 import Maintenances from '~/pages/Admin/Maintenance/maintenances';
 import Manufacturers from '~/pages/Admin/Manufacturer/manufacturers';
 
+import Maintenance from '~/pages/Maintenance/maintenance';
+
 import ProtectedRoute from '~/routers/protectedRoute.jsx';
 
 export const router = createBrowserRouter([
@@ -46,7 +48,7 @@ export const router = createBrowserRouter([
 
                 element: (
                     <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
-                        <h1>Danh sách đơn cần bảo dưỡng</h1>
+                        <Maintenance />
                     </ProtectedRoute>
                 )
             }

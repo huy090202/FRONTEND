@@ -6,7 +6,7 @@ import { getToken } from '~/utils/token';
 import { authActions } from '~/redux/slice/authSlice';
 import { userActions } from '~/redux/slice/userSlice';
 import { getUser } from '~/services/userService';
-import { Spin } from 'antd';
+import Loading from '~/components/shared/Loading/loading';
 
 const ProtectedRoute = ({ children, roleRequired }) => {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -58,7 +58,7 @@ const ProtectedRoute = ({ children, roleRequired }) => {
     if (loading) {
         return (
             <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
-                <Spin size='large' />
+                <Loading />
             </div>
         );
     }

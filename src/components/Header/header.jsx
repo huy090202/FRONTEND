@@ -120,7 +120,8 @@ const Header = () => {
                                         >
                                             Thông tin tài khoản
                                         </div>
-                                        {user.role === 'Quản trị viên' && (
+                                        {(user.role === 'Quản trị viên' ||
+                                            user.role === 'Kỹ thuật viên') && (
                                             <div
                                                 className='text-2xl cursor-pointer py-2 hover:bg-[#f4f4f4]'
                                                 onClick={gotoAdmin}

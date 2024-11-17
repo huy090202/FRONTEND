@@ -78,6 +78,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
                     if (responseImage.status === false) toast.error(responseImage.message);
                 }
                 clearHandler();
+                onCancel();
             } else {
                 toast.error(response.message || 'Tạo một xe mới thất bại');
             }
@@ -160,7 +161,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
                 </div>
 
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl w-[30%] text-left font-bold'>Vai trò:</label>
+                    <label className='text-2xl font-bold text-left'>Loại xe:</label>
                     <Select
                         size='large'
                         value={motorType}

@@ -28,7 +28,6 @@ function* getUserSaga(action) {
 function* changePasswordSaga(action) {
     try {
         const response = yield call(changePassword, action.payload.token, action.payload.data);
-        console.log(response);
         if (response.status === true) {
             yield put(userActions.changePasswordSuccess(response));
             yield put(userActions.getUser(action.payload.token));

@@ -1,6 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { login } from '~/services/userService';
 import { authActions } from '~/redux/slice/authSlice';
+import { userActions } from '../slice/userSlice';
 
 function* loginUserSaga(action) {
     try {
@@ -10,6 +11,7 @@ function* loginUserSaga(action) {
                 data: response.data,
                 message: response.message
             }));
+            yield put(userActions.getUser(response.data.access_token));
         } else {
             yield put(authActions.loginUserFailure(response.message || 'Đăng nhập thất bại'));
         }

@@ -16,6 +16,15 @@ export const getUser = async (accessToken) => {
     });
 };
 
+// Lấy thông tin người dùng theo id
+export const getUserById = async (accessToken, id) => {
+    return await axios.get(`user/get/${id}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
 export const updateUser = async (accessToken, data) => {
     return await axios.put('user/update', data, {
         headers: {
@@ -88,3 +97,8 @@ export const createStaff = async (accessToken, { firstName, lastName, email, pho
         },
     });
 };
+
+// Tạo tài khoản tự động cho người dùng vãng lai
+export const createGuest = async ({ firstName, lastName, email, phone }) => {
+    return await axios.post('user/guest', { firstName, lastName, email, phoneNumber: phone });
+}

@@ -6,15 +6,20 @@ import {
     RightOutlined,
     LeftOutlined,
     DoubleLeftOutlined,
-    DoubleRightOutlined
+    DoubleRightOutlined,
+    DeleteOutlined
 } from '@ant-design/icons';
-import { getAllAppoinmentsAdmin, updateAppoinmentStatus } from '~/services/appoinmentService';
+import {
+    deleteAppoinment,
+    getAllAppoinmentsAdmin,
+    updateAppoinmentStatus
+} from '~/services/appoinmentService';
 import { useGlobalFilter, useTable } from 'react-table';
-import { allMotors } from '~/services/motorService';
 import AppointmentModalDetail from '~/pages/Appointment/HistoryAppointment/appointmentModalDetail';
 import { Input, Select } from 'antd';
-import { getAllTechs } from '~/services/userService';
+import { getAllTechs, getUserById } from '~/services/userService';
 import { FormatDate } from '~/utils/formatDate.js';
+import { createMaintenance } from '~/services/maintenanceService';
 
 const Appointment = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -62,6 +67,19 @@ const Appointment = () => {
 
         fetchTechnicians();
     }, []);
+
+    const handleDeleteAppoint = async (id) => {
+        if (!token || !id) {
+            return;
+        }
+
+        const res = await deleteAppoinment(token, id);
+        if (res.status === true) {
+            toast.success(res.message);
+        } else {
+            toast.error(res.message);
+        }
+    };
 
     const columns = useMemo(
         () => [
@@ -131,23 +149,30 @@ const Appointment = () => {
                     <Select
                         style={{ width: '100%' }}
                         value={value}
-                        defaultValue={row.original.technicianId}
+                        disabled={!!row.original.technicianId}
                         onChange={async (newTechnicianId) => {
-                            const appointmentId = row.original.id;
-                            // try {
-                            //     const response = await updateTechnician(
-                            //         token,
-                            //         appointmentId,
-                            //         newTechnicianId
-                            //     );
-                            //     if (response.status === true) {
-                            //         toast.success(response.message);
-                            //     } else {
-                            //         toast.error(response.message);
-                            //     }
-                            // } catch (error) {
-                            //     toast.error('Cập nhật kỹ thuật viên thất bại!');
-                            // }
+                            const appointId = row.original.id;
+                            const techId = newTechnicianId;
+                            const resMain = await createMaintenance(token, { techId, appointId });
+                            if (resMain.status === true) {
+                                toast.success(resMain.message);
+
+                                const resTech = await getUserById(token, resMain.data.user_id);
+
+                                setDataAppointment((prevAppointments) =>
+                                    prevAppointments.map((appointment) =>
+                                        appointment.id === appointId
+                                            ? {
+                                                  ...appointment,
+                                                  technicianId: techId,
+                                                  technician_name: `${resTech.data.lastName} ${resTech.data.firstName}`
+                                              }
+                                            : appointment
+                                    )
+                                );
+                            } else {
+                                toast.error(resMain.message);
+                            }
                         }}
                     >
                         {technicians.map((technician) => (
@@ -157,6 +182,20 @@ const Appointment = () => {
                         ))}
                     </Select>
                 )
+            },
+            {
+                Header: 'Hành động',
+                Cell: ({ row }) =>
+                    (row.original.status === 'Đã hoàn thành' ||
+                        row.original.status === 'Đã hủy') && (
+                        <div className='flex items-center w-full'>
+                            <DeleteOutlined
+                                className='text-3xl'
+                                onClick={() => handleDeleteAppoint(row.original.id)}
+                                style={{ cursor: 'pointer', color: 'red' }}
+                            />
+                        </div>
+                    )
             }
         ],
         [token, technicians]
@@ -168,12 +207,8 @@ const Appointment = () => {
                 return;
             }
             try {
-                const motorsResponse = await allMotors(token);
-                const motors = motorsResponse.data;
-
                 const response = await getAllAppoinmentsAdmin(token, { page, limit });
                 const appointments = response.data;
-                console.log(appointments);
 
                 const technicianMap = {};
                 technicians.forEach((technician) => {
@@ -181,8 +216,6 @@ const Appointment = () => {
                 });
 
                 const appointmentsWithMotorName = appointments.map((appointment) => {
-                    console.log(appointment);
-                    // const motorName = motors.find((m) => m.id === appointment.motor_id);
                     return {
                         ...appointment,
                         motor_name: appointment ? appointment.motor.motor_name : 'Không có tên xe',

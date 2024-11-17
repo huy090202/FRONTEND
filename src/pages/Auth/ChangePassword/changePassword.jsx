@@ -1,10 +1,11 @@
 import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Input, Button, Spin } from 'antd';
-import { SafetyOutlined } from '@ant-design/icons';
+import { Input, Button } from 'antd';
+import { KeyOutlined } from '@ant-design/icons';
 import { toast } from 'react-toastify';
 import { getToken } from '~/utils/token';
 import { userActions } from '~/redux/slice/userSlice';
+import Loading from '~/components/shared/Loading/loading';
 
 const ChangePassword = () => {
     const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const ChangePassword = () => {
         <Fragment>
             {loading && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
-                    <Spin size='large' />
+                    <Loading />
                 </div>
             )}
             <div className='w-[60%] my-5 text-center border-2 border-[#eeefee] rounded-2xl p-5 bg-white shadow-xl'>
@@ -51,30 +52,33 @@ const ChangePassword = () => {
                         <Input.Password
                             autoFocus
                             size='large'
-                            prefix={<SafetyOutlined />}
+                            prefix={<KeyOutlined />}
                             placeholder='Nhập vào mật khẩu hiện tại'
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>
                         <label className='text-2xl w-[30%] text-left'>Mật khẩu mới:</label>
                         <Input.Password
                             size='large'
-                            prefix={<SafetyOutlined />}
+                            prefix={<KeyOutlined />}
                             placeholder='Nhập vào mật khẩu mới'
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <div className='flex items-center gap-10'>
                         <label className='text-2xl w-[30%] text-left'>Xác nhận mật khẩu:</label>
                         <Input.Password
                             size='large'
-                            prefix={<SafetyOutlined />}
+                            prefix={<KeyOutlined />}
                             placeholder='Xác nhận mật khẩu mới'
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <Button

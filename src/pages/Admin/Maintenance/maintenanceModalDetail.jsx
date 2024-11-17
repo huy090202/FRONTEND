@@ -2,13 +2,9 @@
 import { Input, Modal } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { formatVND } from '~/utils/formatVND';
 import { FormatDate } from '~/utils/formatDate.js';
 
 const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
-    const token = useSelector((state) => state.auth.auth.access_token);
-
     const [maintenanceDate, setMaintenanceDate] = useState('');
     const [notesBefore, setNotesBefore] = useState('');
     const [notesAfter, setNotesAfter] = useState('');
@@ -16,12 +12,6 @@ const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
     const [wearPercentageAfter, setWearPercentageAfter] = useState('');
     const [techId, setTechId] = useState('');
     const [motorId, setMotorId] = useState('');
-    const [appointmentId, setAppointmentId] = useState('');
-    const [quantity, setquantity] = useState('');
-    const [price, setprice] = useState('');
-    const [wearPercentage, setWearPercentage] = useState('');
-    const [partId, setPartId] = useState('');
-    const [status, setStatus] = useState('');
 
     const maintenanceData = useMemo(() => maintenance, [maintenance]);
     useEffect(() => {
@@ -33,17 +23,6 @@ const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
             setWearPercentageAfter(maintenanceData.wear_percentage_after);
             setTechId(maintenanceData.user_id);
             setMotorId(maintenanceData.motor_id);
-            setAppointmentId(maintenanceData.appointment_id);
-            setStatus(maintenanceData.status);
-
-            if (maintenanceData.details && maintenanceData.details.length > 0) {
-                setquantity(maintenanceData.details[0].quantity);
-                setprice(maintenanceData.details[0].price);
-                setWearPercentage(maintenanceData.details[0].wear_percentage);
-
-                const defaultPart = maintenanceData.details[0].part_id;
-                setPartId(defaultPart);
-            }
         }
     }, [maintenanceData]);
 
@@ -104,36 +83,6 @@ const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
                         <label className='text-2xl font-bold'>Xe:</label>
                         <Input size='large' value={motorId} />
                     </div>
-                    <h1 className='text-5xl'>Chi tiết</h1>
-                    {maintenanceData.details &&
-                        maintenanceData.details.length > 0 &&
-                        maintenanceData.details.map((item) => (
-                            <>
-                                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                                    <label className='text-2xl font-bold'>
-                                        Số lượng linh kiện thay thế:
-                                    </label>
-                                    <Input size='large' value={item.quantity} />
-                                </div>
-                                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                                    <label className='text-2xl font-bold'>Giá:</label>
-                                    <Input
-                                        size='large'
-                                        value={item.price ? formatVND(item.price) : '0 VND'}
-                                    />
-                                </div>
-                                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                                    <label className='text-2xl font-bold'>
-                                        Độ hao mòn của linh kiện:
-                                    </label>
-                                    <Input size='large' value={item.wear_percentage} />
-                                </div>
-                                <div className='flex flex-col w-full gap-4 text-gray-800'>
-                                    <label className='text-2xl font-bold'>Linh kiện:</label>
-                                    <Input size='large' value={item.part_id} />
-                                </div>
-                            </>
-                        ))}
                 </div>
             )}
         </Modal>
