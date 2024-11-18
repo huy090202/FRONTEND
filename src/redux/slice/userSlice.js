@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { removeToken, setToken } from '~/utils/token';
+import { setToken } from '~/utils/token';
 
 const initialState = {
     user: {
