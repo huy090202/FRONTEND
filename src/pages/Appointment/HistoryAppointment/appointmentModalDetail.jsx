@@ -170,7 +170,7 @@ const AppointmentModalDetail = ({ isVisible, onCancel, appoint }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

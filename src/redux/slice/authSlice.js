@@ -51,8 +51,8 @@ const authSlice = createSlice({
             removeToken('user');
             removeToken('activeId');
             removeToken('activeProfileId');
-            removeToken('activeHomeId');
             removeToken('initialized');
+            removeToken('carts');
             state.auth = initialState.auth;
             state.isAuthenticated = false;
         },

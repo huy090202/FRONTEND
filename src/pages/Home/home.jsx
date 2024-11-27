@@ -2,6 +2,9 @@ import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { userActions } from '~/redux/slice/userSlice';
 import { getToken, setToken } from '~/utils/token';
+import SectionBanner from './SectionBanner/sectionBanner';
+import SectionPart from './SectionPart/sectionPart';
+import SectionTech from './SectionTech/sectionTech';
 
 const HomePage = () => {
     const dispatch = useDispatch();
@@ -22,11 +25,17 @@ const HomePage = () => {
         }
     }, [dispatch, initialized]);
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     return (
         <Fragment>
-            <div className='my-5 text-center'>
-                <h1 className='text-5xl font-bold'>Home Page</h1>
-            </div>
+            <section className='flex flex-col gap-10 bg-white'>
+                <SectionBanner />
+                <SectionPart />
+                <SectionTech />
+            </section>
         </Fragment>
     );
 };

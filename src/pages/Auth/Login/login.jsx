@@ -100,6 +100,7 @@ const Login = () => {
                         type='light'
                         className='h-16 text-2xl font-bold'
                         onClick={() => loginHandler()}
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                     >
                         Đăng nhập
                     </WrapperButton>

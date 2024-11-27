@@ -192,6 +192,7 @@ const Profile = () => {
                         type='primary'
                         className='mt-5 text-2xl font-bold h-14'
                         onClick={handleUpdateProfile}
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                     >
                         Lưu những thay đổi
                     </Button>

@@ -102,3 +102,8 @@ export const createStaff = async (accessToken, { firstName, lastName, email, pho
 export const createGuest = async ({ firstName, lastName, email, phone }) => {
     return await axios.post('user/guest', { firstName, lastName, email, phoneNumber: phone });
 }
+
+// Lấy danh sách kỹ thuật viên - public
+export const allTechs = async () => {
+    return await axios.get('user/techs');
+}

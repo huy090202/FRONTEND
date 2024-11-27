@@ -72,7 +72,7 @@ const MotorTempModalCreate = ({ isVisible, onCancel, isEmail }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

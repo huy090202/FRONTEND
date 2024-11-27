@@ -36,7 +36,7 @@ const ManufacturerModalDetail = ({ isVisible, onCancel, manufacturer }) => {
     };
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

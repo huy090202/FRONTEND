@@ -14,7 +14,7 @@ const ModalCreate = ({ isVisible, onCancel }) => {
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('STAFF');
+    const [role, setRole] = useState('Nhân viên');
 
     const clearHandler = () => {
         setFirstName('');
@@ -58,7 +58,7 @@ const ModalCreate = ({ isVisible, onCancel }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}
@@ -129,10 +129,10 @@ const ModalCreate = ({ isVisible, onCancel }) => {
                             cursive: 'LXGW Wen'
                         }}
                     >
-                        <Option value='STAFF'>Nhân viên</Option>
-                        <Option value='TECH'>Kỹ thuật viên</Option>
-                        <Option value='CASHIER'>Thu ngân</Option>
-                        <Option value='ADMIN'>Quản trị</Option>
+                        <Option value='Nhân viên'>Nhân viên</Option>
+                        <Option value='Kỹ thuật viên'>Kỹ thuật viên</Option>
+                        <Option value='Thu ngân'>Thu ngân</Option>
+                        <Option value='Quản trị viên'>Quản trị</Option>
                     </Select>
                 </div>
                 <div className='w-full text-right'>

@@ -1,7 +1,8 @@
-import { Image } from 'antd';
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { Button, Image, Popconfirm } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import Loading from '~/components/shared/Loading/loading';
 import { maintenanceActions } from '~/redux/slice/maintenanceSlice';
 import { getAppoinmentDetail } from '~/services/appoinmentService';
@@ -99,6 +100,14 @@ const Maintenance = () => {
         setIsModalVisible(false);
     };
 
+    const confirmCancel = () => {
+        alert('Hủy đơn bảo dưỡng thành công');
+    };
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     return (
         <Fragment>
             {isLoading && (
@@ -146,7 +155,9 @@ const Maintenance = () => {
                                         />
                                     </div>
                                     <div className='flex flex-col gap-2'>
-                                        <p className='text-2xl font-bold'>Thông tin khách hàng</p>
+                                        <p className='mt-3 mb-5 text-2xl font-bold'>
+                                            Thông tin khách hàng
+                                        </p>
                                         <p className='flex items-center gap-2'>
                                             <span className='text-xl font-bold'>Tên:</span>
                                             <span className='text-xl'>
@@ -181,13 +192,56 @@ const Maintenance = () => {
                                                 {appoint[index]?.appointment_time}
                                             </span>
                                         </p>
-                                        <div className='flex justify-end w-full'>
-                                            <button
-                                                className='px-6 py-3 mr-2 text-xl text-white bg-black rounded-2xl'
-                                                onClick={() => handleOpenModal(index)}
-                                            >
-                                                Chi tiết
-                                            </button>
+                                        <div className='flex justify-end w-full gap-2 mt-5'>
+                                            {item.status === 'Kiểm tra xe' ? (
+                                                <>
+                                                    <Popconfirm
+                                                        title='Hủy đơn bảo dưỡng'
+                                                        description='Bạn có chắc muốn hủy đơn bảo dưỡng này?'
+                                                        icon={
+                                                            <QuestionCircleOutlined
+                                                                style={{
+                                                                    color: 'red'
+                                                                }}
+                                                            />
+                                                        }
+                                                        onConfirm={confirmCancel}
+                                                    >
+                                                        <Button
+                                                            type='light'
+                                                            className='h-12 text-2xl text-right bg-[#bf1717] hover:bg-[#e84444] text-white'
+                                                            style={{
+                                                                fontFamily: 'LXGW WenKai TC',
+                                                                cursive: 'LXGW Wen'
+                                                            }}
+                                                        >
+                                                            Hủy
+                                                        </Button>
+                                                    </Popconfirm>
+                                                    <Button
+                                                        type='light'
+                                                        className='h-12 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white'
+                                                        style={{
+                                                            fontFamily: 'LXGW WenKai TC',
+                                                            cursive: 'LXGW Wen'
+                                                        }}
+                                                    >
+                                                        Xác nhận
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <Button
+                                                    onClick={() => handleOpenModal(index)}
+                                                    type='light'
+                                                    className='h-12 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white'
+                                                    style={{
+                                                        fontFamily: 'LXGW WenKai TC',
+                                                        cursive: 'LXGW Wen'
+                                                    }}
+                                                >
+                                                    Xem chi tiết
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

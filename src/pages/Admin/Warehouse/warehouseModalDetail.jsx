@@ -36,7 +36,7 @@ const WarehouseModalDetail = ({ isVisible, onCancel, warehouse }) => {
     };
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

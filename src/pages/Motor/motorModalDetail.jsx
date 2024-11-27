@@ -157,7 +157,7 @@ const MotorModalDetail = ({ isVisible, onCancel, motor }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

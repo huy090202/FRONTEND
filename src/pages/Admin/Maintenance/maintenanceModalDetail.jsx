@@ -28,7 +28,7 @@ const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

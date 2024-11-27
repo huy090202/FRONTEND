@@ -308,6 +308,10 @@ const CreateAppointment = () => {
     // Kiểm tra checkbox nào cần được bật hoặc tắt
     const isChecked = (id) => checkedNotes.includes(id);
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     return (
         <Fragment>
             {loading && (

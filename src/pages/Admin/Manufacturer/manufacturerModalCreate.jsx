@@ -44,7 +44,7 @@ const ManufacturerModalCreate = ({ isVisible, onCancel }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

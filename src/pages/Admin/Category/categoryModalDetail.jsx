@@ -36,7 +36,7 @@ const CategoryModalDetail = ({ isVisible, onCancel, category }) => {
     };
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

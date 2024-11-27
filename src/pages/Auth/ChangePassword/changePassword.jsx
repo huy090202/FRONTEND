@@ -90,6 +90,7 @@ const ChangePassword = () => {
                         type='primary'
                         className='mt-5 text-2xl font-bold h-14'
                         onClick={handleChangePassword}
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                     >
                         Lưu thay đổi
                     </Button>

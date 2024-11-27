@@ -143,6 +143,7 @@ const Register = () => {
                         type='light'
                         className='h-16 text-2xl font-bold'
                         onClick={() => registerHandler()}
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                     >
                         Đăng ký
                     </WrapperButton>

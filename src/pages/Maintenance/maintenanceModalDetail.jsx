@@ -2,11 +2,13 @@
 import { Modal } from 'antd';
 import SectionMotor from './SectionMotor/sectionMotor';
 import SectionAppoint from './SectionAppoint/sectionAppoint';
+import SectionUser from './SectionUser/sectionUser';
+import SectionMain from './SectionMain/sectionMain';
 
 const MaintenanceModalDetail = ({ visible, onCancel, maintenance, appoint, motor, user }) => {
     return (
         <Modal
-            visible={visible}
+            open={visible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}
@@ -17,15 +19,24 @@ const MaintenanceModalDetail = ({ visible, onCancel, maintenance, appoint, motor
             width={900}
         >
             {maintenance && appoint && motor && user && (
-                <div className='flex flex-col gap-10'>
-                    <h2 className='text-4xl font-bold text-center'>Chi tiết đơn bảo dưỡng</h2>
-                    <p className='text-xl'>
-                        Tên khách hàng: {user.firstName} {user.lastName}
-                    </p>
-                    <p className='text-xl'>Số điện thoại: {user.phoneNumber}</p>
-                    <p className='text-xl'>Email: {user.email}</p>
+                <div className='flex flex-col gap-5'>
+                    <h1 className='text-4xl font-bold text-center uppercase'>
+                        Chi tiết đơn bảo dưỡng
+                    </h1>
+                    <h2 className='text-3xl font-bold'>Thông tin khách hàng</h2>
+                    <SectionUser user={user} />
+                    <h2 className='text-3xl font-bold'>Thông tin lịch hẹn</h2>
                     <SectionAppoint appoint={appoint} />
+                    <h2 className='text-3xl font-bold'>Thông tin xe</h2>
                     <SectionMotor motor={motor} />
+                    <h2 className='text-3xl font-bold'>Thông tin bảo dưỡng</h2>
+                    <SectionMain
+                        maintenance={maintenance}
+                        appoint={appoint}
+                        motor={motor}
+                        user={user}
+                        onCancel={onCancel}
+                    />
                 </div>
             )}
         </Modal>

@@ -4,7 +4,7 @@ import { Input, Modal } from 'antd';
 const StaffModalDetail = ({ isVisible, onCancel, staff }) => {
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

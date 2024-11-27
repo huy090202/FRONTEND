@@ -188,7 +188,7 @@ const PartModalDetail = ({ isVisible, onCancel, part }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}

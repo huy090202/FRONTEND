@@ -31,10 +31,10 @@ const Maintenances = () => {
     const limit = 5;
 
     const statusOptions = [
-        { value: 'Nhận xe', label: 'Nhận xe' },
         { value: 'Kiểm tra xe', label: 'Kiểm tra xe' },
         { value: 'Đang bảo dưỡng', label: 'Đang bảo dưỡng' },
-        { value: 'Hoàn thành bảo dưỡng', label: 'Hoàn thành bảo dưỡng' }
+        { value: 'Hoàn thành bảo dưỡng', label: 'Hoàn thành bảo dưỡng' },
+        { value: 'Đã hủy', label: 'Đã hủy' }
     ];
 
     const showModal = (maintenance) => {
@@ -115,7 +115,7 @@ const Maintenances = () => {
                                 toast.error('Cập nhật trạng thái thất bại!');
                             }
                         }}
-                        disabled={value === 'Hoàn thành bảo dưỡng'}
+                        disabled={value === 'Hoàn thành bảo dưỡng' || value === 'Đã hủy'}
                     >
                         {statusOptions.map((option) => (
                             <Select.Option key={option.value} value={option.value}>
@@ -128,7 +128,8 @@ const Maintenances = () => {
             {
                 Header: 'Hành động',
                 Cell: ({ row }) =>
-                    row.original.status === 'Hoàn thành bảo dưỡng' && (
+                    (row.original.status === 'Hoàn thành bảo dưỡng' ||
+                        row.original.status === 'Đã hủy') && (
                         <div className='flex items-center w-full'>
                             <DeleteOutlined
                                 className='text-3xl'
