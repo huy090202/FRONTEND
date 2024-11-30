@@ -110,6 +110,11 @@ const Login = () => {
                             Đăng ký ngay
                         </Link>
                     </span>
+                    <span className='text-center'>
+                        <Link to={'/'} className='text-blue-300 underline'>
+                            Về trang chủ
+                        </Link>
+                    </span>
                 </form>
             </div>
         </Fragment>

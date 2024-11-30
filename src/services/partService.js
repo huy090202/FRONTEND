@@ -23,6 +23,11 @@ export const allPartsPublic = async () => {
     return await axios.get('part/get');
 }
 
+// Lấy danh sách linh kiện theo danh mục - Public
+export const partsByCategoryPublic = async (categoryId) => {
+    return await axios.get(`part/all-by-category?category_id=${categoryId}`);
+}
+
 // Tạo mới linh kiện
 export const createPart = async (accessToken, formData) => {
     return await axios.post('part/create', formData, {

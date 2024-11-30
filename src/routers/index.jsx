@@ -6,6 +6,8 @@ import Motor from '~/pages/Motor/motor';
 import Home from '~/pages/Home/home.jsx';
 import AboutUs from '~/pages/AboutUs/aboutUs';
 import Menu from '~/pages/Menu/menu';
+import Cart from '~/pages/Carts/cart';
+import Payment from '~/pages/Carts/payment';
 import HistoryAppointment from '~/pages/Appointment/HistoryAppointment/historyAppointment';
 import CreateAppointment from '~/pages/Appointment/CreateAppointment/createAppointment';
 
@@ -49,6 +51,14 @@ export const router = createBrowserRouter([
             {
                 path: '/menu',
                 element: <Menu />
+            },
+            {
+                path: '/cart',
+                element: <Cart />
+            },
+            {
+                path: '/payment',
+                element: <Payment />
             },
             {
                 path: 'create-appointment',

@@ -7,7 +7,7 @@ export const countCartItems = createSelector(cartsSelector, (carts) => carts.red
 
 // Tính tổng tiền của giỏ hàng
 export const totalCartPrice = createSelector(cartsSelector, (carts) =>
-    carts.reduce((total, cart) => total + cart.quantity * cart.price, 0)
+    carts.reduce((total, cart) => total + cart.quantity * cart.part_price, 0)
 );
 
 // Tính tổng tiền của giỏ hàng sau khi giảm giá

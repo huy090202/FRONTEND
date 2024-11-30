@@ -47,7 +47,7 @@ const SectionTech = () => {
                         techs.length > 0 &&
                         techs.map((tech, index) => (
                             <div className='px-5' key={index}>
-                                <div className='flex flex-col items-center justify-center p-4 text-center border-2 border-gray-200 rounded-lg'>
+                                <div className='flex flex-col items-center justify-center p-4 text-center border rounded-lg'>
                                     {tech.avatar ? (
                                         <Badge
                                             dot
@@ -60,6 +60,7 @@ const SectionTech = () => {
                                             }}
                                         >
                                             <img
+                                                loading='lazy'
                                                 src={`/minio${tech.avatar}`}
                                                 alt='#Avatar'
                                                 className='object-cover rounded-full w-28 h-28'
@@ -77,6 +78,7 @@ const SectionTech = () => {
                                             }}
                                         >
                                             <img
+                                                loading='lazy'
                                                 src='https://placehold.co/400x400'
                                                 alt='#Avatar'
                                                 className='object-cover rounded-full w-28 h-28'

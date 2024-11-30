@@ -29,12 +29,11 @@ const cartSlice = createSlice({
 
             if (existingPartIndex !== -1) {
                 state.carts[existingPartIndex].quantity = quantity;
+                setToken('carts', state.carts);
             }
-
-            setToken('carts', state.carts);
         },
         removeFromCart(state, action) {
-            const { id } = action.payload;
+            const id = action.payload;
             state.carts = state.carts.filter((cart) => cart.id !== id);
             setToken('carts', state.carts);
         },

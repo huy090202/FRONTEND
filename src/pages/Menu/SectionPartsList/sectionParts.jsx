@@ -1,33 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+import { useState } from 'react';
 import { Badge, Button } from 'antd';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { EyeOutlined } from '@ant-design/icons';
-import { partActions } from '~/redux/slice/partSlice';
 import { formatVND } from '~/utils/formatVND';
-import PartModalDetail from './partModalDetail';
+import { WrapperMenuScroll } from '../style';
+import PartModalDetail from '~/pages/Home/SectionPart/partModalDetail';
 
-const SectionPart = () => {
-    const parts = useSelector((state) => state.part.parts);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    const [partsData, setPartsData] = useState([]);
-
+/* eslint-disable react/prop-types */
+const SectionParts = ({ parts }) => {
     // Hiển thị modal chi tiết
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectPart, setSelectPart] = useState(null);
-
-    useEffect(() => {
-        dispatch(partActions.fetchParts());
-    }, []);
-
-    useEffect(() => {
-        if (parts.length > 0) {
-            setPartsData(parts.slice(0, 5));
-        }
-    }, [parts]);
 
     const showModal = (part) => {
         setSelectPart(part);
@@ -38,20 +20,14 @@ const SectionPart = () => {
         setIsModalVisible(false);
     };
 
-    // Chuyển đến trang menu
-    const handleGoToMenu = () => {
-        navigate('/menu');
-    };
-
     return (
-        <div className='flex flex-col gap-10 mb-5 px-28'>
-            <h1 className='text-3xl font-bold text-center uppercase'>Phụ tùng thay thế mới</h1>
-            <div className='flex items-center justify-around'>
-                {partsData &&
-                    partsData.map((part) => {
+        <div className='block sm:px-28 lg:p-0'>
+            <WrapperMenuScroll className='pr-10'>
+                <div className='grid grid-cols-1 gap-7 px-28 lg:p-0 lg:pb-10 sm:grid-cols-2 lg:grid-cols-4'>
+                    {parts.map((part) => {
                         return part.sale ? (
                             <Badge.Ribbon text={`Giảm giá ${part.sale}%`} color='red' key={part.id}>
-                                <div className='flex flex-col gap-4 px-3 py-5 bg-white rounded-lg shadow-md w-96'>
+                                <div className='flex flex-col gap-4 px-3 py-5 bg-white border rounded-lg shadow-md w-96'>
                                     <div className='flex items-center justify-center'>
                                         <img
                                             loading='lazy'
@@ -99,7 +75,7 @@ const SectionPart = () => {
                             </Badge.Ribbon>
                         ) : (
                             <div
-                                className='flex flex-col gap-4 px-3 py-5 rounded-lg shadow-xl w-96'
+                                className='flex flex-col gap-4 px-3 py-5 border rounded-lg shadow-xl w-96'
                                 key={part.id}
                             >
                                 <div className='flex items-center justify-center'>
@@ -143,20 +119,8 @@ const SectionPart = () => {
                             </div>
                         );
                     })}
-            </div>
-            <div className='flex justify-center mt-5'>
-                <Button
-                    type='light'
-                    className='h-16 text-2xl text-right bg-[#bf1717] hover:bg-[#e84444] text-white'
-                    style={{
-                        fontFamily: 'LXGW WenKai TC',
-                        cursive: 'LXGW Wen'
-                    }}
-                    onClick={handleGoToMenu}
-                >
-                    Xem thêm
-                </Button>
-            </div>
+                </div>
+            </WrapperMenuScroll>
             <PartModalDetail
                 isVisible={isModalVisible}
                 onCancel={handleCancel}
@@ -166,4 +130,4 @@ const SectionPart = () => {
     );
 };
 
-export default SectionPart;
+export default SectionParts;

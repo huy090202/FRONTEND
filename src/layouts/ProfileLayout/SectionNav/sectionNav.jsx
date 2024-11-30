@@ -16,16 +16,21 @@ const SectionNav = () => {
         },
         {
             id: 3,
-            name: 'Lịch sử bảo dưỡng',
-            path: 'history'
-        },
-        {
-            id: 4,
             name: 'Xe của bạn',
             path: 'motor'
         },
         {
+            id: 4,
+            name: 'Lịch sử mua hàng',
+            path: 'order-history'
+        },
+        {
             id: 5,
+            name: 'Lịch sử bảo dưỡng',
+            path: 'history'
+        },
+        {
+            id: 6,
             name: 'Lịch sử đặt lịch',
             path: 'history-appointment'
         }

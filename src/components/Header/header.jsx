@@ -70,6 +70,10 @@ const Header = () => {
         navigate(path);
     };
 
+    const handleGoToCart = () => {
+        navigate('/cart');
+    };
+
     return (
         <Fragment>
             <header className='fixed top-0 right-0 z-10 w-full py-4 bg-white shadow-xl px-28'>
@@ -99,7 +103,10 @@ const Header = () => {
                     {isAuthenticated && user ? (
                         <div className='flex items-center gap-10'>
                             <Badge count={countCarts} size='small'>
-                                <ShoppingCartOutlined className='text-5xl' />
+                                <ShoppingCartOutlined
+                                    className='text-5xl cursor-pointer'
+                                    onClick={handleGoToCart}
+                                />
                             </Badge>
                             <div className='text-5xl text-[#eeeffe]'>|</div>
                             <Popover

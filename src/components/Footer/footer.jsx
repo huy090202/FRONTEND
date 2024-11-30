@@ -61,8 +61,8 @@ export default function Footer() {
                         <Link to='/' className='hover:text-[#6699BB]'>
                             Trang chủ
                         </Link>
-                        <Link to='/' className='hover:text-[#6699BB]'>
-                            Phụ tùng
+                        <Link to='/menu' className='hover:text-[#6699BB]'>
+                            Phụ tùng thay thế
                         </Link>
                         <Link to='/create-appointment' className='hover:text-[#6699BB]'>
                             Đăng ký bảo dưỡng
