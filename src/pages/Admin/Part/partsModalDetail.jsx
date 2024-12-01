@@ -2,15 +2,15 @@
 import { Image, Input, Modal } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { PlusOutlined } from '@ant-design/icons';
 import { WrapperSelect } from '~/pages/Appointment/CreateAppointment/style';
 import { allCategoriesPublic } from '~/services/categoryService.js';
 import { allManufacturersPublic } from '~/services/manufacturerService';
-import { updatePart } from '~/services/partService';
 import { allWarehousesPublic } from '~/services/warehouseService';
 import { formatVND } from '~/utils/formatVND.js';
+import { partActions } from '~/redux/slice/partSlice';
 
 const PartModalDetail = ({ isVisible, onCancel, part }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -32,6 +32,8 @@ const PartModalDetail = ({ isVisible, onCancel, part }) => {
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     const [selectedManufacturer, setSelectedManufacturer] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const dispatch = useDispatch();
 
     const partData = useMemo(() => part, [part]);
 
@@ -84,53 +86,21 @@ const PartModalDetail = ({ isVisible, onCancel, part }) => {
         }
     }, [partData, warehouseData, manufacturerData, categoryData]);
 
+    const fetchData = async (service, setData) => {
+        if (!token) return;
+        try {
+            const response = await service(token);
+            setData(response.data);
+        } catch (error) {
+            toast.error(error.response?.data?.message);
+        }
+    };
+
     useEffect(() => {
-        const fetchWarehouse = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await allWarehousesPublic(token);
-                setWarehouseData(response.data);
-
-                if (response.data.length > 0) {
-                    setSelectedWarehouse({
-                        value: response.data[0].id,
-                        label: response.data[0].name
-                    });
-                }
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-
-        const fetchManufacturers = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await allManufacturersPublic(token);
-                setManufacturerData(response.data);
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-
-        const fetchCategories = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await allCategoriesPublic(token);
-                setCategoryData(response.data);
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-
-        fetchWarehouse();
-        fetchManufacturers();
-        fetchCategories();
+        fetchData(allWarehousesPublic, setWarehouseData);
+        fetchData(allManufacturersPublic, setManufacturerData);
+        fetchData(allCategoriesPublic, setCategoryData);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const updateHandler = async () => {
@@ -151,9 +121,8 @@ const PartModalDetail = ({ isVisible, onCancel, part }) => {
         formData.append('quantity_part[quantity]', quantityPart);
         formData.append('quantity_part[warehouse_id]', warehouseId);
 
-        const response = await updatePart(token, partData.id, formData);
-        if (response.status === true) toast.success(response.message);
-        else toast.error(response.message);
+        dispatch(partActions.updatePart({ token, id: partData.id, formData }));
+        onCancel();
     };
 
     const handleReviewImage = () => {
@@ -315,7 +284,7 @@ const PartModalDetail = ({ isVisible, onCancel, part }) => {
                         </div>
                     </div>
                     <div className='flex flex-col gap-2 bg-[#e5eaf3] border-2 p-5 rounded-xl'>
-                        <span className='text-2xl font-bold'>Chọn ảnh (nếu có):</span>
+                        <span className='text-2xl font-bold'>Chọn ảnh:</span>
                         <div className='flex'>
                             <label htmlFor='file' className='text-5xl cursor-pointer'>
                                 <div className='flex items-center justify-center py-10 border-2 border-[#eeefee] mr-5 border-dashed rounded-lg size-60'>

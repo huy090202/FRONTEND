@@ -4,6 +4,11 @@ import userSaga from '~/redux/saga/userSaga';
 import motorSaga from '~/redux/saga/motorSaga';
 import maintenanceSaga from '~/redux/saga/maintenanceSaga';
 import partSaga from './partSaga';
+import orderSaga from './orderSaga';
+import appointmentSaga from './appointmentSaga';
+import categorySaga from './categorySaga';
+import manufacturerSaga from './manufacturerSaga';
+import warehouseSaga from './warehouseSage';
 
 export default function* rootSaga() {
     yield all([
@@ -11,6 +16,11 @@ export default function* rootSaga() {
         userSaga(),
         motorSaga(),
         maintenanceSaga(),
-        partSaga()
+        partSaga(),
+        orderSaga(),
+        appointmentSaga(),
+        categorySaga(),
+        manufacturerSaga(),
+        warehouseSaga(),
     ]);
 }

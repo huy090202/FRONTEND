@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
     RightOutlined,
@@ -9,20 +9,18 @@ import {
     DoubleRightOutlined,
     DeleteOutlined
 } from '@ant-design/icons';
-import {
-    deleteAppoinment,
-    getAllAppoinmentsAdmin,
-    updateAppoinmentStatus
-} from '~/services/appoinmentService';
 import { useGlobalFilter, useTable } from 'react-table';
-import AppointmentModalDetail from '~/pages/Appointment/HistoryAppointment/appointmentModalDetail';
+import { debounce } from 'lodash';
 import { Input, Select } from 'antd';
-import { getAllTechs, getUserById } from '~/services/userService';
+import AppointmentModalDetail from '~/pages/Appointment/HistoryAppointment/appointmentModalDetail';
+import { allTechs, getUserById } from '~/services/userService';
 import { FormatDate } from '~/utils/formatDate.js';
 import { createMaintenance } from '~/services/maintenanceService';
+import { appointmentActions } from '~/redux/slice/appointmentSlice';
 
 const Appointment = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
+    const appointments = useSelector((state) => state.appointment.appointments);
 
     const [dataAppointment, setDataAppointment] = useState([]);
     const [page, setPage] = useState(1);
@@ -33,6 +31,8 @@ const Appointment = () => {
     const [selectedAppoint, setSelectedAppoint] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    const dispatch = useDispatch();
+
     const showModal = (appoint) => {
         setSelectedAppoint(appoint);
         setIsModalVisible(true);
@@ -42,19 +42,23 @@ const Appointment = () => {
         setIsModalVisible(false);
     };
 
-    const statusOptions = [
-        { value: 'Chờ xác nhận', label: 'Chờ xác nhận' },
-        { value: 'Đã xác nhận', label: 'Đã xác nhận' },
-        { value: 'Đã hoàn thành', label: 'Đã hoàn thành' },
-        { value: 'Đã hủy', label: 'Đã hủy' }
-    ];
+    const statusOptions = useMemo(
+        () => [
+            { value: 'Chờ xác nhận', label: 'Chờ xác nhận' },
+            { value: 'Đã xác nhận', label: 'Đã xác nhận' },
+            { value: 'Đã hoàn thành', label: 'Đã hoàn thành' },
+            { value: 'Đã hủy', label: 'Đã hủy' }
+        ],
+        []
+    );
 
     const [technicians, setTechnicians] = useState([]);
 
+    // Lấy danh sách kỹ thuật viên
     useEffect(() => {
         const fetchTechnicians = async () => {
             try {
-                const response = await getAllTechs(token, { page, limit: 30 });
+                const response = await allTechs();
                 if (response.status === true) {
                     setTechnicians(response.data);
                 } else {
@@ -66,20 +70,84 @@ const Appointment = () => {
         };
 
         fetchTechnicians();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleDeleteAppoint = async (id) => {
-        if (!token || !id) {
+    // Lấy danh sách lịch hẹn
+    const fetchData = useCallback(() => {
+        if (!token) {
             return;
         }
+        try {
+            dispatch(appointmentActions.fetchAppointments({ token, page, limit }));
 
-        const res = await deleteAppoinment(token, id);
-        if (res.status === true) {
-            toast.success(res.message);
-        } else {
-            toast.error(res.message);
+            const technicianMap = {};
+            technicians.forEach((technician) => {
+                technicianMap[technician.id] = `${technician.lastName} ${technician.firstName}`;
+            });
+
+            const appointmentsWithMotorName = appointments.map((appointment) => {
+                return {
+                    ...appointment,
+                    motor_name: appointment ? appointment.motor.motor_name : 'Không có tên xe',
+                    technician_name: appointment.technicianId
+                        ? technicianMap[appointment.technicianId]
+                        : 'Chưa có kỹ thuật viên'
+                };
+            });
+            setDataAppointment(appointmentsWithMotorName);
+            setTotalPages(Math.ceil(appointments.length / limit));
+        } catch (error) {
+            toast.error(error.response?.data?.message);
         }
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, appointments.length, page, limit, dispatch, technicians]);
+
+    useEffect(() => {
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchData]);
+
+    // Xử lý xóa lịch hẹn
+    const handleDeleteAppoint = useCallback(
+        (id) => {
+            if (!token || !id) {
+                return;
+            }
+            dispatch(appointmentActions.deleteAppointment({ token, appointmentId: id }));
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token]
+    );
+
+    // Xử lý cập nhật trạng thái lịch hẹn
+    const handleChangeStatus = useCallback(
+        (newStatus, appointmentId) => {
+            if (!token || !appointmentId) return;
+            try {
+                dispatch(
+                    appointmentActions.updateAppoimentStatus({
+                        token,
+                        appointmentId,
+                        status: newStatus
+                    })
+                );
+
+                // Cập nhật trực tiếp trạng thái trong dataAppointment
+                setDataAppointment((prevAppointments) =>
+                    prevAppointments.map((appointment) =>
+                        appointment.id === appointmentId
+                            ? { ...appointment, status: newStatus }
+                            : appointment
+                    )
+                );
+            } catch (error) {
+                toast.error('Cập nhật trạng thái thất bại!');
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token, dispatch, fetchData]
+    );
 
     const columns = useMemo(
         () => [
@@ -115,23 +183,9 @@ const Appointment = () => {
                     <Select
                         style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                         value={value}
-                        onChange={async (newStatus) => {
-                            const appointmentId = row.original.id;
-                            try {
-                                const response = await updateAppoinmentStatus(
-                                    token,
-                                    appointmentId,
-                                    newStatus
-                                );
-                                if (response.status === true) {
-                                    toast.success(response.message);
-                                } else {
-                                    toast.error(response.message);
-                                }
-                            } catch (error) {
-                                toast.error('Cập nhật trạng thái thất bại!');
-                            }
-                        }}
+                        onChange={async (newStatus) =>
+                            await handleChangeStatus(newStatus, row.original.id)
+                        }
                         disabled={value === 'Đã hoàn thành' || value === 'Đã hủy'}
                     >
                         {statusOptions.map((option) => (
@@ -149,29 +203,54 @@ const Appointment = () => {
                     <Select
                         style={{ width: '100%' }}
                         value={value}
-                        disabled={!!row.original.technicianId}
+                        disabled={
+                            !!row.original.technicianId || row.original.status !== 'Chờ xác nhận'
+                        }
                         onChange={async (newTechnicianId) => {
                             const appointId = row.original.id;
                             const techId = newTechnicianId;
-                            const resMain = await createMaintenance(token, { techId, appointId });
-                            if (resMain.status === true) {
-                                toast.success(resMain.message);
 
-                                const resTech = await getUserById(token, resMain.data.user_id);
+                            try {
+                                // Gọi API tạo bảo dưỡng
+                                const resMain = await createMaintenance(token, {
+                                    techId,
+                                    appointId
+                                });
+                                if (resMain.status === true) {
+                                    toast.success(resMain.message);
 
-                                setDataAppointment((prevAppointments) =>
-                                    prevAppointments.map((appointment) =>
-                                        appointment.id === appointId
-                                            ? {
-                                                  ...appointment,
-                                                  technicianId: techId,
-                                                  technician_name: `${resTech.data.lastName} ${resTech.data.firstName}`
-                                              }
-                                            : appointment
-                                    )
+                                    // Cập nhật thông tin kỹ thuật viên
+                                    const resTech = await getUserById(token, resMain.data.user_id);
+
+                                    // Cập nhật danh sách lịch hẹn
+                                    setDataAppointment((prevAppointments) =>
+                                        prevAppointments.map((appointment) =>
+                                            appointment.id === appointId
+                                                ? {
+                                                      ...appointment,
+                                                      technicianId: techId,
+                                                      technician_name: `${resTech.data.lastName} ${resTech.data.firstName}`,
+                                                      status: 'Đã xác nhận'
+                                                  }
+                                                : appointment
+                                        )
+                                    );
+
+                                    // Cập nhật trạng thái lịch hẹn
+                                    dispatch(
+                                        appointmentActions.updateAppoimentStatus({
+                                            token,
+                                            appointmentId: appointId,
+                                            status: 'Đã xác nhận'
+                                        })
+                                    );
+                                } else {
+                                    toast.error(resMain.message);
+                                }
+                            } catch (error) {
+                                toast.error(
+                                    'Không thể tạo đơn bảo dưỡng hoặc cập nhật trạng thái!'
                                 );
-                            } else {
-                                toast.error(resMain.message);
                             }
                         }}
                     >
@@ -198,39 +277,9 @@ const Appointment = () => {
                     )
             }
         ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [token, technicians]
     );
-
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await getAllAppoinmentsAdmin(token, { page, limit });
-                const appointments = response.data;
-
-                const technicianMap = {};
-                technicians.forEach((technician) => {
-                    technicianMap[technician.id] = `${technician.lastName} ${technician.firstName}`;
-                });
-
-                const appointmentsWithMotorName = appointments.map((appointment) => {
-                    return {
-                        ...appointment,
-                        motor_name: appointment ? appointment.motor.motor_name : 'Không có tên xe',
-                        technician_name:
-                            technicianMap[appointment.technicianId] || 'Chưa có kỹ thuật viên'
-                    };
-                });
-                setDataAppointment(appointmentsWithMotorName);
-                setTotalPages(Math.ceil(response.total / limit));
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-        fetchData();
-    }, [token, page]);
 
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, setGlobalFilter } =
         useTable(
@@ -241,18 +290,23 @@ const Appointment = () => {
             useGlobalFilter
         );
 
-    const handleFilterChange = (e) => {
+    const handleFilterChange = useCallback((e) => {
         setFilterInput(e.target.value);
-    };
+    }, []);
 
-    const handleApplyFilter = () => {
-        setGlobalFilter(filterInput);
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleApplyFilter = useCallback(
+        debounce(() => {
+            setGlobalFilter(filterInput);
+        }, 300),
+        [filterInput]
+    );
 
-    const handleClearFilter = () => {
+    const handleClearFilter = useCallback(() => {
         setFilterInput('');
         setGlobalFilter(undefined);
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleGoToFirstPage = () => {
         setPage(1);

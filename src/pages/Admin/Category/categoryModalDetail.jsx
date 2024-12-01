@@ -1,15 +1,17 @@
 /* eslint-disable react/prop-types */
 import { Input, Modal } from 'antd';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { updateCategory } from '~/services/categoryService.js';
+import { categoryActions } from '~/redux/slice/categorySlice';
 
 const CategoryModalDetail = ({ isVisible, onCancel, category }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (category) {
@@ -19,21 +21,17 @@ const CategoryModalDetail = ({ isVisible, onCancel, category }) => {
     }, [category]);
 
     const updateHandler = async () => {
-        try {
-            const response = await updateCategory(token, category.id, {
-                name,
-                description
-            });
-            if (response.status === true) {
-                toast.success(response.message);
-                onCancel();
-            } else {
-                toast.error(response.message || 'Cập nhật danh mục thất bại');
-            }
-        } catch (error) {
-            toast.error('Đã có lỗi xảy ra, vui lòng thử lại sau');
+        if (!name) {
+            toast.error('Tên danh mục không được để trống');
+            return;
         }
+
+        dispatch(
+            categoryActions.updateCategory({ token, id: category.id, data: { name, description } })
+        );
+        onCancel();
     };
+
     return (
         <Modal
             open={isVisible}

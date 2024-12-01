@@ -2,14 +2,14 @@
 import { useEffect, useState } from 'react';
 import { Button, Image, Input, Modal } from 'antd';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import TextArea from 'antd/es/input/TextArea';
 import { PlusOutlined } from '@ant-design/icons';
 import { allWarehousesPublic } from '~/services/warehouseService';
 import { allManufacturersPublic } from '~/services/manufacturerService';
 import { allCategoriesPublic } from '~/services/categoryService.js';
 import { WrapperSelect } from '~/pages/Appointment/CreateAppointment/style';
-import { createPart } from '~/services/partService';
+import { partActions } from '~/redux/slice/partSlice';
 
 const PartModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -32,89 +32,36 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
     const [selectedManufacturer, setSelectedManufacturer] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const clearHandler = () => {
-        setPartImage(null);
-        setPartName('');
-        setPartPrice('');
-        setAverageLife('');
-        setDescription('');
-        setQuantityPart('');
-        setSalePart('');
-        if (manufacturerData.length > 0)
-            selectedManufacturer({
-                value: manufacturerData[0].id,
-                label: manufacturerData[0].name
-            });
-        if (categoryData.length > 0)
-            selectedCategory({ value: categoryData[0].id, label: categoryData[0].name });
-        if (warehouseData.length > 0)
-            selectedWarehouse({ value: warehouseData[0].id, label: warehouseData[0].name });
+    const dispatch = useDispatch();
+
+    const fetchData = async (service, setData, setSelected, setDataId) => {
+        if (!token) return;
+        try {
+            const response = await service(token);
+            setData(response.data);
+
+            if (response.data.length > 0) {
+                setSelected({
+                    value: response.data[0].id,
+                    label: response.data[0].name
+                });
+                setDataId(response.data[0].id);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message);
+        }
     };
 
     useEffect(() => {
-        const fetchWarehouse = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await allWarehousesPublic(token);
-                setWarehouseData(response.data);
-
-                if (response.data.length > 0) {
-                    setSelectedWarehouse({
-                        value: response.data[0].id,
-                        label: response.data[0].name
-                    });
-                    setWarehouseId(response.data[0].id);
-                }
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-
-        const fetchManufacturers = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await allManufacturersPublic(token);
-                setManufacturerData(response.data);
-
-                if (response.data.length > 0) {
-                    setSelectedManufacturer({
-                        value: response.data[0].id,
-                        label: response.data[0].name
-                    });
-                    setManufacturerId(response.data[0].id);
-                }
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-
-        const fetchCategories = async () => {
-            if (!token) {
-                return;
-            }
-            try {
-                const response = await allCategoriesPublic(token);
-                setCategoryData(response.data);
-
-                if (response.data.length > 0) {
-                    setSelectedCategory({
-                        value: response.data[0].id,
-                        label: response.data[0].name
-                    });
-                    setCategoryId(response.data[0].id);
-                }
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-
-        fetchWarehouse();
-        fetchManufacturers();
-        fetchCategories();
+        fetchData(allWarehousesPublic, setWarehouseData, setSelectedWarehouse, setWarehouseId);
+        fetchData(
+            allManufacturersPublic,
+            setManufacturerData,
+            setSelectedManufacturer,
+            setManufacturerId
+        );
+        fetchData(allCategoriesPublic, setCategoryData, setSelectedCategory, setCategoryId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const createHandler = async () => {
@@ -135,13 +82,25 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
         formData.append('quantity_part[quantity]', quantityPart);
         formData.append('quantity_part[warehouse_id]', warehouseId);
 
-        const response = await createPart(token, formData);
-        if (response.status === true) {
-            toast.success(response.message);
-            clearHandler();
-            onCancel();
-            return;
-        } else toast.error(response.message);
+        dispatch(partActions.createPart({ token, formData }));
+
+        setPartImage(null);
+        setPartName('');
+        setPartPrice('');
+        setAverageLife('');
+        setDescription('');
+        setQuantityPart('');
+        setSalePart('');
+        if (manufacturerData.length > 0)
+            selectedManufacturer({
+                value: manufacturerData[0].id,
+                label: manufacturerData[0].name
+            });
+        if (categoryData.length > 0)
+            selectedCategory({ value: categoryData[0].id, label: categoryData[0].name });
+        if (warehouseData.length > 0)
+            selectedWarehouse({ value: warehouseData[0].id, label: warehouseData[0].name });
+        onCancel();
     };
 
     const handleUploadFilesImage = (e) => {
@@ -293,7 +252,7 @@ const PartModalCreate = ({ isVisible, onCancel }) => {
                     </div>
                 </div>
                 <div className='flex flex-col gap-2 bg-[#e5eaf3] border-2 p-5 rounded-xl'>
-                    <span className='text-2xl font-bold'>Chọn ảnh (nếu có):</span>
+                    <span className='text-2xl font-bold'>Chọn ảnh:</span>
                     <div className='flex'>
                         <label htmlFor='file' className='text-5xl cursor-pointer'>
                             <div className='flex items-center justify-center py-10 border-2 border-[#eeefee] mr-5 border-dashed rounded-lg size-60'>

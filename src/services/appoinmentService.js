@@ -1,7 +1,7 @@
 import axios from "~/axios";
 
 // Lấy danh sách lịch hẹn - Public
-export const getAllAppoinmentsUser = async (accessToken, { page, limit }) => {
+export const getAllAppoinmentsUser = async (accessToken, page, limit) => {
     return await axios.get(`/appointment/get-all?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -10,7 +10,7 @@ export const getAllAppoinmentsUser = async (accessToken, { page, limit }) => {
 };
 
 // Lấy danh sách lịch hẹn - Admin
-export const getAllAppoinmentsAdmin = async (accessToken, { page, limit }) => {
+export const getAllAppoinmentsAdmin = async (accessToken, page, limit) => {
     return await axios.get(`/appointment/all?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,

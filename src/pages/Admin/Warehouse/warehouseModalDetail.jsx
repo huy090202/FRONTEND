@@ -1,15 +1,17 @@
 /* eslint-disable react/prop-types */
 import { Input, Modal } from 'antd';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { updateWarehouse } from '~/services/warehouseService';
+import { warehouseActions } from '~/redux/slice/warehouseSlice';
 
 const WarehouseModalDetail = ({ isVisible, onCancel, warehouse }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (warehouse) {
@@ -19,20 +21,15 @@ const WarehouseModalDetail = ({ isVisible, onCancel, warehouse }) => {
     }, [warehouse]);
 
     const updateHandler = async () => {
-        try {
-            const response = await updateWarehouse(token, warehouse.id, {
-                name,
-                address
-            });
-            if (response.status === true) {
-                toast.success(response.message);
-                onCancel();
-            } else {
-                toast.error(response.message || 'Cập nhật nhà kho thất bại');
-            }
-        } catch (error) {
-            toast.error('Đã có lỗi xảy ra, vui lòng thử lại sau');
+        if (!name) {
+            toast.error('Tên nhà kho không được để trống');
+            return;
         }
+
+        dispatch(
+            warehouseActions.updateWarehouse({ token, id: warehouse.id, data: { name, address } })
+        );
+        onCancel();
     };
     return (
         <Modal

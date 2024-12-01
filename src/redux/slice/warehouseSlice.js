@@ -2,11 +2,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
-const partSlice = createSlice({
-    name: 'part',
+const warehouseSlice = createSlice({
+    name: 'warehouse',
     initialState: {
-        parts: [], // Public
-        partPrivates: [], // Private
+        warehouses: [], // User
+        warehousesAdmin: [], // Admin
         total: 0,
         page: 1,
         limit: 5,
@@ -14,116 +14,116 @@ const partSlice = createSlice({
         loading: false,
     },
     reducers: {
-        // Lấy danh sách linh kiện - Public <=> active = true
-        fetchParts(state) {
+        // Lấy danh sách nhà kho - User
+        fetchWarehouses(state) {
             state.loading = true;
         },
-        fetchPartsSuccess(state, action) {
+        fetchWarehousesSuccess(state, action) {
             state.loading = false;
-            state.parts = action.payload;
+            state.warehouses = action.payload;
         },
-        fetchPartsFailure(state, action) {
+        fetchWarehousesFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Lấy danh sách linh kiện - Private
-        fetchPartPrivates(state, action) {
+        // Lấy danh sách nhà kho - Admin
+        fetchWarehousesAdmin(state, action) {
             state.loading = true;
             state.page = action.payload.page || state.page;
             state.limit = action.payload.limit || state.limit;
         },
-        fetchPartPrivatesSuccess(state, action) {
+        fetchWarehousesAdminSuccess(state, action) {
             state.loading = false;
             const { data, total, limit } = action.payload;
-            state.partPrivates = data;
+            state.warehousesAdmin = data;
             state.total = total;
             state.totalPages = Math.ceil(total / limit);
         },
-        fetchPartPrivatesFailure(state, action) {
+        fetchWarehousesAdminFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Tạo linh kiện
-        createPart(state) {
+        // Tạo nhà kho
+        createWarehouse(state) {
             state.loading = true;
         },
-        createPartSuccess(state, action) {
+        createWarehouseSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.partPrivates = [data, ...state.partPrivates];
+                state.warehousesAdmin = [data, ...state.warehousesAdmin];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
-        createPartFailure(state, action) {
+        createWarehouseFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Cập nhật linh kiện
-        updatePart(state, action) {
+        // Cập nhật nhà kho
+        updateWarehouse(state) {
             state.loading = true;
         },
-        updatePartSuccess(state, action) {
+        updateWarehouseSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.partPrivates.findIndex((part) => part.id === data.id);
+                const index = state.warehousesAdmin.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.partPrivates[index] = data;
+                    state.warehousesAdmin[index] = data;
                 } else {
-                    state.partPrivates = [data, ...state.partPrivates];
+                    state.warehousesAdmin = [data, ...state.warehousesAdmin];
                 }
                 toast.success(message);
             }
         },
-        updatePartFailure(state, action) {
+        updateWarehouseFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Xóa linh kiện
-        deletePart(state) {
+        // Xóa nhà kho
+        deleteWarehouse(state) {
             state.loading = true;
         },
-        deletePartSuccess(state, action) {
+        deleteWarehouseSuccess(state, action) {
             state.loading = false;
             const { id, message } = action.payload;
-            state.partPrivates = state.partPrivates.filter((part) => part.id !== id);
+            state.warehousesAdmin = state.warehousesAdmin.filter((item) => item.id !== id);
             toast.success(message);
         },
-        deletePartFailure(state, action) {
+        deleteWarehouseFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Cập nhật trạng thái linh kiện
-        updatePartStatus(state) {
+        // Cập nhật trạng thái nhà kho
+        updateWarehouseStatus(state) {
             state.loading = true;
         },
-        updatePartStatusSuccess(state, action) {
+        updateWarehouseStatusSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.partPrivates.findIndex((part) => part.id === data.id);
+                const index = state.warehousesAdmin.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.partPrivates[index] = data;
+                    state.warehousesAdmin[index] = data;
                 } else {
-                    state.partPrivates = [data, ...state.partPrivates];
+                    state.warehousesAdmin = [data, ...state.warehousesAdmin];
                 }
                 toast.success(message);
             }
         },
-        updatePartStatusFailure(state, action) {
+        updateWarehouseStatusFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
-        }
-    },
-})
+        },
+    }
+});
 
-export const partActions = partSlice.actions;
-export default partSlice.reducer;
+export const warehouseActions = warehouseSlice.actions;
+export default warehouseSlice.reducer;

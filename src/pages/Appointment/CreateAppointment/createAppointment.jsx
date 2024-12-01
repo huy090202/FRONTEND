@@ -78,6 +78,18 @@ const CreateAppointment = () => {
         setIsModalCreate(false);
     };
 
+    // Hàm để vô hiệu hóa các giờ không nằm trong khoảng từ 8 đến 17
+    const disabledHours = () => {
+        const hours = [];
+        for (let i = 0; i < 24; i++) {
+            if (i < 8 || i > 17) {
+                // Vô hiệu hóa trước 8 giờ và sau 17 giờ
+                hours.push(i);
+            }
+        }
+        return hours;
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             if (!token) {
@@ -432,6 +444,7 @@ const CreateAppointment = () => {
                                     <TimePicker
                                         value={appointTime}
                                         onChange={(time) => setAppointTime(time)}
+                                        disabledHours={disabledHours}
                                         style={{
                                             backgroundColor: 'transparent',
                                             fontFamily: 'LXGW WenKai TC',

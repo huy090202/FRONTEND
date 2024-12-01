@@ -8,7 +8,8 @@ import {
     ContainerOutlined,
     SettingOutlined,
     TeamOutlined,
-    InboxOutlined
+    InboxOutlined,
+    ShoppingOutlined
 } from '@ant-design/icons';
 import { WrapperMenuScroll } from './style';
 import { getToken, setToken } from '~/utils/token';
@@ -49,12 +50,18 @@ const SectionMenu = () => {
         },
         {
             id: 6,
+            name: 'Đơn hàng',
+            path: 'order',
+            element: <ShoppingOutlined />
+        },
+        {
+            id: 7,
             name: 'Danh sách lịch hẹn',
             path: 'appointment',
             element: <InboxOutlined />
         },
         {
-            id: 7,
+            id: 8,
             name: 'Danh sách bảo dưỡng',
             path: 'maintenance',
             element: <SettingOutlined />
@@ -62,31 +69,31 @@ const SectionMenu = () => {
     ];
     const account = [
         {
-            id: 8,
+            id: 9,
             name: 'Khách hàng',
             path: 'customer',
             element: <TeamOutlined />
         },
         {
-            id: 9,
+            id: 10,
             name: 'Nhân viên cửa hàng',
             path: 'staff',
             element: <TeamOutlined />
         },
         {
-            id: 10,
+            id: 11,
             name: 'Kỹ thuật viên',
             path: 'technician',
             element: <TeamOutlined />
         },
         {
-            id: 11,
+            id: 12,
             name: 'Thu ngân',
             path: 'cashier',
             element: <TeamOutlined />
         },
         {
-            id: 12,
+            id: 13,
             name: 'Quản lý',
             path: 'supervisor',
             element: <TeamOutlined />

@@ -1,6 +1,6 @@
 import axios from "~/axios";
 
-export const changeWarehouseStatus = async (accessToken, id, { active }) => {
+export const changeWarehouseStatus = async (accessToken, id, active) => {
     return await axios.patch(`warehouse/change-status/${id}`, { active }, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -8,8 +8,8 @@ export const changeWarehouseStatus = async (accessToken, id, { active }) => {
     });
 }
 
-export const getAllWarehouses = async (accessToken, { page, limit }) => {
-    return await axios.get(`warehouse/get-all?page=${page}&limit=${limit}`, {
+export const getAllWarehouses = async (accessToken, page, limit, active) => {
+    return await axios.get(`warehouse/get-all?active=${active}&page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
@@ -20,16 +20,16 @@ export const allWarehousesPublic = async () => {
     return await axios.get('warehouse/get');
 }
 
-export const createWarehouse = async (accessToken, { name, address }) => {
-    return await axios.post('warehouse/create', { name, address }, {
+export const createWarehouse = async (accessToken, data) => {
+    return await axios.post('warehouse/create', data, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
     });
 }
 
-export const updateWarehouse = async (accessToken, id, { name, address }) => {
-    return await axios.put(`warehouse/update/${id}`, { name, address }, {
+export const updateWarehouse = async (accessToken, id, data) => {
+    return await axios.put(`warehouse/update/${id}`, data, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },

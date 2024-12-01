@@ -10,9 +10,10 @@ import Cart from '~/pages/Carts/cart';
 import Payment from '~/pages/Carts/payment';
 import HistoryAppointment from '~/pages/Appointment/HistoryAppointment/historyAppointment';
 import CreateAppointment from '~/pages/Appointment/CreateAppointment/createAppointment';
+import OrderHistory from '~/pages/OrderHistory/orderHistory';
 
 import Login from '~/pages/Auth/Login/login.jsx';
-import History from '~/pages/Auth/History/history';
+import HistoryMaintenance from '~/pages/Auth/HistoryMaintenance/historyMaintenance';
 import Profile from '~/pages/Auth/Profile/profile.jsx';
 import Register from '~/pages/Auth/Register/register.jsx';
 import ChangePassword from '~/pages/Auth/ChangePassword/changePassword';
@@ -29,6 +30,7 @@ import Supervisors from '~/pages/Admin/Supervisor/supervisors';
 import Appointment from '~/pages/Admin/Appointment/appointment';
 import Maintenances from '~/pages/Admin/Maintenance/maintenances';
 import Manufacturers from '~/pages/Admin/Manufacturer/manufacturers';
+import Order from '~/pages/Admin/Order/order';
 
 import Maintenance from '~/pages/Maintenance/maintenance';
 import MaintenanceHistory from '~/pages/Maintenance/MaintenanceHistory/maintenanceHistory';
@@ -103,8 +105,12 @@ export const router = createBrowserRouter([
                 element: <ChangePassword />
             },
             {
+                path: 'order-history',
+                element: <OrderHistory />
+            },
+            {
                 path: 'history',
-                element: <History />
+                element: <HistoryMaintenance />
             },
             {
                 path: 'motor',
@@ -143,6 +149,10 @@ export const router = createBrowserRouter([
             {
                 path: 'warehouse',
                 element: <Warehouses />
+            },
+            {
+                path: 'order',
+                element: <Order />
             },
             {
                 path: 'appointment',

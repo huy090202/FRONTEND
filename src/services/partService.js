@@ -1,7 +1,8 @@
 import axios from "~/axios";
 
 // Cập nhật trạng thái linh kiện
-export const changePartStatus = async (accessToken, id, { active }) => {
+export const changePartStatus = async (accessToken, id, active) => {
+    console.log(accessToken, id, active);
     return await axios.patch(`part/change-status/${id}`, { active }, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -10,8 +11,8 @@ export const changePartStatus = async (accessToken, id, { active }) => {
 }
 
 // Lấy danh sách linh kiện - Admin
-export const getAllParts = async (accessToken, { page, limit }) => {
-    return await axios.get(`part/get-all?page=${page}&limit=${limit}`, {
+export const getAllParts = async (accessToken, page, limit, active) => {
+    return await axios.get(`part/get-all?active=${active}&page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },

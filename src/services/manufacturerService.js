@@ -1,6 +1,6 @@
 import axios from "~/axios";
 
-export const changeManufacturerStatus = async (accessToken, id, { active }) => {
+export const changeManufacturerStatus = async (accessToken, id, active) => {
     return await axios.patch(`manufacturer/change-status/${id}`, { active }, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -8,8 +8,8 @@ export const changeManufacturerStatus = async (accessToken, id, { active }) => {
     });
 }
 
-export const getAllManufacturers = async (accessToken, { page, limit }) => {
-    return await axios.get(`manufacturer/get-all?page=${page}&limit=${limit}`, {
+export const getAllManufacturers = async (accessToken, page, limit, active) => {
+    return await axios.get(`manufacturer/get-all?active=${active}&page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
@@ -20,16 +20,16 @@ export const allManufacturersPublic = async () => {
     return await axios.get('manufacturer/all');
 }
 
-export const createManufacturer = async (accessToken, { name, country }) => {
-    return await axios.post('manufacturer/create', { name, country }, {
+export const createManufacturer = async (accessToken, data) => {
+    return await axios.post('manufacturer/create', data, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
     });
 }
 
-export const updateManufacturer = async (accessToken, id, { name, country }) => {
-    return await axios.put(`manufacturer/update/${id}`, { name, country }, {
+export const updateManufacturer = async (accessToken, id, data) => {
+    return await axios.put(`manufacturer/update/${id}`, data, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },

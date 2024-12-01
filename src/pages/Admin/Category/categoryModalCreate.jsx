@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
-import { createCategory } from '~/services/categoryService.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { categoryActions } from '~/redux/slice/categorySlice';
 
 const CategoryModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -11,10 +11,7 @@ const CategoryModalCreate = ({ isVisible, onCancel }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
-    const clearHandler = () => {
-        setName('');
-        setDescription('');
-    };
+    const dispatch = useDispatch();
 
     const createHandler = async () => {
         try {
@@ -23,18 +20,10 @@ const CategoryModalCreate = ({ isVisible, onCancel }) => {
                 return;
             }
 
-            const response = await createCategory(token, {
-                name,
-                description
-            });
-
-            if (response.status === true) {
-                toast.success(response.message);
-                clearHandler();
-                onCancel();
-            } else {
-                toast.error(response.message || 'Tạo danh mục thất bại');
-            }
+            dispatch(categoryActions.createCategory({ token, data: { name, description } }));
+            setName('');
+            setDescription('');
+            onCancel();
         } catch (error) {
             const errorMessage =
                 error.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau';

@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
-import { createManufacturer } from '~/services/manufacturerService';
+import { useDispatch, useSelector } from 'react-redux';
+import { manufacturerActions } from '~/redux/slice/manufacturerSlice';
 
 const ManufacturerModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -11,10 +11,7 @@ const ManufacturerModalCreate = ({ isVisible, onCancel }) => {
     const [name, setName] = useState('');
     const [country, setCountry] = useState('');
 
-    const clearHandler = () => {
-        setName('');
-        setCountry('');
-    };
+    const dispatch = useDispatch();
 
     const createHandler = async () => {
         try {
@@ -23,18 +20,10 @@ const ManufacturerModalCreate = ({ isVisible, onCancel }) => {
                 return;
             }
 
-            const response = await createManufacturer(token, {
-                name,
-                country
-            });
-
-            if (response.status === true) {
-                toast.success(response.message);
-                clearHandler();
-                onCancel();
-            } else {
-                toast.error(response.message || 'Tạo nhà kho thất bại');
-            }
+            dispatch(manufacturerActions.createManufacturer({ token, data: { name, country } }));
+            setName('');
+            setCountry('');
+            onCancel();
         } catch (error) {
             const errorMessage =
                 error.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau';

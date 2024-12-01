@@ -2,11 +2,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
-const partSlice = createSlice({
-    name: 'part',
+const manufacturerSlice = createSlice({
+    name: 'manufacturer',
     initialState: {
-        parts: [], // Public
-        partPrivates: [], // Private
+        manufacturers: [], // User
+        manufacturersAdmin: [], // Admin
         total: 0,
         page: 1,
         limit: 5,
@@ -14,116 +14,116 @@ const partSlice = createSlice({
         loading: false,
     },
     reducers: {
-        // Lấy danh sách linh kiện - Public <=> active = true
-        fetchParts(state) {
+        // Lấy danh sách nhà sản xuất - User
+        fetchManufacturers(state) {
             state.loading = true;
         },
-        fetchPartsSuccess(state, action) {
+        fetchManufacturersSuccess(state, action) {
             state.loading = false;
-            state.parts = action.payload;
+            state.manufacturers = action.payload;
         },
-        fetchPartsFailure(state, action) {
+        fetchManufacturersFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Lấy danh sách linh kiện - Private
-        fetchPartPrivates(state, action) {
+        // Lấy danh sách nhà sản xuất - Admin
+        fetchManufacturersAdmin(state, action) {
             state.loading = true;
             state.page = action.payload.page || state.page;
             state.limit = action.payload.limit || state.limit;
         },
-        fetchPartPrivatesSuccess(state, action) {
+        fetchManufacturersAdminSuccess(state, action) {
             state.loading = false;
             const { data, total, limit } = action.payload;
-            state.partPrivates = data;
+            state.manufacturersAdmin = data;
             state.total = total;
             state.totalPages = Math.ceil(total / limit);
         },
-        fetchPartPrivatesFailure(state, action) {
+        fetchManufacturersAdminFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Tạo linh kiện
-        createPart(state) {
+        // Tạo nhà sản xuất
+        createManufacturer(state) {
             state.loading = true;
         },
-        createPartSuccess(state, action) {
+        createManufacturerSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.partPrivates = [data, ...state.partPrivates];
+                state.manufacturersAdmin = [data, ...state.manufacturersAdmin];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
-        createPartFailure(state, action) {
+        createManufacturerFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Cập nhật linh kiện
-        updatePart(state, action) {
+        // Cập nhật nhà sản xuất
+        updateManufacturer(state) {
             state.loading = true;
         },
-        updatePartSuccess(state, action) {
+        updateManufacturerSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.partPrivates.findIndex((part) => part.id === data.id);
+                const index = state.manufacturersAdmin.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.partPrivates[index] = data;
+                    state.manufacturersAdmin[index] = data;
                 } else {
-                    state.partPrivates = [data, ...state.partPrivates];
+                    state.manufacturersAdmin = [data, ...state.manufacturersAdmin];
                 }
                 toast.success(message);
             }
         },
-        updatePartFailure(state, action) {
+        updateManufacturerFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Xóa linh kiện
-        deletePart(state) {
+        // Xóa nhà sản xuất
+        deleteManufacturer(state) {
             state.loading = true;
         },
-        deletePartSuccess(state, action) {
+        deleteManufacturerSuccess(state, action) {
             state.loading = false;
             const { id, message } = action.payload;
-            state.partPrivates = state.partPrivates.filter((part) => part.id !== id);
+            state.manufacturersAdmin = state.manufacturersAdmin.filter((item) => item.id !== id);
             toast.success(message);
         },
-        deletePartFailure(state, action) {
+        deleteManufacturerFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Cập nhật trạng thái linh kiện
-        updatePartStatus(state) {
+        // Cập nhật trạng thái nhà sản xuất
+        updateManufacturerStatus(state) {
             state.loading = true;
         },
-        updatePartStatusSuccess(state, action) {
+        updateManufacturerStatusSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.partPrivates.findIndex((part) => part.id === data.id);
+                const index = state.manufacturersAdmin.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.partPrivates[index] = data;
+                    state.manufacturersAdmin[index] = data;
                 } else {
-                    state.partPrivates = [data, ...state.partPrivates];
+                    state.manufacturersAdmin = [data, ...state.manufacturersAdmin];
                 }
                 toast.success(message);
             }
         },
-        updatePartStatusFailure(state, action) {
+        updateManufacturerStatusFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
-        }
-    },
-})
+        },
+    }
+});
 
-export const partActions = partSlice.actions;
-export default partSlice.reducer;
+export const manufacturerActions = manufacturerSlice.actions;
+export default manufacturerSlice.reducer;

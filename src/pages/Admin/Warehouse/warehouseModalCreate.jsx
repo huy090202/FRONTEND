@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
-import { createWarehouse } from '~/services/warehouseService';
+import { useDispatch, useSelector } from 'react-redux';
+import { warehouseActions } from '~/redux/slice/warehouseSlice';
 
 const WarehouseModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -11,10 +11,7 @@ const WarehouseModalCreate = ({ isVisible, onCancel }) => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
 
-    const clearHandler = () => {
-        setName('');
-        setAddress('');
-    };
+    const dispatch = useDispatch();
 
     const createHandler = async () => {
         try {
@@ -23,18 +20,10 @@ const WarehouseModalCreate = ({ isVisible, onCancel }) => {
                 return;
             }
 
-            const response = await createWarehouse(token, {
-                name,
-                address
-            });
-
-            if (response.status === true) {
-                toast.success(response.message);
-                clearHandler();
-                onCancel();
-            } else {
-                toast.error(response.message || 'Tạo nhà kho thất bại');
-            }
+            dispatch(warehouseActions.createWarehouse({ token, data: { name, address } }));
+            setName('');
+            setAddress('');
+            onCancel();
         } catch (error) {
             const errorMessage =
                 error.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau';

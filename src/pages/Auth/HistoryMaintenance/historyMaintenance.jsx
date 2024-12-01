@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
 
-const History = () => {
+const HistoryMaintenance = () => {
     return (
         <Fragment>
             <div className='my-5 text-center'>
-                <h1 className='text-5xl font-bold'>History Page</h1>
+                <h1 className='text-5xl font-bold'>History Maintenance Page</h1>
             </div>
         </Fragment>
     );
 };
-export default History;
+export default HistoryMaintenance;

@@ -1,40 +1,49 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { updateUser, getUser, changePassword } from '~/services/userService';
+import * as userService from '~/services/userService';
 import { userActions } from '~/redux/slice/userSlice';
 
-function* updateUserSaga(action) {
+function* handleApiCall(action, apiFunction, successAction, failureAction) {
     try {
-        const response = yield call(updateUser, action.payload.token, action.payload.formData);
+        const response = yield call(apiFunction, ...Object.values(action.payload));
         if (response.status === true) {
-            yield put(userActions.updateUserSuccess({ data: response.data, message: response.message }));
+            yield put(successAction({ data: response.data, message: response.message, total: response.total, limit: response.limit }));
         } else {
-            yield put(userActions.updateUserFailure(response.message));
+            yield put(failureAction(response.message));
         }
     } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.';
-        yield put(userActions.updateUserFailure(errorMessage));
+        const errorMessage = error.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+        yield put(failureAction(errorMessage));
     }
 }
 
+// Các saga chính
+function* updateUserSaga(action) {
+    yield handleApiCall(
+        action,
+        userService.updateUser,
+        userActions.updateUserSuccess,
+        userActions.updateUserFailure
+    );
+}
+
 function* getUserSaga(action) {
-    try {
-        const response = yield call(getUser, action.payload);
-        yield put(userActions.getUserSuccess(response.data));
-    } catch (error) {
-        yield put(userActions.handleError(error.message));
-    }
+    yield handleApiCall(
+        action,
+        userService.getUser,
+        userActions.getUserSuccess,
+        userActions.handleError
+    );
 }
 
 function* changePasswordSaga(action) {
     try {
-        const response = yield call(changePassword, action.payload.token, action.payload.data);
+        const response = yield call(userService.changePassword, action.payload.token, action.payload.data);
         if (response.status === true) {
             yield put(userActions.changePasswordSuccess(response));
-            yield put(userActions.getUser(action.payload.token));
         } else {
             yield put(userActions.changePasswordFailure(response.message || 'Đổi mật khẩu thất bại'));
-            yield put(userActions.getUser(action.payload.token));
         }
+        yield put(userActions.getUser(action.payload.token)); // Luôn gọi getUser sau khi đổi mật khẩu
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.';
         yield put(userActions.changePasswordFailure(errorMessage));
@@ -42,8 +51,68 @@ function* changePasswordSaga(action) {
     }
 }
 
-export default function* userSaga() {
+function* genericFetchSaga(action, apiFunction, successAction, failureAction) {
+    yield handleApiCall(action, apiFunction, successAction, failureAction);
+}
+
+function* userSaga() {
     yield takeLatest(userActions.updateUser, updateUserSaga);
     yield takeLatest(userActions.getUser, getUserSaga);
     yield takeLatest(userActions.changePassword, changePasswordSaga);
+
+    // Quản lý dữ liệu chung
+    const fetchMap = {
+        fetchCustomers: userService.getAllUsers,
+        fetchTechs: userService.getAllTechs,
+        fetchStaffs: userService.getAllStaffs,
+        fetchCashiers: userService.getAllCashiers,
+        fetchSupervisors: userService.getAllAdmins,
+    };
+
+    for (const [actionType, apiFunction] of Object.entries(fetchMap)) {
+        yield takeLatest(userActions[actionType], function* (action) {
+            yield genericFetchSaga(action, apiFunction, userActions[`${actionType}Success`], userActions[`${actionType}Failure`]);
+        });
+    }
+
+    // Thay đổi trạng thái
+    const changeStatusMap = {
+        updateCustomerStatus: userActions.updateCustomerStatus,
+        updateTechStatus: userActions.updateTechStatus,
+        updateStaffStatus: userActions.updateStaffStatus,
+        updateCashierStatus: userActions.updateCashierStatus,
+        updateSupervisorStatus: userActions.updateSupervisorStatus,
+    };
+
+    for (const [actionType] of Object.entries(changeStatusMap)) {
+        yield takeLatest(userActions[actionType], function* (action) {
+            yield handleApiCall(
+                action,
+                userService.changeUserStatus,
+                userActions[`${actionType}Success`],
+                userActions[`${actionType}Failure`]
+            );
+        });
+    }
+
+    // Tạo mới nhân viên
+    const createMap = {
+        createTech: userActions.createTech,
+        createStaff: userActions.createStaff,
+        createCashier: userActions.createCashier,
+        createSupervisor: userActions.createSupervisor,
+    };
+
+    for (const [actionType] of Object.entries(createMap)) {
+        yield takeLatest(userActions[actionType], function* (action) {
+            yield handleApiCall(
+                action,
+                userService.createStaff,
+                userActions[`${actionType}Success`],
+                userActions[`${actionType}Failure`]
+            );
+        });
+    }
 }
+
+export default userSaga;

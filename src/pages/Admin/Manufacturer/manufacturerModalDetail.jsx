@@ -1,15 +1,17 @@
 /* eslint-disable react/prop-types */
 import { Input, Modal } from 'antd';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { updateManufacturer } from '~/services/manufacturerService';
+import { manufacturerActions } from '~/redux/slice/manufacturerSlice';
 
 const ManufacturerModalDetail = ({ isVisible, onCancel, manufacturer }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
     const [name, setName] = useState('');
     const [country, setCountry] = useState('');
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (manufacturer) {
@@ -19,20 +21,19 @@ const ManufacturerModalDetail = ({ isVisible, onCancel, manufacturer }) => {
     }, [manufacturer]);
 
     const updateHandler = async () => {
-        try {
-            const response = await updateManufacturer(token, manufacturer.id, {
-                name,
-                country
-            });
-            if (response.status === true) {
-                toast.success(response.message);
-                onCancel();
-            } else {
-                toast.error(response.message || 'Cập nhật nhà kho thất bại');
-            }
-        } catch (error) {
-            toast.error('Đã có lỗi xảy ra, vui lòng thử lại sau');
+        if (!name) {
+            toast.error('Tên nhà sản xuất không được để trống');
+            return;
         }
+
+        dispatch(
+            manufacturerActions.updateManufacturer({
+                token,
+                id: manufacturer.id,
+                data: { name, country }
+            })
+        );
+        onCancel();
     };
     return (
         <Modal

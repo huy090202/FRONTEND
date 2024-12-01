@@ -2,11 +2,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
-const partSlice = createSlice({
-    name: 'part',
+const categorySlice = createSlice({
+    name: 'category',
     initialState: {
-        parts: [], // Public
-        partPrivates: [], // Private
+        categories: [], // User
+        categoriesAdmin: [], // Admin
         total: 0,
         page: 1,
         limit: 5,
@@ -14,116 +14,116 @@ const partSlice = createSlice({
         loading: false,
     },
     reducers: {
-        // Lấy danh sách linh kiện - Public <=> active = true
-        fetchParts(state) {
+        // Lấy danh sách danh mục - User
+        fetchCategories(state) {
             state.loading = true;
         },
-        fetchPartsSuccess(state, action) {
+        fetchCategoriesSuccess(state, action) {
             state.loading = false;
-            state.parts = action.payload;
+            state.categories = action.payload;
         },
-        fetchPartsFailure(state, action) {
+        fetchCategoriesFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Lấy danh sách linh kiện - Private
-        fetchPartPrivates(state, action) {
+        // Lấy danh sách danh mục - Admin
+        fetchCategoriesAdmin(state, action) {
             state.loading = true;
             state.page = action.payload.page || state.page;
             state.limit = action.payload.limit || state.limit;
         },
-        fetchPartPrivatesSuccess(state, action) {
+        fetchCategoriesAdminSuccess(state, action) {
             state.loading = false;
             const { data, total, limit } = action.payload;
-            state.partPrivates = data;
+            state.categoriesAdmin = data;
             state.total = total;
             state.totalPages = Math.ceil(total / limit);
         },
-        fetchPartPrivatesFailure(state, action) {
+        fetchCategoriesAdminFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Tạo linh kiện
-        createPart(state) {
+        // Tạo danh mục
+        createCategory(state) {
             state.loading = true;
         },
-        createPartSuccess(state, action) {
+        createCategorySuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.partPrivates = [data, ...state.partPrivates];
+                state.categoriesAdmin = [data, ...state.categoriesAdmin];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
-        createPartFailure(state, action) {
+        createCategoryFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Cập nhật linh kiện
-        updatePart(state, action) {
+        // Cập nhật danh mục
+        updateCategory(state) {
             state.loading = true;
         },
-        updatePartSuccess(state, action) {
+        updateCategorySuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.partPrivates.findIndex((part) => part.id === data.id);
+                const index = state.categoriesAdmin.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.partPrivates[index] = data;
+                    state.categoriesAdmin[index] = data;
                 } else {
-                    state.partPrivates = [data, ...state.partPrivates];
+                    state.categoriesAdmin = [data, ...state.categoriesAdmin];
                 }
                 toast.success(message);
             }
         },
-        updatePartFailure(state, action) {
+        updateCategoryFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Xóa linh kiện
-        deletePart(state) {
+        // Xóa danh mục
+        deleteCategory(state) {
             state.loading = true;
         },
-        deletePartSuccess(state, action) {
+        deleteCategorySuccess(state, action) {
             state.loading = false;
             const { id, message } = action.payload;
-            state.partPrivates = state.partPrivates.filter((part) => part.id !== id);
+            state.categoriesAdmin = state.categoriesAdmin.filter((item) => item.id !== id);
             toast.success(message);
         },
-        deletePartFailure(state, action) {
+        deleteCategoryFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
         },
 
-        // Cập nhật trạng thái linh kiện
-        updatePartStatus(state) {
+        // Cập nhật trạng thái danh mục
+        updateCategoryStatus(state) {
             state.loading = true;
         },
-        updatePartStatusSuccess(state, action) {
+        updateCategoryStatusSuccess(state, action) {
             state.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.partPrivates.findIndex((part) => part.id === data.id);
+                const index = state.categoriesAdmin.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.partPrivates[index] = data;
+                    state.categoriesAdmin[index] = data;
                 } else {
-                    state.partPrivates = [data, ...state.partPrivates];
+                    state.categoriesAdmin = [data, ...state.categoriesAdmin];
                 }
                 toast.success(message);
             }
         },
-        updatePartStatusFailure(state, action) {
+        updateCategoryStatusFailure(state, action) {
             state.loading = false;
             toast.error(action.payload);
-        }
-    },
-})
+        },
+    }
+});
 
-export const partActions = partSlice.actions;
-export default partSlice.reducer;
+export const categoryActions = categorySlice.actions;
+export default categorySlice.reducer;

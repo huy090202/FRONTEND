@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import { authReducer, cartReducer, maintenanceReducer, motorReducer, partReducer, userReducer } from '~/redux/slice';
+import { appointmentReducer, authReducer, cartReducer, categoryReducer, maintenanceReducer, manufacturerReducer, motorReducer, orderReducer, partReducer, userReducer, warehouseReducer } from '~/redux/slice';
 import rootSaga from '~/redux/saga/rootSaga';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -12,7 +12,12 @@ const store = configureStore({
         motor: motorReducer,
         maintenance: maintenanceReducer,
         part: partReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        order: orderReducer,
+        appointment: appointmentReducer,
+        category: categoryReducer,
+        manufacturer: manufacturerReducer,
+        warehouse: warehouseReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ serializableCheck: false }).concat(
