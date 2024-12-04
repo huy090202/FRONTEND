@@ -9,3 +9,4 @@ export { default as appointmentReducer } from '~/redux/slice/appointmentSlice';
 export { default as categoryReducer } from '~/redux/slice/categorySlice';
 export { default as manufacturerReducer } from '~/redux/slice/manufacturerSlice';
 export { default as warehouseReducer } from '~/redux/slice/warehouseSlice';
+export { default as invoiceReducer } from '~/redux/slice/invoiceSlice';

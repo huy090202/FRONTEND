@@ -9,7 +9,7 @@ export const changeMaintenanceStatus = async (accessToken, id, active) => {
 }
 
 // Hiển thị toàn bộ đơn bảo dưỡng của hệ thống
-export const getAllMaintenances = async (accessToken, { page, limit }) => {
+export const getAllMaintenances = async (accessToken, page, limit) => {
     return await axios.get(`maintenance/all?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -55,8 +55,17 @@ export const updateMaintenance = async (accessToken, id, data) => {
 }
 
 // Hiển thị lịch sử bảo dưỡng của người dùng
-export const getMaintenancesByUser = async (accessToken, { userId }) => {
-    return await axios.get(`maintenance/history/${userId}`, {
+export const getMaintenancesByUser = async (accessToken, { id }, page, limit) => {
+    return await axios.get(`maintenance/history/${id}?page=${page}&limit=${limit}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+}
+
+// Lịch sử bảo dưỡng của người dùng trong profile
+export const getMaintenancesByUserInProfile = async (accessToken, page, limit) => {
+    return await axios.get(`maintenance/me?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },

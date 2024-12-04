@@ -14,16 +14,14 @@ const initialState = {
         gender: '',
         role: '',
     },
-    customers: [],
-    techs: [],
-    staffs: [],
-    cashiers: [],
-    supervisors: [],
+    customers: { data: [], loading: false, totalPages: 0 },
+    techs: { data: [], loading: false, totalPages: 0 },
+    staffs: { data: [], loading: false, totalPages: 0 },
+    cashiers: { data: [], loading: false, totalPages: 0 },
+    supervisors: { data: [], loading: false, totalPages: 0 },
     total: 0,
     page: 1,
     limit: 5,
-    totalPages: 0,
-    loading: false,
 };
 
 const userSlice = createSlice({
@@ -69,268 +67,278 @@ const userSlice = createSlice({
         },
 
         // Lấy danh sách khách hàng
-        fetchCustomers(state) {
-            state.loading = true;
+        fetchCustomers(state, action) {
+            state.customers.loading = true;
+            state.page = action.payload.page || state.page;
+            state.limit = action.payload.limit || state.limit;
         },
         fetchCustomersSuccess(state, action) {
-            state.loading = false;
+            state.customers.loading = false;
             const { data, total, limit } = action.payload;
-            state.customers = data;
+            state.customers.data = data;
             state.total = total;
-            state.totalPages = Math.ceil(total / limit);
+            state.customers.totalPages = Math.ceil(total / limit);
         },
         fetchCustomersFailure(state, action) {
-            state.loading = false;
+            state.customers.loading = false;
             toast.error(action.payload);
         },
 
         // Cập nhật trạng thái tài khoản khách hàng
         updateCustomerStatus(state) {
-            state.loading = true;
+            state.customers.loading = true;
         },
         updateCustomerStatusSuccess(state, action) {
-            state.loading = false;
+            state.customers.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.customers.findIndex((item) => item.id === data.id);
+                const index = state.customers.data.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.customers[index] = data;
+                    state.customers.data[index] = data;
                 } else {
-                    state.customers = [data, ...state.customers];
+                    state.customers.data = [data, ...state.customers.data];
                 }
                 toast.success(message);
             }
         },
         updateCustomerStatusFailure(state, action) {
-            state.loading = false;
+            state.customers.loading = false;
             toast.error(action.payload);
         },
 
         // Lấy danh sách kỹ thuật viên
-        fetchTechs(state) {
-            state.loading = true;
+        fetchTechs(state, action) {
+            state.techs.loading = true;
+            state.page = action.payload.page || state.page;
+            state.limit = action.payload.limit || state.limit;
         },
         fetchTechsSuccess(state, action) {
-            state.loading = false;
+            state.techs.loading = false;
             const { data, total, limit } = action.payload;
-            state.techs = data;
+            state.techs.data = data;
             state.total = total;
-            state.totalPages = Math.ceil(total / limit);
+            state.techs.totalPages = Math.ceil(total / limit);
         },
         fetchTechsFailure(state, action) {
-            state.loading = false;
+            state.techs.loading = false;
             toast.error(action.payload);
         },
 
         // Thêm kỹ thuật viên
         createTech(state) {
-            state.loading = true;
+            state.techs.loading = true;
         },
         createTechSuccess(state, action) {
-            state.loading = false;
+            state.techs.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.techs = [data, ...state.techs];
+                state.techs.data = [data, ...state.techs.data];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
         createTechFailure(state, action) {
-            state.loading = false;
+            state.techs.loading = false;
             toast.error(action.payload);
         },
 
         // Cập nhật trạng thái tài khoản kỹ thuật viên
         updateTechStatus(state) {
-            state.loading = true;
+            state.techs.loading = true;
         },
         updateTechStatusSuccess(state, action) {
-            state.loading = false;
+            state.techs.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.techs.findIndex((item) => item.id === data.id);
+                const index = state.techs.data.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.techs[index] = data;
+                    state.techs.data[index] = data;
                 } else {
-                    state.techs = [data, ...state.techs];
+                    state.techs.data = [data, ...state.techs.data];
                 }
                 toast.success(message);
             }
         },
         updateTechStatusFailure(state, action) {
-            state.loading = false;
+            state.techs.loading = false;
             toast.error(action.payload);
         },
 
         // Lấy danh sách nhân viên
-        fetchStaffs(state) {
-            state.loading = true;
+        fetchStaffs(state, action) {
+            state.staffs.loading = true;
+            state.page = action.payload.page || state.page;
+            state.limit = action.payload.limit || state.limit;
         },
         fetchStaffsSuccess(state, action) {
-            state.loading = false;
+            state.staffs.loading = false;
             const { data, total, limit } = action.payload;
-            state.staffs = data;
+            state.staffs.data = data;
             state.total = total;
-            state.totalPages = Math.ceil(total / limit);
+            state.staffs.totalPages = Math.ceil(total / limit);
         },
         fetchStaffsFailure(state, action) {
-            state.loading = false;
+            state.staffs.loading = false;
             toast.error(action.payload);
         },
 
         // Thêm nhân viên
         createStaff(state) {
-            state.loading = true;
+            state.staffs.loading = true;
         },
         createStaffSuccess(state, action) {
-            state.loading = false;
+            state.staffs.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.staffs = [data, ...state.staffs];
+                state.staffs.data = [data, ...state.staffs.data];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
         createStaffFailure(state, action) {
-            state.loading = false;
+            state.staffs.loading = false;
             toast.error(action.payload);
         },
 
         // Cập nhật trạng thái tài khoản nhân viên
         updateStaffStatus(state) {
-            state.loading = true;
+            state.staffs.loading = true;
         },
         updateStaffStatusSuccess(state, action) {
-            state.loading = false;
+            state.staffs.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.staffs.findIndex((item) => item.id === data.id);
+                const index = state.staffs.data.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.staffs[index] = data;
+                    state.staffs.data[index] = data;
                 } else {
-                    state.staffs = [data, ...state.staffs];
+                    state.staffs.data = [data, ...state.staffs.data];
                 }
                 toast.success(message);
             }
         },
         updateStaffStatusFailure(state, action) {
-            state.loading = false;
+            state.staffs.loading = false;
             toast.error(action.payload);
         },
 
         // Lấy danh sách thu ngân
-        fetchCashiers(state) {
-            state.loading = true;
+        fetchCashiers(state, action) {
+            state.cashiers.loading = true;
+            state.page = action.payload.page || state.page;
+            state.limit = action.payload.limit || state.limit;
         },
         fetchCashiersSuccess(state, action) {
-            state.loading = false;
+            state.cashiers.loading = false;
             const { data, total, limit } = action.payload;
-            state.cashiers = data;
+            state.cashiers.data = data;
             state.total = total;
-            state.totalPages = Math.ceil(total / limit);
+            state.cashiers.totalPages = Math.ceil(total / limit);
         },
         fetchCashiersFailure(state, action) {
-            state.loading = false;
+            state.cashiers.loading = false;
             toast.error(action.payload);
         },
 
         // Thêm thu ngân
         createCashier(state) {
-            state.loading = true;
+            state.cashiers.loading = true;
         },
         createCashierSuccess(state, action) {
-            state.loading = false;
+            state.cashiers.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.cashiers = [data, ...state.cashiers];
+                state.cashiers.data = [data, ...state.cashiers.data];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
         createCashierFailure(state, action) {
-            state.loading = false;
+            state.cashiers.loading = false;
             toast.error(action.payload);
         },
 
         // Cập nhật trạng thái tài khoản thu ngân
         updateCashierStatus(state) {
-            state.loading = true;
+            state.cashiers.loading = true;
         },
         updateCashierStatusSuccess(state, action) {
-            state.loading = false;
+            state.cashiers.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.cashiers.findIndex((item) => item.id === data.id);
+                const index = state.cashiers.data.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.cashiers[index] = data;
+                    state.cashiers.data[index] = data;
                 } else {
-                    state.cashiers = [data, ...state.cashiers];
+                    state.cashiers.data = [data, ...state.cashiers.data];
                 }
                 toast.success(message);
             }
         },
         updateCashierStatusFailure(state, action) {
-            state.loading = false;
+            state.cashiers.loading = false;
             toast.error(action.payload);
         },
 
         // Lấy danh sách quản lý
-        fetchSupervisors(state) {
-            state.loading = true;
+        fetchSupervisors(state, action) {
+            state.supervisors.loading = true;
+            state.page = action.payload.page || state.page;
+            state.limit = action.payload.limit || state.limit;
         },
         fetchSupervisorsSuccess(state, action) {
-            state.loading = false;
+            state.supervisors.loading = false;
             const { data, total, limit } = action.payload;
-            state.supervisors = data;
+            state.supervisors.data = data;
             state.total = total;
-            state.totalPages = Math.ceil(total / limit);
+            state.supervisors.totalPages = Math.ceil(total / limit);
         },
         fetchSupervisorsFailure(state, action) {
-            state.loading = false;
+            state.supervisors.loading = false;
             toast.error(action.payload);
         },
 
         // Thêm quản lý
         createSupervisor(state) {
-            state.loading = true;
+            state.supervisors.loading = true;
         },
         createSupervisorSuccess(state, action) {
-            state.loading = false;
+            state.supervisors.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                state.supervisors = [data, ...state.supervisors];
+                state.supervisors.data = [data, ...state.supervisors.data];
                 toast.success(message);
             } else {
                 toast.error(message);
             }
         },
         createSupervisorFailure(state, action) {
-            state.loading = false;
+            state.supervisors.loading = false;
             toast.error(action.payload);
         },
 
         // Cập nhật trạng thái tài khoản quản lý
         updateSupervisorStatus(state) {
-            state.loading = true;
+            state.supervisors.loading = true;
         },
         updateSupervisorStatusSuccess(state, action) {
-            state.loading = false;
+            state.supervisors.loading = false;
             const { data, message } = action.payload;
             if (data) {
-                const index = state.supervisors.findIndex((item) => item.id === data.id);
+                const index = state.supervisors.data.findIndex((item) => item.id === data.id);
                 if (index !== -1) {
-                    state.supervisors[index] = data;
+                    state.supervisors.data[index] = data;
                 } else {
-                    state.supervisors = [data, ...state.supervisors];
+                    state.supervisors.data = [data, ...state.supervisors.data];
                 }
                 toast.success(message);
             }
         },
         updateSupervisorStatusFailure(state, action) {
-            state.loading = false;
+            state.supervisors.loading = false;
             toast.error(action.payload);
         },
     },

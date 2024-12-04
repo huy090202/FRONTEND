@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
 import { UserOutlined, FormOutlined, PhoneOutlined, SafetyOutlined } from '@ant-design/icons';
 import { toast } from 'react-toastify';
-import { createStaff } from '~/services/userService';
-import { getToken } from '~/utils/token';
+import { useDispatch, useSelector } from 'react-redux';
+import { userActions } from '~/redux/slice/userSlice';
 
 const { Option } = Select;
 
 const ModalCreate = ({ isVisible, onCancel }) => {
+    const token = useSelector((state) => state.auth.auth.access_token);
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -16,13 +18,7 @@ const ModalCreate = ({ isVisible, onCancel }) => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('Nhân viên');
 
-    const clearHandler = () => {
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPhoneNumber('');
-        setPassword('');
-    };
+    const dispatch = useDispatch();
 
     const createHandler = async () => {
         try {
@@ -31,24 +27,42 @@ const ModalCreate = ({ isVisible, onCancel }) => {
                 return;
             }
 
-            const token = getToken('auth').auth.access_token;
-
-            const response = await createStaff(token, {
-                firstName,
-                lastName,
-                email,
-                phoneNumber,
-                password,
-                role
-            });
-
-            if (response.status === true) {
-                toast.success(response.message);
-                clearHandler();
-                onCancel();
+            if (role === 'Nhân viên') {
+                dispatch(
+                    userActions.createStaff({
+                        token,
+                        data: { firstName, lastName, email, phoneNumber, password, role }
+                    })
+                );
+            } else if (role === 'Kỹ thuật viên') {
+                dispatch(
+                    userActions.createTech({
+                        token,
+                        data: { firstName, lastName, email, phoneNumber, password, role }
+                    })
+                );
+            } else if (role === 'Thu ngân') {
+                dispatch(
+                    userActions.createCashier({
+                        token,
+                        data: { firstName, lastName, email, phoneNumber, password, role }
+                    })
+                );
             } else {
-                toast.error(response.message || 'Tạo nhân viên thất bại');
+                dispatch(
+                    userActions.createSupervisor({
+                        token,
+                        data: { firstName, lastName, email, phoneNumber, password, role }
+                    })
+                );
             }
+
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPhoneNumber('');
+            setPassword('');
+            onCancel();
         } catch (error) {
             const errorMessage =
                 error.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại sau';

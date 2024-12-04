@@ -7,7 +7,8 @@ export const selectFilteredWarehouses = createSelector(
 
         if (searchQuery) {
             filteredWarehouses = filteredWarehouses.filter((warehouse) =>
-                warehouse.name.toLowerCase().includes(searchQuery.toLowerCase())
+                warehouse.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                warehouse.address.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
 

@@ -7,7 +7,8 @@ export const selectFilteredCategories = createSelector(
 
         if (searchQuery) {
             filteredCategories = filteredCategories.filter((category) =>
-                category.name.toLowerCase().includes(searchQuery.toLowerCase())
+                category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                category.description.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
 

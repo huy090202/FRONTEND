@@ -9,7 +9,11 @@ function* fetchAppointmentsSage(action) {
         const { token, page, limit } = action.payload;
         const response = yield call(getAllAppoinmentsAdmin, token, page, limit);
         if (response.status === true) {
-            yield put(appointmentActions.fetchAppointmentsSuccess(response.data));
+            yield put(appointmentActions.fetchAppointmentsSuccess({
+                data: response.data,
+                total: response.total,
+                limit: response.limit
+            }));
         } else {
             yield put(appointmentActions.fetchAppointmentsFailure(response.message));
         }
@@ -42,7 +46,10 @@ function* deleteAppointmentSaga(action) {
         const { token, appointmentId } = action.payload;
         const response = yield call(deleteAppoinment, token, appointmentId);
         if (response.status === true) {
-            yield put(appointmentActions.deleteAppointmentSuccess(appointmentId));
+            yield put(appointmentActions.deleteAppointmentSuccess({
+                appointmentId,
+                message: response.message
+            }));
         } else {
             yield put(appointmentActions.deleteAppointmentFailure(response.message));
         }
@@ -55,15 +62,37 @@ function* deleteAppointmentSaga(action) {
 // Lấy danh sách lịch hẹn
 function* fetchAppointmentsByUserSage(action) {
     try {
-        const { token } = action.payload;
-        const response = yield call(getAllAppoinmentsUser, token);
+        const { token, page, limit } = action.payload;
+        const response = yield call(getAllAppoinmentsUser, token, page, limit);
         if (response.status === true) {
-            yield put(appointmentActions.fetchAppointmentsByUserSuccess(response.data));
+            yield put(appointmentActions.fetchAppointmentsByUserSuccess({
+                data: response.data,
+                total: response.total,
+                limit: response.limit
+            }));
         } else {
             yield put(appointmentActions.fetchAppointmentsByUserFailure(response.message));
         }
     } catch (error) {
         yield put(appointmentActions.fetchAppointmentsByUserFailure(error.message));
+    }
+}
+
+// Xóa lịch hẹn
+function* deleteAppointmentByUserSaga(action) {
+    try {
+        const { token, appointmentId } = action.payload;
+        const response = yield call(deleteAppoinment, token, appointmentId);
+        if (response.status === true) {
+            yield put(appointmentActions.deleteAppointmentSuccess({
+                appointmentId,
+                message: response.message
+            }));
+        } else {
+            yield put(appointmentActions.deleteAppointmentFailure(response.message));
+        }
+    } catch (error) {
+        yield put(appointmentActions.deleteAppointmentFailure(error.message));
     }
 }
 
@@ -74,4 +103,5 @@ export default function* appointmentSaga() {
     yield takeLatest(appointmentActions.deleteAppointment, deleteAppointmentSaga);
     // User
     yield takeLatest(appointmentActions.fetchAppointmentsByUser, fetchAppointmentsByUserSage);
+    yield takeLatest(appointmentActions.deleteAppointmentByUser, deleteAppointmentByUserSaga);
 }

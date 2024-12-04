@@ -1,35 +1,33 @@
 /* eslint-disable react/prop-types */
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useTable, useGlobalFilter } from 'react-table';
 import { toast } from 'react-toastify';
-import { DeleteOutlined } from '@ant-design/icons';
-import { useTable } from 'react-table';
-import AppointmentModalDetail from './appointmentModalDetail';
-import { FormatDate } from '~/utils/formatDate.js';
-import { selectFilteredAppointmentsUser } from '~/redux/selector/appointmentSelector';
-import { appointmentActions } from '~/redux/slice/appointmentSlice';
-import Loading from '~/components/shared/Loading/loading';
 import { Input, Pagination, Select } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import Loading from '~/components/shared/Loading/loading';
+import { formatVND } from '~/utils/formatVND';
+import { selectFilteredInvoices } from '~/redux/selector/invoiceSelector';
+import { invoiceActions } from '~/redux/slice/invoiceSlice';
+import InvoiceModalDetail from './invoiceModalDetail';
 
-const HistoryAppointment = () => {
+const Invoice = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
-    const { appointmentsByUser, page, limit, total } = useSelector((state) => state.appointment);
+    const { invoices, page, limit, total } = useSelector((state) => state.invoice);
 
     const [totalPages, setTotalPages] = useState(1);
-    const [filterInput, setFilterInput] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
-
-    const [selectedAppoint, setSelectedAppoint] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [filterInput, setFilterInput] = useState('');
+    const [paymentStatusFilter, setPaymentStatusFilter] = useState('all');
+    const [paymentMethodFilter, setPaymentMethodFilter] = useState('all');
 
-    const filteredAppointments = useSelector((state) =>
-        selectFilteredAppointmentsUser(state, filterInput, statusFilter)
+    const filteredInvoices = useSelector((state) =>
+        selectFilteredInvoices(state, filterInput, paymentStatusFilter, paymentMethodFilter)
     );
 
-    const dispatch = useDispatch();
-
-    const showModal = (appoint) => {
-        setSelectedAppoint(appoint);
+    const showModal = (order) => {
+        setSelectedInvoice(order);
         setIsModalVisible(true);
     };
 
@@ -37,17 +35,18 @@ const HistoryAppointment = () => {
         setIsModalVisible(false);
     };
 
+    const dispatch = useDispatch();
+
     const handlePageChange = (page, limit) => {
-        dispatch(appointmentActions.fetchAppointmentsByUser({ token, page, limit }));
+        dispatch(invoiceActions.fetchInvoices({ token, page, limit }));
     };
 
-    // Xử lý xóa lịch hẹn
-    const handleDeleteAppoint = useCallback(
-        (id) => {
-            if (!token || !id) {
+    const handleDeleteInvoice = useCallback(
+        (code) => {
+            if (!token || !code) {
                 return;
             }
-            dispatch(appointmentActions.deleteAppointmentByUser({ token, appointmentId: id }));
+            dispatch(invoiceActions.deleteInvoice({ token, code }));
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [token]
@@ -56,91 +55,90 @@ const HistoryAppointment = () => {
     const columns = useMemo(
         () => [
             {
-                Header: 'Tên xe',
-                accessor: 'motor',
+                Header: 'Code',
+                accessor: 'invoices_code',
                 Cell: ({ value, row }) => (
                     <span
                         className='text-gray-500 cursor-pointer hover:underline'
                         onClick={() => showModal(row.original)}
                     >
-                        {value ? value.motor_name : 'Không có tên xe'}
+                        {value}
                     </span>
                 )
             },
             {
-                Header: 'Tên khách hàng',
-                accessor: 'user',
-                Cell: ({ value }) =>
-                    value ? value.lastName + ' ' + value.firstName : 'Không có tên'
+                Header: 'Thời gian tạo hóa đơn',
+                accessor: 'create_at'
             },
             {
-                Header: 'Ngày hẹn',
-                accessor: 'appointment_date',
-                Cell: ({ value }) => FormatDate(value)
+                Header: 'Tổng tiền',
+                accessor: 'total_amount',
+                Cell: ({ value }) => formatVND(Number(value))
             },
             {
-                Header: 'Giờ bắt đầu',
-                accessor: 'appointment_time'
+                Header: 'Trạng thái thanh toán',
+                accessor: 'payment_status'
             },
             {
-                Header: 'Ghi chú',
-                accessor: 'content'
-            },
-            {
-                Header: 'Trạng thái',
-                accessor: 'status'
+                Header: 'Phương thức thanh toán',
+                accessor: 'payment_method'
             },
             {
                 Header: 'Hành động',
-                Cell: ({ row }) =>
-                    (row.original.status === 'Đã hoàn thành' ||
-                        row.original.status === 'Đã hủy') && (
-                        <div className='flex items-center w-full'>
+                Cell: ({ row }) => (
+                    <div className='flex items-center w-full'>
+                        {row.original.payment_status === 'Đã thanh toán' ? (
                             <DeleteOutlined
                                 className='text-3xl'
-                                onClick={() => handleDeleteAppoint(row.original.id)}
+                                onClick={() => handleDeleteInvoice(row.original.invoices_code)}
                                 style={{ cursor: 'pointer', color: 'red' }}
                             />
-                        </div>
-                    )
+                        ) : null}
+                    </div>
+                )
             }
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [appointmentsByUser.data.length]
+        [token, invoices.data.length]
     );
 
-    // Lấy danh sách lịch hẹn
     const fetchData = useCallback(() => {
         if (!token) {
             toast.error('Token không tồn tại');
             return;
         }
         try {
-            dispatch(appointmentActions.fetchAppointmentsByUser({ token, page, limit }));
+            dispatch(invoiceActions.fetchInvoices({ token, page, limit }));
             setTotalPages(totalPages);
         } catch (error) {
             console.log(error.message);
-            toast.error('Lấy dữ liệu lịch hẹn thất bại');
+            toast.error('Lấy dữ liệu hóa đơn thất bại');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, appointmentsByUser.data.length, page, limit, dispatch, totalPages]);
+    }, [token, page, limit, dispatch, invoices.data.length, totalPages]);
 
     useEffect(() => {
         fetchData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchData]);
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
-        columns,
-        data: filteredAppointments
-    });
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+        {
+            columns,
+            data: filteredInvoices
+        },
+        useGlobalFilter
+    );
 
-    const handleFilterChange = useCallback((e) => {
+    const handleFilterChange = (e) => {
         setFilterInput(e.target.value);
-    }, []);
+    };
 
-    const handleStatusFilterChange = (value) => {
-        setStatusFilter(value);
+    const handlePaymentStatusFilterChange = (value) => {
+        setPaymentStatusFilter(value);
+    };
+
+    const handlePaymentMethodFilterChange = (value) => {
+        setPaymentMethodFilter(value);
     };
 
     const vietnameseLocale = {
@@ -155,35 +153,46 @@ const HistoryAppointment = () => {
 
     return (
         <Fragment>
-            {appointmentsByUser.loading && (
+            {invoices.loading && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
                     <Loading />
                 </div>
             )}
-            <div className='border-2 border-[#eeefee] rounded-2xl bg-white shadow-xl my-5'>
+            <div className='flex flex-col w-full'>
+                <h1 className='text-4xl font-bold my-14'>Danh sách hóa đơn</h1>
                 <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
+                    {/* Filter */}
                     <div className='flex gap-4 px-10 mb-4'>
                         <Input
                             size='large'
-                            className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
+                            className='w-1/4 px-4 py-5 text-2xl border rounded-2xl'
                             type='text'
-                            placeholder='Từ khóa tìm kiếm...'
+                            placeholder='Nhập vào code'
                             value={filterInput}
                             onChange={handleFilterChange}
                         />
                         <Select
                             defaultValue='all'
-                            onChange={handleStatusFilterChange}
+                            onChange={handlePaymentStatusFilterChange}
                             style={{ width: 150, height: 50 }}
                             options={[
-                                { label: 'Trạng thái lịch hẹn', value: 'all' },
-                                { value: 'Chờ xác nhận', label: 'Chờ xác nhận' },
-                                { value: 'Đã xác nhận', label: 'Đã xác nhận' },
-                                { value: 'Đã hoàn thành', label: 'Đã hoàn thành' },
-                                { value: 'Đã hủy', label: 'Đã hủy' }
+                                { label: 'Trạng thái thanh toán', value: 'all' },
+                                { label: 'Đã thanh toán', value: 'Đã thanh toán' },
+                                { label: 'Chưa thanh toán', value: 'Chưa thanh toán' }
+                            ]}
+                        />
+                        <Select
+                            defaultValue='all'
+                            onChange={handlePaymentMethodFilterChange}
+                            style={{ width: 150, height: 50 }}
+                            options={[
+                                { label: 'Phương thức thanh toán', value: 'all' },
+                                { label: 'Tiền mặt', value: 'Tiền mặt' },
+                                { label: 'ZALOPAY', value: 'ZALOPAY' }
                             ]}
                         />
                     </div>
+                    {/* Table */}
                     <table {...getTableProps()} className='w-full'>
                         <thead>
                             {headerGroups.map((headerGroup) => (
@@ -217,6 +226,7 @@ const HistoryAppointment = () => {
                             })}
                         </tbody>
                     </table>
+                    {/* Page */}
                     <div className='flex items-center justify-center px-10 mt-5 text-2xl'>
                         <div className='flex gap-4 text-gray-500'>
                             <Pagination
@@ -229,10 +239,11 @@ const HistoryAppointment = () => {
                             />
                         </div>
                     </div>
-                    <AppointmentModalDetail
+                    {/* Modal */}
+                    <InvoiceModalDetail
                         isVisible={isModalVisible}
                         onCancel={handleCancel}
-                        appoint={selectedAppoint}
+                        invoice={selectedInvoice}
                     />
                 </div>
             </div>
@@ -240,4 +251,4 @@ const HistoryAppointment = () => {
     );
 };
 
-export default HistoryAppointment;
+export default Invoice;

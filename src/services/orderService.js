@@ -20,7 +20,16 @@ export const allOrders = async (accessToken, page, limit) => {
 
 // Cập nhật trạng thái đơn hàng
 export const updateOrderStatus = async (accessToken, id, status) => {
-    return await axios.patch(`order/${id}/order-status?status=${status}`, {
+    return await axios.patch(`order/${id}/order-status?status=${status}`, null, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+}
+
+// Xóa đơn hàng
+export const deleteOrder = async (accessToken, code) => {
+    return await axios.delete(`order/delete/${code}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
@@ -28,8 +37,8 @@ export const updateOrderStatus = async (accessToken, id, status) => {
 }
 
 // Lấy danh sách đơn hàng - User
-export const allOrdersByUser = async (accessToken) => {
-    return await axios.get('order/get-all', {
+export const allOrdersByUser = async (accessToken, page, limit) => {
+    return await axios.get(`order/get-all?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },

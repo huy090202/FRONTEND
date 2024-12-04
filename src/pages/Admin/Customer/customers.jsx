@@ -12,7 +12,7 @@ import Loading from '~/components/shared/Loading/loading';
 
 const Customers = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
-    const { customers, loading, page, limit, total } = useSelector((state) => state.user);
+    const { customers, page, limit, total } = useSelector((state) => state.user);
 
     const [data, setData] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
@@ -100,7 +100,7 @@ const Customers = () => {
             }
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [token, data]
+        [token, customers.data.length]
     );
 
     const fetchData = useCallback(() => {
@@ -113,10 +113,10 @@ const Customers = () => {
             setTotalPages(totalPages);
         } catch (error) {
             console.log(error.message);
-            toast.error('Lấy dữ liệu danh mục thất bại');
+            toast.error('Lấy dữ liệu khách hàng thất bại');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, page, limit, dispatch, customers.length, totalPages]);
+    }, [token, page, limit, dispatch, customers.data.length, totalPages]);
 
     useEffect(() => {
         fetchData();
@@ -150,7 +150,7 @@ const Customers = () => {
 
     return (
         <Fragment>
-            {loading && (
+            {customers.loading && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
                     <Loading />
                 </div>

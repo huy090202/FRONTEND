@@ -198,7 +198,7 @@ const Categories = () => {
                             size='large'
                             className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
                             type='text'
-                            placeholder='Từ khóa tìm kiếm...'
+                            placeholder='Nhập vào tên hoặc mô tả'
                             value={filterInput}
                             onChange={handleFilterChange}
                         />

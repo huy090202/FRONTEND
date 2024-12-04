@@ -9,6 +9,7 @@ import appointmentSaga from './appointmentSaga';
 import categorySaga from './categorySaga';
 import manufacturerSaga from './manufacturerSaga';
 import warehouseSaga from './warehouseSage';
+import invoiceSaga from './invoiceSaga';
 
 export default function* rootSaga() {
     yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
         categorySaga(),
         manufacturerSaga(),
         warehouseSaga(),
+        invoiceSaga(),
     ]);
 }

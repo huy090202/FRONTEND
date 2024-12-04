@@ -445,6 +445,7 @@ const CreateAppointment = () => {
                                         value={appointTime}
                                         onChange={(time) => setAppointTime(time)}
                                         disabledHours={disabledHours}
+                                        showNow={false}
                                         style={{
                                             backgroundColor: 'transparent',
                                             fontFamily: 'LXGW WenKai TC',

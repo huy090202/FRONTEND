@@ -1,34 +1,30 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTable, useGlobalFilter } from 'react-table';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import {
-    RightOutlined,
-    LeftOutlined,
-    DoubleLeftOutlined,
-    DoubleRightOutlined,
-    DeleteOutlined
-} from '@ant-design/icons';
-import { Input, Select } from 'antd';
-import {
-    changeMaintenanceStatus,
-    deleteMaintenance,
-    getAllMaintenances
-} from '~/services/maintenanceService';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Input, Pagination, Select } from 'antd';
 import MaintenanceModalDetail from './maintenanceModalDetail';
 import { FormatDate } from '~/utils/formatDate.js';
+import { selectFilteredMaintenances } from '~/redux/selector/maintenanceSelector';
+import { maintenanceActions } from '~/redux/slice/maintenanceSlice';
+import Loading from '~/components/shared/Loading/loading';
 
 const Maintenances = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
+    const { maintenances, page, limit, total } = useSelector((state) => state.maintenance);
 
     const [data, setData] = useState([]);
-    const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedMaintenance, setSelectedMaintenance] = useState(null);
     const [filterInput, setFilterInput] = useState('');
-    const limit = 5;
+    const [statusFilter, setStatusFilter] = useState('all');
+
+    const filteredMaintenances = useSelector((state) =>
+        selectFilteredMaintenances(state, filterInput, statusFilter)
+    );
 
     const statusOptions = [
         { value: 'Kiểm tra xe', label: 'Kiểm tra xe' },
@@ -36,6 +32,12 @@ const Maintenances = () => {
         { value: 'Hoàn thành bảo dưỡng', label: 'Hoàn thành bảo dưỡng' },
         { value: 'Đã hủy', label: 'Đã hủy' }
     ];
+
+    const dispatch = useDispatch();
+
+    const handlePageChange = (page, limit) => {
+        dispatch(maintenanceActions.fetchMaintenances({ token, page, limit }));
+    };
 
     const showModal = (maintenance) => {
         setSelectedMaintenance(maintenance);
@@ -46,50 +48,50 @@ const Maintenances = () => {
         setIsModalVisible(false);
     };
 
-    const handleDeletePart = async (maintenanceId) => {
-        try {
-            const res = await deleteMaintenance(token, maintenanceId);
-            if (res.status === true) {
-                toast.success(res.message);
-            } else {
-                toast.error(res.message);
-            }
-        } catch (error) {
-            toast.error('Xóa đơn bảo dưỡng thất bại');
-        }
-    };
+    const handleDeleteMaintenance = useCallback(
+        (id) => {
+            if (!token || !id) return;
+            dispatch(maintenanceActions.deleteMaintenance({ token, id }));
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token]
+    );
 
     const columns = useMemo(
         () => [
             {
-                Header: 'Ngày bảo dưỡng',
-                accessor: 'maintenance_date',
+                Header: 'Code',
+                accessor: 'maintenance_code',
                 Cell: ({ value, row }) => (
                     <span
                         className='text-gray-500 cursor-pointer hover:underline'
                         onClick={() => showModal(row.original)}
                     >
-                        {FormatDate(value)}
+                        {value}
                     </span>
                 )
             },
             {
-                Header: 'Ghi chú trước bảo dưỡng',
-                accessor: 'notes_before'
+                Header: 'Tên xe',
+                accessor: 'motor',
+                Cell: ({ value }) => (value ? `${value?.motor_name}` : 'Không có tên xe')
             },
             {
-                Header: 'Ghi chú sau bảo dưỡng',
-                accessor: 'notes_after'
+                Header: 'Tên khách hàng',
+                accessor: 'appointment',
+                Cell: ({ value }) =>
+                    value ? `${value.user?.lastName} ${value.user?.firstName}` : 'Không có tên'
             },
             {
-                Header: 'Phần trăm hao mòn trước',
-                accessor: 'wear_percentage_before',
-                Cell: ({ value }) => <span>{value} %</span>
+                Header: 'Tên kỹ thuật viên',
+                accessor: 'user',
+                Cell: ({ value }) =>
+                    value ? `${value?.lastName} ${value?.firstName}` : 'Không có tên'
             },
             {
-                Header: 'Phần trăm hao mòn sau',
-                accessor: 'wear_percentage_after',
-                Cell: ({ value }) => <span>{value} %</span>
+                Header: 'Ngày bảo dưỡng',
+                accessor: 'maintenance_date',
+                Cell: ({ value }) => FormatDate(value)
             },
             {
                 Header: 'Trạng thái',
@@ -101,18 +103,21 @@ const Maintenances = () => {
                         onChange={async (newStatus) => {
                             const maintenanceId = row.original.id;
                             try {
-                                const response = await changeMaintenanceStatus(
-                                    token,
-                                    maintenanceId,
-                                    newStatus
+                                dispatch(
+                                    maintenanceActions.updateMaintenanceStatus({
+                                        token,
+                                        id: maintenanceId,
+                                        active: newStatus
+                                    })
                                 );
-                                if (response.status === true) {
-                                    toast.success(response.message);
-                                } else {
-                                    toast.error(response.message);
-                                }
+                                const updateData = data.map((maintenance) =>
+                                    maintenance.id === maintenanceId
+                                        ? { ...maintenance, status: newStatus }
+                                        : maintenance
+                                );
+                                setData(updateData);
                             } catch (error) {
-                                toast.error('Cập nhật trạng thái thất bại!');
+                                toast.error(error.response?.data?.message);
                             }
                         }}
                         disabled={value === 'Hoàn thành bảo dưỡng' || value === 'Đã hủy'}
@@ -133,179 +138,154 @@ const Maintenances = () => {
                         <div className='flex items-center w-full'>
                             <DeleteOutlined
                                 className='text-3xl'
-                                onClick={() => handleDeletePart(row.original.id)}
+                                onClick={() => handleDeleteMaintenance(row.original.id)}
                                 style={{ cursor: 'pointer', color: 'red' }}
                             />
                         </div>
                     )
             }
         ],
-        [token, data]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token, maintenances.data.length]
     );
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!token) {
-                toast.error('Token không tồn tại');
-                return;
-            }
-            try {
-                const response = await getAllMaintenances(token, { page, limit });
-                setData(response.data);
-                setTotalPages(Math.ceil(response.total / limit));
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-        fetchData();
-    }, [token, page]);
+    const fetchData = useCallback(() => {
+        if (!token) {
+            toast.error('Token không tồn tại');
+            return;
+        }
+        try {
+            dispatch(maintenanceActions.fetchMaintenances({ token, page, limit }));
+            setTotalPages(totalPages);
+        } catch (error) {
+            console.log(error.message);
+            toast.error('Lấy dữ liệu đơn bảo dưỡng thất bại');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, maintenances.data.length, page, limit, dispatch, totalPages]);
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, setGlobalFilter } =
-        useTable(
-            {
-                columns,
-                data
-            },
-            useGlobalFilter
-        );
+    useEffect(() => {
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchData]);
+
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+        {
+            columns,
+            data: filteredMaintenances
+        },
+        useGlobalFilter
+    );
 
     const handleFilterChange = (e) => {
         setFilterInput(e.target.value);
     };
 
-    const handleApplyFilter = () => {
-        setGlobalFilter(filterInput);
+    const handleStatusFilterChange = (value) => {
+        setStatusFilter(value);
     };
 
-    const handleClearFilter = () => {
-        setFilterInput('');
-        setGlobalFilter(undefined);
+    const vietnameseLocale = {
+        items_per_page: '/ trang',
+        jump_to: 'Đi đến',
+        page: '',
+        prev_page: 'Trang trước',
+        next_page: 'Trang sau',
+        prev_5: '5 trang trước',
+        next_5: '5 trang sau'
     };
-
-    const handleGoToFirstPage = () => {
-        setPage(1);
-    };
-
-    const handleGoToLastPage = () => {
-        setPage(totalPages);
-    };
-
-    const isFirstPage = page === 1;
-    const isLastPage = page === totalPages;
 
     return (
-        <div className='flex flex-col w-full'>
-            <h1 className='text-4xl font-bold my-14'>Danh sách Đơn bảo dưỡng</h1>
-            <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
-                {/* Filter */}
-                <div className='flex gap-4 px-10 mb-4'>
-                    <Input
-                        size='large'
-                        className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
-                        type='text'
-                        placeholder='Từ khóa tìm kiếm...'
-                        value={filterInput}
-                        onChange={handleFilterChange}
-                    />
-                    <button
-                        className='px-6 py-1 mr-2 text-xl text-white bg-black rounded-2xl'
-                        onClick={handleApplyFilter}
-                    >
-                        Tìm kiếm
-                    </button>
-                    {filterInput && (
-                        <button
-                            className='px-6 py-1 mr-2 text-xl text-white bg-red-600 rounded-2xl'
-                            onClick={handleClearFilter}
-                        >
-                            Xóa
-                        </button>
-                    )}
+        <Fragment>
+            {maintenances.loading && (
+                <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
+                    <Loading />
                 </div>
-                {/* Table */}
-                <table {...getTableProps()} className='w-full'>
-                    <thead>
-                        {headerGroups.map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((column) => (
-                                    <th
-                                        key={column.id}
-                                        className='h-24 text-left bg-[#f4f6f8] py-5 px-10 text-2xl'
-                                    >
-                                        {column.render('Header')}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                            prepareRow(row);
-                            return (
-                                <tr
-                                    key={row.id}
-                                    className='border-gray-200 border-y-2 hover:bg-[#f4f6f8] text-2xl text-gray-500'
-                                >
-                                    {row.cells.map((cell) => (
-                                        <td key={cell.column.id} className='h-24 px-10 py-5'>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {/* Page */}
-                <div className='flex items-center justify-between px-10 mt-5 text-2xl'>
-                    <span className='text-black'>
-                        Trang {page} / {totalPages}
-                    </span>
-                    <div className='flex gap-4 text-gray-500'>
-                        <DoubleLeftOutlined
-                            onClick={handleGoToFirstPage}
-                            className={`p-3 rounded-xl ${
-                                isFirstPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
+            )}
+            <div className='flex flex-col w-full'>
+                <h1 className='text-4xl font-bold my-14'>Danh sách Đơn bảo dưỡng</h1>
+                <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
+                    {/* Filter */}
+                    <div className='flex gap-4 px-10 mb-4'>
+                        <Input
+                            size='large'
+                            className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
+                            type='text'
+                            placeholder='Từ khóa tìm kiếm...'
+                            value={filterInput}
+                            onChange={handleFilterChange}
                         />
-                        <LeftOutlined
-                            onClick={() => !isFirstPage && setPage((prev) => prev - 1)}
-                            className={`p-3 rounded-xl ${
-                                isFirstPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
-                        />
-                        <RightOutlined
-                            onClick={() => !isLastPage && setPage((prev) => prev + 1)}
-                            className={`p-3 rounded-xl ${
-                                isLastPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
-                        />
-                        <DoubleRightOutlined
-                            onClick={handleGoToLastPage}
-                            className={`p-3 rounded-xl ${
-                                isLastPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
+                        <Select
+                            defaultValue='all'
+                            onChange={handleStatusFilterChange}
+                            style={{ width: 150, height: 50 }}
+                            options={[
+                                { label: 'Trạng thái đơn bảo dưỡng', value: 'all' },
+                                { value: 'Kiểm tra xe', label: 'Kiểm tra xe' },
+                                { value: 'Đang bảo dưỡng', label: 'Đang bảo dưỡng' },
+                                { value: 'Hoàn thành bảo dưỡng', label: 'Hoàn thành bảo dưỡng' },
+                                { value: 'Đã hủy', label: 'Đã hủy' }
+                            ]}
                         />
                     </div>
-                </div>
-                {/* Modal */}
-                <MaintenanceModalDetail
-                    isVisible={isModalVisible}
-                    onCancel={handleCancel}
-                    maintenance={selectedMaintenance}
-                />
+                    {/* Table */}
+                    <table {...getTableProps()} className='w-full'>
+                        <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((column) => (
+                                        <th
+                                            key={column.id}
+                                            className='h-24 text-left bg-[#f4f6f8] py-5 px-10 text-2xl'
+                                        >
+                                            {column.render('Header')}
+                                        </th>
+                                    ))}
+                                </tr>
+                            ))}
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                            {rows.map((row) => {
+                                prepareRow(row);
+                                return (
+                                    <tr
+                                        key={row.id}
+                                        className='border-gray-200 border-y-2 hover:bg-[#f4f6f8] text-2xl text-gray-500'
+                                    >
+                                        {row.cells.map((cell) => (
+                                            <td key={cell.column.id} className='h-24 px-10 py-5'>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    {/* Page */}
+                    <div className='flex items-center justify-center px-10 mt-5 text-2xl'>
+                        <div className='flex gap-4 text-gray-500'>
+                            <Pagination
+                                current={page}
+                                pageSize={limit}
+                                total={total}
+                                onChange={handlePageChange}
+                                showSizeChanger
+                                locale={vietnameseLocale}
+                            />
+                        </div>
+                    </div>
+                    {/* Modal */}
+                    <MaintenanceModalDetail
+                        isVisible={isModalVisible}
+                        onCancel={handleCancel}
+                        maintenance={selectedMaintenance}
+                    />
 
-                {/* <PartModalCreate isVisible={isModalCreate} onCancel={handleCancel} /> */}
+                    {/* <PartModalCreate isVisible={isModalCreate} onCancel={handleCancel} /> */}
+                </div>
             </div>
-        </div>
+        </Fragment>
     );
 };
 

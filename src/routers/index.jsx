@@ -31,6 +31,7 @@ import Appointment from '~/pages/Admin/Appointment/appointment';
 import Maintenances from '~/pages/Admin/Maintenance/maintenances';
 import Manufacturers from '~/pages/Admin/Manufacturer/manufacturers';
 import Order from '~/pages/Admin/Order/order';
+import Invoice from '~/pages/Admin/Invoice/invoice';
 
 import Maintenance from '~/pages/Maintenance/maintenance';
 import MaintenanceHistory from '~/pages/Maintenance/MaintenanceHistory/maintenanceHistory';
@@ -149,6 +150,10 @@ export const router = createBrowserRouter([
             {
                 path: 'warehouse',
                 element: <Warehouses />
+            },
+            {
+                path: 'invoice',
+                element: <Invoice />
             },
             {
                 path: 'order',

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Button, Image, Popconfirm } from 'antd';
@@ -84,6 +84,7 @@ const Maintenance = () => {
         fetchMaintenance();
         getAppointAndUser();
         getMotor();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, maintenancesTech.length > 0]);
 
     const handleOpenModal = (index) => {
@@ -100,9 +101,31 @@ const Maintenance = () => {
         setIsModalVisible(false);
     };
 
-    const confirmCancel = () => {
-        alert('Hủy đơn bảo dưỡng thành công');
-    };
+    const confirmCancel = useCallback(
+        (id) => {
+            if (!token || !id) return;
+            dispatch(
+                maintenanceActions.updateMaintenanceStatusByTech({ token, id, active: 'Đã hủy' })
+            );
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token]
+    );
+
+    const handleConfirmMain = useCallback(
+        (id) => {
+            if (!token || !id) return;
+            dispatch(
+                maintenanceActions.updateMaintenanceStatusByTech({
+                    token,
+                    id,
+                    active: 'Đang bảo dưỡng'
+                })
+            );
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token]
+    );
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -205,7 +228,7 @@ const Maintenance = () => {
                                                                 }}
                                                             />
                                                         }
-                                                        onConfirm={confirmCancel}
+                                                        onConfirm={() => confirmCancel(item.id)}
                                                     >
                                                         <Button
                                                             type='light'
@@ -219,6 +242,7 @@ const Maintenance = () => {
                                                         </Button>
                                                     </Popconfirm>
                                                     <Button
+                                                        onClick={() => handleConfirmMain(item.id)}
                                                         type='light'
                                                         className='h-12 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white'
                                                         style={{

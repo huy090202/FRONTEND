@@ -23,12 +23,13 @@ const SectionMain = ({ onCancel, maintenance, appoint, motor, user }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const handleMaintenanceHistory = (maintenanceId) => {
-        navigate(`/maintenance-history/${maintenanceId}`);
+    const handleMaintenanceHistory = (userId) => {
+        navigate(`/maintenance-history/${userId}`);
     };
 
     useEffect(() => {
         dispatch(partActions.fetchParts());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -89,7 +90,7 @@ const SectionMain = ({ onCancel, maintenance, appoint, motor, user }) => {
                         <span className='text-2xl font-bold'>Lịch sử bảo dưỡng tại cửa hàng: </span>
                         <Button
                             onClick={() => {
-                                handleMaintenanceHistory(maintenance.id);
+                                handleMaintenanceHistory(user.id);
                             }}
                             type='light'
                             className='h-12 text-2xl text-right bg-[#295255] hover:bg-[#577877] text-white'

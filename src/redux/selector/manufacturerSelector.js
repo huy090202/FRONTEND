@@ -7,7 +7,8 @@ export const selectFilteredManufacturers = createSelector(
 
         if (searchQuery) {
             filteredManufacturers = filteredManufacturers.filter((manufacturer) =>
-                manufacturer.name.toLowerCase().includes(searchQuery.toLowerCase())
+                manufacturer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                manufacturer.country.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
 

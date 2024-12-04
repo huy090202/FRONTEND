@@ -28,16 +28,16 @@ export const createFilteredSelector = (selector) =>
 
 
 // Tìm kiếm và lọc dữ liệu khách hàng
-export const filteredCustomersSelector = createFilteredSelector((state) => state.user.customers);
+export const filteredCustomersSelector = createFilteredSelector((state) => state.user.customers.data);
 
 // Tìm kiếm và lọc dữ liệu kỹ thuật viên
-export const filteredTechniciansSelector = createFilteredSelector((state) => state.user.techs);
+export const filteredTechniciansSelector = createFilteredSelector((state) => state.user.techs.data);
 
 // Tìm kiếm và lọc dữ liệu nhân viên
-export const filteredStaffsSelector = createFilteredSelector((state) => state.user.staffs);
+export const filteredStaffsSelector = createFilteredSelector((state) => state.user.staffs.data);
 
 // Tìm kiếm và lọc dữ liệu thu ngân
-export const filteredCashiersSelector = createFilteredSelector((state) => state.user.cashiers);
+export const filteredCashiersSelector = createFilteredSelector((state) => state.user.cashiers.data);
 
 // Tìm kiếm và lọc dữ liệu quản lý
-export const filteredSupervisorsSelector = createFilteredSelector((state) => state.user.supervisors);
+export const filteredSupervisorsSelector = createFilteredSelector((state) => state.user.supervisors.data);
