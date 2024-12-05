@@ -9,6 +9,7 @@ import { Input, Pagination, Select } from 'antd';
 import { selectFilteredMaintenancesByUser } from '~/redux/selector/maintenanceSelector';
 import { maintenanceActions } from '~/redux/slice/maintenanceSlice';
 import { FormatDate } from '~/utils/formatDate';
+import HistoryMaintenanceModalDetail from './historyMaintenanceModalDetail';
 
 const HistoryMaintenance = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -18,7 +19,7 @@ const HistoryMaintenance = () => {
     const [filterInput, setFilterInput] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 
-    const [selectedAppoint, setSelectedAppoint] = useState(null);
+    const [selectedMain, setSelectedMain] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const filteredMaintenancesByUser = useSelector((state) =>
@@ -27,8 +28,8 @@ const HistoryMaintenance = () => {
 
     const dispatch = useDispatch();
 
-    const showModal = (appoint) => {
-        setSelectedAppoint(appoint);
+    const showModal = (main) => {
+        setSelectedMain(main);
         setIsModalVisible(true);
     };
 
@@ -233,6 +234,11 @@ const HistoryMaintenance = () => {
                     </div>
                 </div>
             </div>
+            <HistoryMaintenanceModalDetail
+                isVisible={isModalVisible}
+                onCancel={handleCancel}
+                maintenance={selectedMain}
+            />
         </Fragment>
     );
 };

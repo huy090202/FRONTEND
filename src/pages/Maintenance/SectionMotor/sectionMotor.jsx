@@ -1,32 +1,42 @@
 /* eslint-disable react/prop-types */
-import { Carousel, Image } from 'antd';
+import { Image } from 'antd';
+import Slider from 'react-slick';
 import { FormatDate } from '~/utils/formatDate';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const SectionMotor = ({ motor }) => {
+    const sliderSettings = {
+        arrows: false,
+        dots: false,
+        infinite: false,
+        speed: 500
+    };
+
     return (
         <div className='flex items-center gap-10'>
-            <div className='w-[55%]'>
-                <Carousel arrows infinite={false}>
+            <div className='w-[35%]'>
+                <Slider {...sliderSettings} className='flex items-center gap-10'>
                     {motor && motor.motorImages && motor.motorImages.length > 0 ? (
                         motor.motorImages.map((image, index) => (
-                            <Image
-                                key={index}
-                                src={`/minio${image.image_url}`}
-                                alt='motor'
-                                className='object-cover'
-                                height={161}
-                            />
+                            <div key={index}>
+                                <img
+                                    src={`/minio${image.image_url}`}
+                                    alt='motor'
+                                    className='object-cover w-[287px] h-[161px]'
+                                />
+                            </div>
                         ))
                     ) : (
                         <Image
-                            src='https://placehold.co/300x170'
+                            src='https://placehold.co/287x161'
                             alt='motor'
-                            className='object-cover'
+                            className='object-cover w-full'
                         />
                     )}
-                </Carousel>
+                </Slider>
             </div>
-            <div className='flex items-center justify-between bg-[#e5eaf3] w-full py-16 px-10 rounded-lg'>
+            <div className='w-[65%] flex items-center justify-between bg-[#e5eaf3] py-16 px-10 rounded-lg'>
                 <div className='flex flex-col gap-5'>
                     <p className='flex items-center gap-2'>
                         <span className='text-2xl font-bold'>Màu xe:</span>

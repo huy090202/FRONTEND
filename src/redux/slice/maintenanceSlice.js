@@ -30,7 +30,7 @@ const maintenanceSlice = createSlice({
         },
         updateMaintenanceByTechSuccess(state, action) {
             state.isLoading = false;
-            const { data, message } = action.payload;
+            const { data } = action.payload;
             if (data) {
                 const maintenanceIndex = state.maintenancesTech.findIndex((maintenance) => maintenance.id === data.id);
                 if (maintenanceIndex !== -1) {
@@ -38,7 +38,7 @@ const maintenanceSlice = createSlice({
                 } else {
                     state.maintenancesTech = [data, ...state.maintenancesTech];
                 }
-                toast.success(message);
+                toast.success("Đơn bảo dưỡng đã được hoàn thành");
             }
         },
         updateMaintenanceByTechFailure(state, action) {
@@ -50,7 +50,7 @@ const maintenanceSlice = createSlice({
         },
         updateMaintenanceStatusByTechSuccess(state, action) {
             state.isLoading = false;
-            const { data, message } = action.payload;
+            const { data } = action.payload;
             if (data) {
                 const maintenanceIndex = state.maintenancesTech.findIndex((maintenance) => maintenance.id === data.id);
                 if (maintenanceIndex !== -1) {
@@ -58,7 +58,6 @@ const maintenanceSlice = createSlice({
                 } else {
                     state.maintenancesTech = [data, ...state.maintenancesTech];
                 }
-                toast.success(message);
             }
         },
         updateMaintenanceStatusByTechFailure(state, action) {

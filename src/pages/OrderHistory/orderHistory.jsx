@@ -9,6 +9,7 @@ import { Input, Pagination, Select } from 'antd';
 import { selectFilteredOrdersUser } from '~/redux/selector/orderSelector';
 import { orderActions } from '~/redux/slice/orderSlice';
 import { formatVND } from '~/utils/formatVND';
+import OrderHistoryModalDetail from './orderHistoryModalDetail';
 
 const OrderHistory = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -21,7 +22,7 @@ const OrderHistory = () => {
     const [paymentMethodFilter, setPaymentMethodFilter] = useState('all');
     const [deliveryMethodFilter, setDeliveryMothodFilter] = useState('all');
 
-    const [selectedAppoint, setSelectedAppoint] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const filteredOrdersByUser = useSelector((state) =>
@@ -37,8 +38,8 @@ const OrderHistory = () => {
 
     const dispatch = useDispatch();
 
-    const showModal = (appoint) => {
-        setSelectedAppoint(appoint);
+    const showModal = (order) => {
+        setSelectedOrder(order);
         setIsModalVisible(true);
     };
 
@@ -88,10 +89,6 @@ const OrderHistory = () => {
                 Header: 'Tổng tiền',
                 accessor: 'total_price',
                 Cell: ({ value }) => formatVND(Number(value))
-            },
-            {
-                Header: 'Ghi chú',
-                accessor: 'content'
             },
             {
                 Header: 'Trạng thái',
@@ -299,6 +296,11 @@ const OrderHistory = () => {
                     </div>
                 </div>
             </div>
+            <OrderHistoryModalDetail
+                onCancel={handleCancel}
+                order={selectedOrder}
+                isVisible={isModalVisible}
+            />
         </Fragment>
     );
 };

@@ -27,9 +27,27 @@ export const updateOrderStatus = async (accessToken, id, status) => {
     });
 }
 
+// Cập nhật trạng thái thanh toán
+export const updatePaymentStatus = async (accessToken, orderCode, status) => {
+    return await axios.patch(`order/${orderCode}/payment-status?status=${status}`, null, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+}
+
 // Xóa đơn hàng
 export const deleteOrder = async (accessToken, code) => {
     return await axios.delete(`order/delete/${code}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+}
+
+// Kiểm tra trạng thái đơn hàng
+export const checkOrderStatus = async (accessToken, app_trans_id) => {
+    return await axios.get(`order/check/${app_trans_id}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },

@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { orderActions } from '~/redux/slice/orderSlice';
-import { allOrders, allOrdersByUser, deleteOrder, updateOrderStatus } from '~/services/orderService';
+import { allOrders, allOrdersByUser, deleteOrder, updateOrderStatus, updatePaymentStatus } from '~/services/orderService';
 
 // Admin
 // Lấy danh sách đơn hàng
@@ -39,6 +39,24 @@ function* updateOrderStatusSaga(action) {
         }
     } catch (error) {
         yield put(orderActions.updateOrderStatusFailure(error.message));
+    }
+}
+
+// Cập nhật trạng thái thanh toán
+function* updatePaymentStatusSaga(action) {
+    try {
+        const { token, orderCode, status } = action.payload;
+        const response = yield call(updatePaymentStatus, token, orderCode, status);
+        if (response.status === true) {
+            yield put(orderActions.updatePaymentStatusSuccess({
+                data: response.data,
+                message: response.message,
+            }));
+        } else {
+            yield put(orderActions.updatePaymentStatusFailure(response.message));
+        }
+    } catch (error) {
+        yield put(orderActions.updatePaymentStatusFailure(error.message));
     }
 }
 
@@ -103,6 +121,7 @@ export default function* orderSaga() {
     // Admin
     yield takeLatest(orderActions.fetchOrders, fetchOrdersSage);
     yield takeLatest(orderActions.updateOrderStatus, updateOrderStatusSaga);
+    yield takeLatest(orderActions.updatePaymentStatus, updatePaymentStatusSaga);
     yield takeLatest(orderActions.deleteOrder, deleteOrderSaga);
     // User
     yield takeLatest(orderActions.fetchOrdersByUser, fetchOrdersByUserSage);

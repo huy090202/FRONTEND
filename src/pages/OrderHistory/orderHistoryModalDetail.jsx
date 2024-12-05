@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { orderActions } from '~/redux/slice/orderSlice';
 import { formatVND } from '~/utils/formatVND';
 
-const OrderModalDetail = ({ isVisible, onCancel, order }) => {
+const OrderHistoryModalDetail = ({ isVisible, onCancel, order }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
     const [orderDate, setOrderDate] = useState('');
@@ -59,16 +59,7 @@ const OrderModalDetail = ({ isVisible, onCancel, order }) => {
         fetchOrderDetail();
     }, [orderData]);
 
-    const statusOptions = [
-        { value: 'PENDING', label: 'Chờ xác nhận' },
-        { value: 'CONFIRMED', label: 'Đã xác nhận' },
-        { value: 'PREPARING', label: 'Đang chuẩn bị' },
-        { value: 'SHIPPING', label: 'Đang giao hàng' },
-        { value: 'DELIVERED', label: 'Đã giao hàng' },
-        { value: 'CANCELED', label: 'Đã hủy' },
-        { value: 'INVALID', label: 'Đơn hàng không hợp lệ' },
-        { value: 'FAILED', label: 'Đơn hàng thất bại' }
-    ];
+    const statusOptions = [{ value: 'CANCELED', label: 'Đã hủy' }];
 
     return (
         <Modal
@@ -164,7 +155,10 @@ const OrderModalDetail = ({ isVisible, onCancel, order }) => {
                                             orderStatus === 'Đã giao hàng' ||
                                             orderStatus === 'Đã hủy' ||
                                             orderStatus === 'Đơn hàng không hợp lệ' ||
-                                            orderStatus === 'Đơn hàng thất bại'
+                                            orderStatus === 'Đơn hàng thất bại' ||
+                                            orderStatus === 'Đã xác nhận' ||
+                                            orderStatus === 'Đang chuẩn bị' ||
+                                            orderStatus === 'Đang giao hàng'
                                         }
                                     >
                                         {statusOptions.map((option) => (
@@ -273,4 +267,4 @@ const OrderModalDetail = ({ isVisible, onCancel, order }) => {
     );
 };
 
-export default OrderModalDetail;
+export default OrderHistoryModalDetail;

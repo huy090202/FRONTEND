@@ -244,7 +244,7 @@ const CreateAppointment = () => {
         }
     };
 
-    const handleUploadFilesImage = (e) => {
+    const handleUploadFilesImageAppoint = (e) => {
         const files = Array.from(e.target.files);
         const imagesPreview = files.map((file) => ({
             file,
@@ -253,7 +253,7 @@ const CreateAppointment = () => {
         setimages(imagesPreview);
     };
 
-    const handleReviewImage = () => {
+    const handleReviewImageAppoint = () => {
         return images.map((image, index) => (
             <div key={index}>
                 <Image src={image.preview} alt={`image-preview-${index}`} className='size-60' />
@@ -456,29 +456,49 @@ const CreateAppointment = () => {
                                 </div>
                                 {/* Là người dùng đã có tài khoản, đã đăng nhập và đã có xe */}
                                 {isAuthenticated && motorData.length > 0 && (
-                                    <div className='flex flex-col gap-2'>
-                                        <label className='text-2xl'>
-                                            <span className='mr-2 text-red-500'>*</span>
-                                            Chọn xe của bạn:
-                                        </label>
-                                        <WrapperSelect
-                                            style={{
-                                                fontFamily: 'LXGW WenKai TC',
-                                                cursive: 'LXGW Wen'
-                                            }}
-                                            labelInValue
-                                            value={selectedMotor}
-                                            onChange={(e) => setSelectedMotor(e)}
-                                            options={
-                                                Array.isArray(motorData)
-                                                    ? motorData.map((motor) => ({
-                                                          value: motor.id,
-                                                          label: motor.motor_name
-                                                      }))
-                                                    : []
-                                            }
-                                        />
-                                    </div>
+                                    <>
+                                        <div className='flex flex-col gap-2'>
+                                            <label className='text-2xl'>
+                                                <span className='mr-2 text-red-500'>*</span>
+                                                Chọn xe của bạn:
+                                            </label>
+                                            <WrapperSelect
+                                                style={{
+                                                    fontFamily: 'LXGW WenKai TC',
+                                                    cursive: 'LXGW Wen'
+                                                }}
+                                                labelInValue
+                                                value={selectedMotor}
+                                                onChange={(e) => setSelectedMotor(e)}
+                                                options={
+                                                    Array.isArray(motorData)
+                                                        ? motorData.map((motor) => ({
+                                                              value: motor.id,
+                                                              label: motor.motor_name
+                                                          }))
+                                                        : []
+                                                }
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className='text-2xl'>
+                                                <span className='mr-2 text-red-500'>*</span>
+                                                Vui lòng điền đầy đủ thông tin trước khi thêm xe:
+                                            </label>
+                                            <div className='flex items-center mt-2'>
+                                                <button
+                                                    className='px-6 py-3 text-xl hover:bg-[#6699BB] text-[#6699BB] uppercase hover:text-white rounded-lg cursor-pointer'
+                                                    style={{
+                                                        border: '1px solid #6699BB'
+                                                    }}
+                                                    onClick={showModalCreateMotor}
+                                                    disabled={email === ''}
+                                                >
+                                                    <PlusOutlined /> Thêm xe
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
                                 )}
                                 {/* Là người dùng đã có tài khoản, đã đăng nhập nhưng chưa có xe */}
                                 {isAuthenticated && motorData.length === 0 && (
@@ -509,33 +529,53 @@ const CreateAppointment = () => {
                                         motorTemps.some(
                                             (motorTem) => motorTem.email === trimmedEmail
                                         ) ? (
-                                            // Hiển thị phần "Chọn xe của bạn" khi email trùng
-                                            <div className='flex flex-col gap-2'>
-                                                <label className='text-2xl'>
-                                                    <span className='mr-2 text-red-500'>*</span>
-                                                    Chọn xe của bạn:
-                                                </label>
-                                                <WrapperSelect
-                                                    style={{
-                                                        fontFamily: 'LXGW WenKai TC',
-                                                        cursive: 'LXGW Wen'
-                                                    }}
-                                                    labelInValue
-                                                    value={selectedMotorTemp}
-                                                    onChange={(e) => setSelectedMotorTemp(e)}
-                                                    options={motorTemps
-                                                        .filter(
-                                                            (motorTem) =>
-                                                                motorTem.email === trimmedEmail
-                                                        ) // Lọc xe theo email
-                                                        .map((motor) => ({
-                                                            value: motor.id,
-                                                            label: motor.motor_name
-                                                        }))}
-                                                />
-                                            </div>
+                                            <>
+                                                {/* Hiển thị phần "Chọn xe của bạn" khi email trùng */}
+                                                <div className='flex flex-col gap-2'>
+                                                    <label className='text-2xl'>
+                                                        <span className='mr-2 text-red-500'>*</span>
+                                                        Chọn xe của bạn:
+                                                    </label>
+                                                    <WrapperSelect
+                                                        style={{
+                                                            fontFamily: 'LXGW WenKai TC',
+                                                            cursive: 'LXGW Wen'
+                                                        }}
+                                                        labelInValue
+                                                        value={selectedMotorTemp}
+                                                        onChange={(e) => setSelectedMotorTemp(e)}
+                                                        options={motorTemps
+                                                            .filter(
+                                                                (motorTem) =>
+                                                                    motorTem.email === trimmedEmail
+                                                            ) // Lọc xe theo email
+                                                            .map((motor) => ({
+                                                                value: motor.id,
+                                                                label: motor.motor_name
+                                                            }))}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className='text-2xl'>
+                                                        <span className='mr-2 text-red-500'>*</span>
+                                                        Vui lòng điền đầy đủ thông tin trước khi
+                                                        thêm xe:
+                                                    </label>
+                                                    <div className='flex items-center mt-2'>
+                                                        <button
+                                                            className='px-6 py-3 text-xl hover:bg-[#6699BB] text-[#6699BB] uppercase hover:text-white rounded-lg cursor-pointer'
+                                                            style={{
+                                                                border: '1px solid #6699BB'
+                                                            }}
+                                                            onClick={showModalCreate}
+                                                            disabled={email === ''}
+                                                        >
+                                                            <PlusOutlined /> Thêm xe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </>
                                         ) : (
-                                            // Hiển thị nút "Thêm xe" khi email không trùng
                                             <div>
                                                 <label className='text-2xl'>
                                                     <span className='mr-2 text-red-500'>*</span>
@@ -626,14 +666,14 @@ const CreateAppointment = () => {
                                     </div>
                                 </label>
                                 <div className='flex items-center justify-center w-full gap-5'>
-                                    {handleReviewImage()}
+                                    {handleReviewImageAppoint()}
                                 </div>
                                 <input
                                     id='file'
                                     type='file'
                                     multiple
                                     accept='image/*'
-                                    onChange={handleUploadFilesImage}
+                                    onChange={handleUploadFilesImageAppoint}
                                     hidden
                                 />
                             </div>
@@ -659,6 +699,7 @@ const CreateAppointment = () => {
                 isVisible={isModalCreate}
                 onCancel={handleCancel}
                 isEmail={email}
+                isPhone={phone}
             />
 
             <MotorModalCreate isVisible={isModalCreateMotor} onCancel={handleCancelCreate} />

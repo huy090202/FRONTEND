@@ -55,6 +55,11 @@ const Order = () => {
         { value: 'FAILED', label: 'Đơn hàng thất bại' }
     ];
 
+    // const paymentStatusOptions = [
+    //     { value: 'PAID', label: 'Đã thanh toán' },
+    //     { value: 'UNPAID', label: 'Chưa thanh toán' }
+    // ];
+
     const dispatch = useDispatch();
 
     const handlePageChange = (page, limit) => {
@@ -140,6 +145,35 @@ const Order = () => {
             {
                 Header: 'Trạng thái thanh toán',
                 accessor: 'payment_status'
+                // Cell: ({ value, row }) => (
+                //     <Select
+                //         value={value}
+                //         onChange={async (newPaymentStatus) => {
+                //             if (!token) {
+                //                 toast.error('Token không tồn tại');
+                //                 return;
+                //             }
+                //             try {
+                //                 dispatch(
+                //                     orderActions.updatePaymentStatus({
+                //                         token,
+                //                         orderCode: row.original.order_code,
+                //                         status: newPaymentStatus
+                //                     })
+                //                 );
+                //             } catch (error) {
+                //                 toast.error(error.response?.data?.message);
+                //             }
+                //         }}
+                //         disabled={value === 'Đã thanh toán'}
+                //     >
+                //         {paymentStatusOptions.map((option) => (
+                //             <Select.Option key={option.value} value={option.label}>
+                //                 {option.label}
+                //             </Select.Option>
+                //         ))}
+                //     </Select>
+                // )
             },
             {
                 Header: 'Phương thức thanh toán',

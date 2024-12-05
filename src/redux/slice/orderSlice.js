@@ -53,6 +53,29 @@ const orderSlice = createSlice({
             toast.error(action.payload);
         },
 
+        updatePaymentStatus(state) {
+            state.orders.loading = true;
+        },
+        updatePaymentStatusSuccess(state, action) {
+            state.orders.loading = false;
+            const { data, message } = action.payload;
+            if (!data) {
+                toast.error('Dữ liệu trả về không hợp lệ');
+                return;
+            }
+            const order = state.orders.data.findIndex((item) => item.order_code === data.order_code);
+            if (order !== -1) {
+                state.orders.data[order] = data;
+            } else {
+                state.orders.data = [data, ...state.orders.data];
+            }
+            toast.success(message);
+        },
+        updatePaymentStatusFailure(state, action) {
+            state.orders.loading = false;
+            toast.error(action.payload);
+        },
+
         deleteOrder(state) {
             state.orders.loading = true;
         },

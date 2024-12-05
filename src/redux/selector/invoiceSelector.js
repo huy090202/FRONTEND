@@ -21,3 +21,11 @@ export const selectFilteredInvoices = createSelector(
             );
     }
 );
+
+export const totalPaidInvoicesAmount = createSelector(
+    [(state) => state.invoice.invoices.data || []],
+    (invoices) =>
+        invoices
+            .filter(invoice => invoice.payment_status === "Đã thanh toán")
+            .reduce((total, invoice) => total + parseInt(invoice.total_amount || 0), 0)
+);

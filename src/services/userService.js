@@ -67,7 +67,6 @@ export const getAllStaffs = async (accessToken, page, limit, active) => {
 };
 
 export const getAllTechs = async (accessToken, page, limit, active) => {
-    console.log(accessToken, page, limit, active);
     return await axios.get(`user/all-tech?active=${active}&page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,

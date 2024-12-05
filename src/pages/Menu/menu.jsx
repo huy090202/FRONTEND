@@ -7,8 +7,14 @@ import { toast } from 'react-toastify';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { partsByCategoryPublic } from '~/services/partService';
+import { useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { checkOrderStatus } from '~/services/orderService';
 
 const Menu = () => {
+    const [searchParams] = useSearchParams();
+    const token = useSelector((state) => state.auth.auth.access_token);
+
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [partsData, setPartsData] = useState([]);
@@ -18,10 +24,12 @@ const Menu = () => {
         const fetchCategories = async () => {
             const data = await allCategoriesPublic();
             if (data.status === true) {
-                setCategories(data.data);
+                // Đảo ngược mảng danh mục
+                const reversedCategories = data.data.reverse();
+                setCategories(reversedCategories);
 
-                if (data.data.length > 0) {
-                    setSelectedCategory(data.data[0].id);
+                if (reversedCategories.length > 0) {
+                    setSelectedCategory(reversedCategories[0].id);
                 }
                 return;
             }
@@ -46,6 +54,23 @@ const Menu = () => {
         };
         fetchPartsByCategory();
     }, [selectedCategory]);
+
+    // Kiểm tra trạng thái thanh toán qua zalopay
+    useEffect(() => {
+        const checkStatusPayment = async () => {
+            const apptransid = searchParams.get('apptransid');
+            if (!apptransid) return;
+            const check = await checkOrderStatus(token, apptransid);
+            if (check.data.return_code === 1) {
+                toast.success(check.data.return_message);
+            } else if (check.data.return_code === 2) {
+                toast.error(check.data.return_message);
+            } else if (check.return_code === 3) {
+                toast.warning(check.return_message);
+            }
+        };
+        checkStatusPayment();
+    }, [token, searchParams]);
 
     // Cuộn lên đầu trang khi chuyển qua trang khác
     useEffect(() => {

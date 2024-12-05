@@ -7,7 +7,8 @@ import { toast } from 'react-toastify';
 import Loading from '~/components/shared/Loading/loading';
 import { getMaintenancesByUser } from '~/services/maintenanceService';
 import { FormatDate } from '~/utils/formatDate';
-import { Input, Select } from 'antd';
+import MaintenanceHistoryModalDetail from './maintenanceHistoryModalDetail';
+// import { Input, Select } from 'antd';
 
 const MaintenanceHistory = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
@@ -16,15 +17,28 @@ const MaintenanceHistory = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [maintenanceHistory, setMaintenanceHistory] = useState([]);
 
+    const [selectedMain, setSelectedMain] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = (main) => {
+        setSelectedMain(main);
+        setIsModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
     const columns = useMemo(
         () => [
             {
                 Header: 'Code',
                 accessor: 'maintenance.maintenance_code',
+                // eslint-disable-next-line no-unused-vars
                 Cell: ({ value, row }) => (
                     <span
                         className='text-gray-500 cursor-pointer hover:underline'
-                        // onClick={() => showModal(row.original)}
+                        onClick={() => showModal(row.original)}
                     >
                         {value}
                     </span>
@@ -187,13 +201,11 @@ const MaintenanceHistory = () => {
                             </div>
                         </div>
                         {/* Modal */}
-                        {/* <MaintenanceModalDetail
+                        <MaintenanceHistoryModalDetail
                             isVisible={isModalVisible}
                             onCancel={handleCancel}
-                            maintenance={selectedMaintenance}
-                        /> */}
-
-                        {/* <PartModalCreate isVisible={isModalCreate} onCancel={handleCancel} /> */}
+                            maintenance={selectedMain}
+                        />
                     </div>
                 </div>
             </section>

@@ -35,6 +35,8 @@ import Invoice from '~/pages/Admin/Invoice/invoice';
 
 import Maintenance from '~/pages/Maintenance/maintenance';
 import MaintenanceHistory from '~/pages/Maintenance/MaintenanceHistory/maintenanceHistory';
+import MaintenanceInvoice from '~/pages/Maintenance/MaintenanceInvoice/maintenanceInvoice';
+import PrintVoice from '~/pages/Maintenance/PrintVoice/printVoice';
 
 import ProtectedRoute from '~/routers/protectedRoute.jsx';
 
@@ -80,6 +82,22 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
                         <MaintenanceHistory />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'maintenance-invoice/:maintenanceId',
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <MaintenanceInvoice />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'maintenance-print-invoice/:maintenanceId',
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <PrintVoice />
                     </ProtectedRoute>
                 )
             }

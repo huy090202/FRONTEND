@@ -51,3 +51,31 @@ export const selectFilteredMaintenancesByUser = createSelector(
             );
     }
 );
+
+// Số lượng đơn bảo dưỡng đang kiểm tra xe
+export const totalMaintenancesChecking = createSelector(
+    [(state) => state.maintenance.maintenances.data || []],
+    (maintenances) =>
+        maintenances.filter(maintenance => maintenance.status === "Kiểm tra xe").length
+);
+
+// Số lượng đơn bảo dưỡng đang bảo dưỡng
+export const totalMaintenancesMaintaining = createSelector(
+    [(state) => state.maintenance.maintenances.data || []],
+    (maintenances) =>
+        maintenances.filter(maintenance => maintenance.status === "Đang bảo dưỡng").length
+);
+
+// Số lượng đơn bảo dưỡng hoàn thành bảo dưỡng
+export const totalMaintenancesCompleted = createSelector(
+    [(state) => state.maintenance.maintenances.data || []],
+    (maintenances) =>
+        maintenances.filter(maintenance => maintenance.status === "Hoàn thành bảo dưỡng").length
+);
+
+// Số lượng đơn bảo dưỡng đã hủy
+export const totalMaintenancesCanceled = createSelector(
+    [(state) => state.maintenance.maintenances.data || []],
+    (maintenances) =>
+        maintenances.filter(maintenance => maintenance.status === "Đã hủy").length
+);

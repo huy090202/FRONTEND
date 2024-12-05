@@ -85,7 +85,7 @@ const Maintenance = () => {
         getAppointAndUser();
         getMotor();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, maintenancesTech.length > 0]);
+    }, [token, maintenancesTech.length > 0, dispatch]);
 
     const handleOpenModal = (index) => {
         setSelectedMaintenance({

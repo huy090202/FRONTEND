@@ -7,12 +7,12 @@ import { motorActions } from '~/redux/slice/motorSlice';
 
 const { Option } = Select;
 
-const MotorTempModalCreate = ({ isVisible, onCancel, isEmail }) => {
+const MotorTempModalCreate = ({ isVisible, onCancel, isEmail, isPhone }) => {
     const dispatch = useDispatch();
 
     // eslint-disable-next-line no-unused-vars
     const [email, setEmail] = useState(isEmail ? isEmail : '');
-    const [phone, setPhone] = useState('');
+    const [phone, setPhone] = useState(isPhone ? isPhone : '');
     const [motorName, setmotorName] = useState('');
     const [motorType, setmotorType] = useState('Xe số');
     const [motorPlate, setmotorPlate] = useState('');
@@ -37,7 +37,6 @@ const MotorTempModalCreate = ({ isVisible, onCancel, isEmail }) => {
 
     const createHandler = async () => {
         if (
-            !phone ||
             !motorName ||
             !motorType ||
             !motorPlate ||
@@ -54,7 +53,7 @@ const MotorTempModalCreate = ({ isVisible, onCancel, isEmail }) => {
         dispatch(
             motorActions.addMotorTemp({
                 email: isEmail,
-                phone,
+                phone: isPhone,
                 motorName,
                 motorType,
                 motorPlate,
@@ -98,7 +97,7 @@ const MotorTempModalCreate = ({ isVisible, onCancel, isEmail }) => {
                         <Input
                             size='medium'
                             placeholder='Nhập vào số điện thoại'
-                            value={phone}
+                            value={isPhone}
                             onChange={(e) => setPhone(e.target.value)}
                         />
                     </div>

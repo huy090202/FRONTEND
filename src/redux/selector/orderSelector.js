@@ -61,3 +61,11 @@ export const selectFilteredOrdersUser = createSelector(
             );
     }
 );
+
+export const totalCompletedOrdersAmount = createSelector(
+    [(state) => state.order.orders.data || []],
+    (orders) =>
+        orders
+            .filter(order => order.order_status === "Đã giao hàng")
+            .reduce((total, order) => total + parseInt(order.total_price || 0), 0)
+);

@@ -24,8 +24,7 @@ function* updateMaintenanceByTech(action) {
         const response = yield call(updateMaintenance, token, id, data);
         if (response.status === true) {
             yield put(maintenanceActions.updateMaintenanceByTechSuccess({
-                data: response.data,
-                message: response.message
+                data: response.data
             }));
         } else {
             toast.error(response.message);
@@ -43,7 +42,6 @@ function* updateMaintenanceStatusByTech(action) {
         if (response.status === true) {
             yield put(maintenanceActions.updateMaintenanceStatusByTechSuccess({
                 data: response.data,
-                message: response.message
             }));
         } else {
             toast.error(response.message);

@@ -33,14 +33,21 @@ const Payment = () => {
     const [shipping, setShipping] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
 
+    // Phương thức vận chuyển mặc định
+    const [valueDelivery, setValueDeliveryMethod] = useState('Giao hàng');
+
     // Phương thức thanh toán mặc định
-    const [value, setValue] = useState('Tiền mặt');
+    const [value, setValuePaymentMethod] = useState('Tiền mặt');
 
     // Loading
     const [loading, setLoading] = useState(false);
 
     const onChange = (e) => {
-        setValue(e.target.value);
+        setValuePaymentMethod(e.target.value);
+    };
+
+    const onChangeDelivery = (e) => {
+        setValueDeliveryMethod(e.target.value);
     };
 
     // Phương thức thanh toán
@@ -54,6 +61,19 @@ const Payment = () => {
             id: 2,
             label: 'ZaloPay',
             value: 'ZALOPAY'
+        }
+    ];
+    // Phương thức vận chuyển
+    const valueDeliveryMethod = [
+        {
+            id: 1,
+            label: 'Giao hàng',
+            value: 'Giao hàng'
+        },
+        {
+            id: 2,
+            label: 'Nhận tại của hàng',
+            value: 'Nhận tại của hàng'
         }
     ];
 
@@ -81,6 +101,8 @@ const Payment = () => {
     // Xử lý thanh toán
     const handlePayment = async () => {
         const selectedPaymentMethod = value === 'Tiền mặt' ? 'Tiền mặt' : 'ZALOPAY';
+        const selectedDeliveryMethod =
+            valueDelivery === 'Giao hàng' ? 'Giao hàng' : 'Nhận tại của hàng';
         const orer_data = {
             name: nameUser,
             email: emailUser,
@@ -89,6 +111,7 @@ const Payment = () => {
             total_quantity: countCarts,
             total_price: totalAmount,
             payment_method: selectedPaymentMethod,
+            delivery_method: selectedDeliveryMethod,
             notes: productNotes,
             details: carts.map((cart) => ({
                 quantity: cart.quantity,
@@ -106,7 +129,6 @@ const Payment = () => {
             if (newOrder.status === true) {
                 if (orer_data?.payment_method === 'ZALOPAY') {
                     window.location.href = newOrder.data;
-                    toast.success(newOrder.message);
                     dispatch(cartActions.clearCart());
                 } else {
                     navigate('/menu');
@@ -271,6 +293,27 @@ const Payment = () => {
                         </div>
                     </div>
                     <div className='w-[35%] flex flex-col gap-10'>
+                        <div className='flex flex-col gap-10 p-5 rounded-lg shadow-xl'>
+                            <span className='text-3xl'>Phương thức vận chuyển</span>
+                            <Radio.Group
+                                className='font-[400]'
+                                onChange={onChangeDelivery}
+                                value={valueDelivery}
+                            >
+                                {valueDeliveryMethod &&
+                                    valueDeliveryMethod.map((value) => {
+                                        return (
+                                            <Space
+                                                direction='vertical'
+                                                key={value.id}
+                                                className='flex flex-col'
+                                            >
+                                                <Radio value={value.value}>{value.label}</Radio>
+                                            </Space>
+                                        );
+                                    })}
+                            </Radio.Group>
+                        </div>
                         <div className='flex flex-col gap-10 p-5 rounded-lg shadow-xl'>
                             <span className='text-3xl'>Phương thức thanh toán</span>
                             <Radio.Group className='font-[400]' onChange={onChange} value={value}>

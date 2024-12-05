@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FormatDate } from '~/utils/formatDate.js';
 import { formatVND } from '~/utils/formatVND';
 
-const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
+const MaintenanceHistoryModalDetail = ({ isVisible, onCancel, maintenance }) => {
     // Thông tin bảo dưỡng
     const [maintenanceCode, setMaintenanceCode] = useState('');
     const [maintenanceDate, setMaintenanceDate] = useState('');
@@ -24,7 +24,8 @@ const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
     const [technicianPhone, setTechnicianPhone] = useState('');
     const [technicianEmail, setTechnicianEmail] = useState('');
 
-    const maintenanceData = useMemo(() => maintenance, [maintenance]);
+    const maintenanceData = useMemo(() => maintenance?.maintenance, [maintenance]);
+
     useEffect(() => {
         if (maintenanceData) {
             setMaintenanceCode(maintenanceData.maintenance_code);
@@ -192,4 +193,4 @@ const MaintenanceModalDetail = ({ isVisible, onCancel, maintenance }) => {
     );
 };
 
-export default MaintenanceModalDetail;
+export default MaintenanceHistoryModalDetail;
