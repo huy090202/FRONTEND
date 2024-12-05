@@ -2,13 +2,14 @@ import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FormOutlined, SafetyOutlined } from '@ant-design/icons';
-import { Input, Spin } from 'antd';
+import { MailOutlined, KeyOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
 import backGround from '~/assets/images/bg-auth.jpg';
 import { authActions } from '~/redux/slice/authSlice';
 import { getToken } from '~/utils/token';
 import { getUser } from '~/services/userService';
 import { WrapperButton } from '~/pages/Auth/style';
+import Loading from '~/components/shared/Loading/loading';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -39,10 +40,10 @@ const Login = () => {
                 const user = await getUser(token);
                 const checkRole = user?.data?.role;
                 if (
-                    checkRole === 'ADMIN' ||
-                    checkRole === 'STAFF' ||
-                    checkRole === 'TECH' ||
-                    checkRole === 'CASHIER'
+                    checkRole === 'Quản trị viên' ||
+                    checkRole === 'Nhân viên' ||
+                    checkRole === 'Kỹ thuật viên' ||
+                    checkRole === 'Thu ngân'
                 ) {
                     navigate('/dashboard');
                 } else {
@@ -59,7 +60,7 @@ const Login = () => {
         <Fragment>
             {loading && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
-                    <Spin size='large' />
+                    <Loading />
                 </div>
             )}
             <div
@@ -71,34 +72,35 @@ const Login = () => {
                     style={{ backdropFilter: 'blur(19px) saturate(180%)' }}
                 >
                     <div className='text-4xl font-bold text-center uppercase'>Đăng nhập</div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-2'>
                         <label className='text-2xl'>Tài khoản:</label>
                         <Input
                             autoFocus
                             size='large'
-                            prefix={<FormOutlined />}
+                            prefix={<MailOutlined />}
                             placeholder='Nhập vào email của bạn'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
-                    <div className='flex flex-col'>
-                        <div className='flex flex-col'>
-                            <label className='text-2xl'>Mật khẩu:</label>
-                            <Input.Password
-                                size='large'
-                                prefix={<SafetyOutlined />}
-                                placeholder='Nhập vào mật khẩu của bạn'
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
+                    <div className='flex flex-col gap-2'>
+                        <label className='text-2xl'>Mật khẩu:</label>
+                        <Input.Password
+                            size='large'
+                            prefix={<KeyOutlined />}
+                            placeholder='Nhập vào mật khẩu của bạn'
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
+                        />
                     </div>
                     <WrapperButton
                         disabled={!email.length || !password.length}
                         type='light'
                         className='h-16 text-2xl font-bold'
                         onClick={() => loginHandler()}
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                     >
                         Đăng nhập
                     </WrapperButton>
@@ -106,6 +108,11 @@ const Login = () => {
                         {`Bạn chưa có tài khoản?`}{' '}
                         <Link to={'/register'} className='text-blue-300 underline'>
                             Đăng ký ngay
+                        </Link>
+                    </span>
+                    <span className='text-center'>
+                        <Link to={'/'} className='text-blue-300 underline'>
+                            Về trang chủ
                         </Link>
                     </span>
                 </form>

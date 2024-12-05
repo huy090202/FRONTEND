@@ -32,7 +32,7 @@ const MotorModalEditImage = ({ isEditImageModalVisible, imageForEdit, onCancel, 
 
     return (
         <Modal
-            visible={isEditImageModalVisible}
+            open={isEditImageModalVisible}
             onCancel={onCancel}
             maskClosable={true}
             onOk={handleUpdateImage}

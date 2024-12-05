@@ -12,7 +12,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
     const token = useSelector((state) => state.auth.auth.access_token);
 
     const [motorName, setmotorName] = useState('');
-    const [motorType, setmotorType] = useState('UNDERBONE');
+    const [motorType, setmotorType] = useState('Xe số');
     const [motorPlate, setmotorPlate] = useState('');
     const [motorEngine, setmotorEngine] = useState('');
     const [motorChassis, setmotorChassis] = useState('');
@@ -78,6 +78,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
                     if (responseImage.status === false) toast.error(responseImage.message);
                 }
                 clearHandler();
+                onCancel();
             } else {
                 toast.error(response.message || 'Tạo một xe mới thất bại');
             }
@@ -107,7 +108,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
 
     return (
         <Modal
-            visible={isVisible}
+            open={isVisible}
             onCancel={onCancel}
             footer={null}
             maskClosable={true}
@@ -160,7 +161,7 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
                 </div>
 
                 <div className='flex flex-col w-full gap-4 text-gray-800'>
-                    <label className='text-2xl w-[30%] text-left font-bold'>Vai trò:</label>
+                    <label className='text-2xl font-bold text-left'>Loại xe:</label>
                     <Select
                         size='large'
                         value={motorType}
@@ -171,10 +172,11 @@ const MotorModalCreate = ({ isVisible, onCancel }) => {
                             cursive: 'LXGW Wen'
                         }}
                     >
-                        <Option value='UNDERBONE'>Xe số</Option>
-                        <Option value='SCOOTER'>Xe tay ga</Option>
-                        <Option value='MANUAL'>Xe tay côn</Option>
-                        <Option value='BIGBIKE'>Xe phân khối lớn</Option>
+                        <Option value='Xe số'>Xe số</Option>
+                        <Option value='Xe ga'>Xe tay ga</Option>
+                        <Option value='Xe côn'>Xe tay côn</Option>
+                        <Option value='Xe phân khối lớn'>Xe phân khối lớn</Option>
+                        <Option value='Xe khác'>Xe khác</Option>
                     </Select>
                 </div>
 

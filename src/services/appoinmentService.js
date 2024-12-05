@@ -1,7 +1,7 @@
 import axios from "~/axios";
 
 // Lấy danh sách lịch hẹn - Public
-export const getAllAppoinmentsUser = async (accessToken, { page, limit }) => {
+export const getAllAppoinmentsUser = async (accessToken, page, limit) => {
     return await axios.get(`/appointment/get-all?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -9,18 +9,23 @@ export const getAllAppoinmentsUser = async (accessToken, { page, limit }) => {
     });
 };
 
-// Tạo lịch hẹn
-export const createAppoinment = async (accessToken, { appointmentDate, appointmentTime, appointmentEndTime, notes, motorId }) => {
-    return await axios.post('/appointment/create', {
-        appointment_date: appointmentDate,
-        appointment_time: appointmentTime,
-        appointment_end_time: appointmentEndTime,
-        content: notes,
-        motor_id: motorId
-    }, {
+// Lấy danh sách lịch hẹn - Admin
+export const getAllAppoinmentsAdmin = async (accessToken, page, limit) => {
+    return await axios.get(`/appointment/all?page=${page}&limit=${limit}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
+    });
+};
+
+// Tạo lịch hẹn
+export const createAppoinment = async ({ appointmentDate, appointmentTime, notes, motorId, userId }) => {
+    return await axios.post('/appointment/create', {
+        appointment_date: appointmentDate,
+        appointment_time: appointmentTime,
+        content: notes,
+        motor_id: motorId,
+        user_id: userId
     });
 };
 
@@ -46,14 +51,27 @@ export const updateAppoinmentStatus = async (accessToken, appointmentId, status)
     });
 };
 
-// Tạo ảnh cho lịch hẹn
-export const createAppoinmentImage = async (accessToken, formData) => {
-    return await axios.post('/appointment-image/create', formData, {
+// Xóa lịch hẹn
+export const deleteAppoinment = async (accessToken, appointmentId) => {
+    return await axios.delete(`/appointment/delete/${appointmentId}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'multipart/form-data',
         },
     });
+};
+
+// Hiển thị chi tiết lịch hẹn
+export const getAppoinmentDetail = async (accessToken, appointmentId) => {
+    return await axios.get(`/appointment/get/${appointmentId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+};
+
+// Tạo ảnh cho lịch hẹn
+export const createAppoinmentImage = async (formData) => {
+    return await axios.post('/appointment-image/create', formData,);
 };
 
 // Lấy danh sách ảnh của lịch hẹn

@@ -1,11 +1,12 @@
 import { Fragment, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { UserOutlined, FormOutlined, PhoneOutlined, SafetyOutlined } from '@ant-design/icons';
-import { Input, Spin } from 'antd';
+import { UserOutlined, MailOutlined, PhoneOutlined, KeyOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
 import backGround from '~/assets/images/bg-auth.jpg';
 import { register } from '~/services/userService';
 import { WrapperButton } from '~/pages/Auth/style';
+import Loading from '~/components/shared/Loading/loading';
 
 const Register = () => {
     const [firstName, setFirstName] = useState('');
@@ -59,7 +60,7 @@ const Register = () => {
         <Fragment>
             {loading && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
-                    <Spin size='large' />
+                    <Loading />
                 </div>
             )}
             <div
@@ -74,7 +75,7 @@ const Register = () => {
                         Đăng ký tài khoản
                     </div>
                     <div className='flex items-center justify-between gap-5'>
-                        <div className='flex flex-col flex-1'>
+                        <div className='flex flex-col flex-1 gap-2'>
                             <label className='text-2xl'>Tên:</label>
                             <Input
                                 autoFocus
@@ -83,9 +84,10 @@ const Register = () => {
                                 placeholder='Nhập vào tên của bạn'
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
+                                className='flex items-center gap-2 rounded-lg'
                             />
                         </div>
-                        <div className='flex flex-col flex-1'>
+                        <div className='flex flex-col flex-1 gap-2'>
                             <label className='text-2xl'>Họ:</label>
                             <Input
                                 size='large'
@@ -93,20 +95,22 @@ const Register = () => {
                                 placeholder='Nhập vào họ của bạn'
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
+                                className='flex items-center gap-2 rounded-lg'
                             />
                         </div>
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-2'>
                         <label className='text-2xl'>Email:</label>
                         <Input
                             size='large'
-                            prefix={<FormOutlined />}
+                            prefix={<MailOutlined />}
                             placeholder='Nhập vào email của bạn'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-2'>
                         <label className='text-2xl'>Số điện thoại:</label>
                         <Input
                             size='large'
@@ -114,16 +118,18 @@ const Register = () => {
                             placeholder='Nhập vào số điện thoại của bạn'
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
-                    <div className='flex flex-col'>
+                    <div className='flex flex-col gap-2'>
                         <label className='text-2xl'>Mật khẩu:</label>
                         <Input.Password
                             size='large'
-                            prefix={<SafetyOutlined />}
+                            prefix={<KeyOutlined />}
                             placeholder='Nhập vào mật khẩu của bạn'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            className='flex items-center gap-2 rounded-lg'
                         />
                     </div>
                     <WrapperButton
@@ -137,6 +143,7 @@ const Register = () => {
                         type='light'
                         className='h-16 text-2xl font-bold'
                         onClick={() => registerHandler()}
+                        style={{ fontFamily: 'LXGW WenKai TC', cursive: 'LXGW Wen' }}
                     >
                         Đăng ký
                     </WrapperButton>
@@ -144,6 +151,11 @@ const Register = () => {
                         Bạn đã có tài khoản?{' '}
                         <Link to={'/login'} className='text-blue-300 underline'>
                             Đăng nhập ngay
+                        </Link>
+                    </span>
+                    <span className='text-center'>
+                        <Link to={'/'} className='text-blue-300 underline'>
+                            Về trang chủ
                         </Link>
                     </span>
                 </form>

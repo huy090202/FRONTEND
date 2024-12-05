@@ -4,18 +4,23 @@ import { DefaultLayout, ProfileLayout, AdminLayout } from '~/layouts';
 
 import Motor from '~/pages/Motor/motor';
 import Home from '~/pages/Home/home.jsx';
-import Cashiers from '~/pages/Admin/Cashier/cashiers';
+import AboutUs from '~/pages/AboutUs/aboutUs';
+import Menu from '~/pages/Menu/menu';
+import Cart from '~/pages/Carts/cart';
+import Payment from '~/pages/Carts/payment';
 import HistoryAppointment from '~/pages/Appointment/HistoryAppointment/historyAppointment';
 import CreateAppointment from '~/pages/Appointment/CreateAppointment/createAppointment';
+import OrderHistory from '~/pages/OrderHistory/orderHistory';
 
 import Login from '~/pages/Auth/Login/login.jsx';
-import History from '~/pages/Auth/History/history';
+import HistoryMaintenance from '~/pages/Auth/HistoryMaintenance/historyMaintenance';
 import Profile from '~/pages/Auth/Profile/profile.jsx';
 import Register from '~/pages/Auth/Register/register.jsx';
 import ChangePassword from '~/pages/Auth/ChangePassword/changePassword';
 
 import Parts from '~/pages/Admin/Part/parts';
 import Staffs from '~/pages/Admin/Staff/staffs';
+import Cashiers from '~/pages/Admin/Cashier/cashiers';
 import Customers from '~/pages/Admin/Customer/customers';
 import Dashboard from '~/pages/Admin/Dashboard/dashboard';
 import Warehouses from '~/pages/Admin/Warehouse/warehouse';
@@ -25,6 +30,13 @@ import Supervisors from '~/pages/Admin/Supervisor/supervisors';
 import Appointment from '~/pages/Admin/Appointment/appointment';
 import Maintenances from '~/pages/Admin/Maintenance/maintenances';
 import Manufacturers from '~/pages/Admin/Manufacturer/manufacturers';
+import Order from '~/pages/Admin/Order/order';
+import Invoice from '~/pages/Admin/Invoice/invoice';
+
+import Maintenance from '~/pages/Maintenance/maintenance';
+import MaintenanceHistory from '~/pages/Maintenance/MaintenanceHistory/maintenanceHistory';
+import MaintenanceInvoice from '~/pages/Maintenance/MaintenanceInvoice/maintenanceInvoice';
+import PrintVoice from '~/pages/Maintenance/PrintVoice/printVoice';
 
 import ProtectedRoute from '~/routers/protectedRoute.jsx';
 
@@ -38,8 +50,56 @@ export const router = createBrowserRouter([
                 element: <Home />
             },
             {
+                path: '/about-us',
+                element: <AboutUs />
+            },
+            {
+                path: '/menu',
+                element: <Menu />
+            },
+            {
+                path: '/cart',
+                element: <Cart />
+            },
+            {
+                path: '/payment',
+                element: <Payment />
+            },
+            {
                 path: 'create-appointment',
                 element: <CreateAppointment />
+            },
+            {
+                path: 'maintenance-list',
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <Maintenance />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'maintenance-history/:maintenanceId',
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <MaintenanceHistory />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'maintenance-invoice/:maintenanceId',
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <MaintenanceInvoice />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'maintenance-print-invoice/:maintenanceId',
+                element: (
+                    <ProtectedRoute roleRequired={['Kỹ thuật viên']}>
+                        <PrintVoice />
+                    </ProtectedRoute>
+                )
             }
         ]
     },
@@ -64,8 +124,12 @@ export const router = createBrowserRouter([
                 element: <ChangePassword />
             },
             {
+                path: 'order-history',
+                element: <OrderHistory />
+            },
+            {
                 path: 'history',
-                element: <History />
+                element: <HistoryMaintenance />
             },
             {
                 path: 'motor',
@@ -80,7 +144,7 @@ export const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <ProtectedRoute roleRequired={['ADMIN', 'STAFF', 'TECH', 'CASHIER']}>
+            <ProtectedRoute roleRequired={['Quản trị viên', 'Nhân viên', 'Thu ngân']}>
                 <AdminLayout />
             </ProtectedRoute>
         ),
@@ -104,6 +168,14 @@ export const router = createBrowserRouter([
             {
                 path: 'warehouse',
                 element: <Warehouses />
+            },
+            {
+                path: 'invoice',
+                element: <Invoice />
+            },
+            {
+                path: 'order',
+                element: <Order />
             },
             {
                 path: 'appointment',

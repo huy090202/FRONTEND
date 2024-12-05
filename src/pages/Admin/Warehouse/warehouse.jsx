@@ -1,37 +1,34 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTable, useGlobalFilter } from 'react-table';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import {
-    RightOutlined,
-    LeftOutlined,
-    DoubleLeftOutlined,
-    DoubleRightOutlined,
-    PlusOutlined,
-    DeleteOutlined
-} from '@ant-design/icons';
-import { Input } from 'antd';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Input, Pagination, Select } from 'antd';
 import Switch from '~/components/shared/Switch/switch';
-import {
-    changeWarehouseStatus,
-    deleteWarehouse,
-    getAllWarehouses
-} from '~/services/warehouseService';
 import WarehouseModalDetail from './warehouseModalDetail';
 import WarehouseModalCreate from './warehouseModalCreate';
+import { selectFilteredWarehouses } from '~/redux/selector/warehouseSelector';
+import { warehouseActions } from '~/redux/slice/warehouseSlice';
+import Loading from '~/components/shared/Loading/loading';
 
 const Warehouse = () => {
     const token = useSelector((state) => state.auth.auth.access_token);
+    const { warehousesAdmin, loading, page, limit, total } = useSelector(
+        (state) => state.warehouse
+    );
 
     const [data, setData] = useState([]);
-    const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalCreate, setIsModalCreate] = useState(false);
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     const [filterInput, setFilterInput] = useState('');
-    const limit = 5;
+    const [activeFilter, setActiveFilter] = useState('all');
+
+    const filteredWarehouses = useSelector((state) =>
+        selectFilteredWarehouses(state, filterInput, activeFilter)
+    );
 
     const showModal = (warehouse) => {
         setSelectedWarehouse(warehouse);
@@ -47,19 +44,22 @@ const Warehouse = () => {
         setIsModalCreate(false);
     };
 
-    const handleDeleteCategory = async (warehouseId) => {
-        try {
-            const res = await deleteWarehouse(token, warehouseId);
-            if (res.status) {
-                toast.success(res.message);
-                setData(data.filter((warehouse) => warehouse.id !== warehouseId));
-            } else {
-                toast.error(res.message);
-            }
-        } catch (error) {
-            toast.error('Xóa nhà kho thất bại');
-        }
+    const dispatch = useDispatch();
+
+    const handlePageChange = (page, limit) => {
+        dispatch(warehouseActions.fetchWarehousesAdmin({ token, page, limit }));
     };
+
+    const handleDeleteWarehouse = useCallback(
+        (id) => {
+            if (!token || !id) {
+                return;
+            }
+            dispatch(warehouseActions.deleteWarehouse({ token, id }));
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [token]
+    );
 
     const columns = useMemo(
         () => [
@@ -91,15 +91,18 @@ const Warehouse = () => {
                                 return;
                             }
                             try {
-                                const res = await changeWarehouseStatus(token, row.original.id, {
-                                    active: checked
-                                });
+                                dispatch(
+                                    warehouseActions.updateWarehouseStatus({
+                                        token,
+                                        id: row.original.id,
+                                        active: checked
+                                    })
+                                );
                                 const updatedData = data.map((warehouse) =>
                                     warehouse.id === row.original.id
                                         ? { ...warehouse, active: checked }
                                         : warehouse
                                 );
-                                toast.success(res.message);
                                 setData(updatedData);
                             } catch (error) {
                                 toast.error(error.response?.data?.message);
@@ -112,190 +115,164 @@ const Warehouse = () => {
                 Header: 'Hành động',
                 Cell: ({ row }) => (
                     <div className='flex items-center w-full'>
-                        <DeleteOutlined
-                            className='text-3xl'
-                            onClick={() => handleDeleteCategory(row.original.id)}
-                            style={{ cursor: 'pointer', color: 'red' }}
-                        />
+                        {row.original.active ? null : (
+                            <DeleteOutlined
+                                className='text-3xl'
+                                onClick={() => handleDeleteWarehouse(row.original.id)}
+                                style={{ cursor: 'pointer', color: 'red' }}
+                            />
+                        )}
                     </div>
                 )
             }
         ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [token, data]
     );
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!token) {
-                toast.error('Token không tồn tại');
-                return;
-            }
-            try {
-                const response = await getAllWarehouses(token, { page, limit });
-                setData(response.data);
-                setTotalPages(Math.ceil(response.total / limit));
-            } catch (error) {
-                toast.error(error.response?.data?.message);
-            }
-        };
-        fetchData();
-    }, [token, page]);
+    const fetchData = useCallback(() => {
+        if (!token) {
+            toast.error('Token không tồn tại');
+            return;
+        }
+        try {
+            dispatch(warehouseActions.fetchWarehousesAdmin({ token, page, limit }));
+            setTotalPages(totalPages);
+        } catch (error) {
+            console.log(error.message);
+            toast.error('Lấy dữ liệu danh mục thất bại');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, page, limit, dispatch, warehousesAdmin.length, totalPages]);
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, setGlobalFilter } =
-        useTable(
-            {
-                columns,
-                data
-            },
-            useGlobalFilter
-        );
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+        {
+            columns,
+            data: filteredWarehouses
+        },
+        useGlobalFilter
+    );
 
     const handleFilterChange = (e) => {
         setFilterInput(e.target.value);
     };
 
-    const handleApplyFilter = () => {
-        setGlobalFilter(filterInput);
+    const handleActiveFilterChange = (value) => {
+        setActiveFilter(value);
     };
 
-    const handleClearFilter = () => {
-        setFilterInput('');
-        setGlobalFilter(undefined);
+    const vietnameseLocale = {
+        items_per_page: '/ trang',
+        jump_to: 'Đi đến',
+        page: '',
+        prev_page: 'Trang trước',
+        next_page: 'Trang sau',
+        prev_5: '5 trang trước',
+        next_5: '5 trang sau'
     };
-
-    const handleGoToFirstPage = () => {
-        setPage(1);
-    };
-
-    const handleGoToLastPage = () => {
-        setPage(totalPages);
-    };
-
-    const isFirstPage = page === 1;
-    const isLastPage = page === totalPages;
 
     return (
-        <div className='flex flex-col w-full'>
-            <div className='flex items-center justify-between my-10'>
-                <h1 className='text-4xl font-bold '>Danh sách nhà kho</h1>
-                <button
-                    className='px-6 py-5 mr-2 text-xl text-white bg-green-600 rounded-2xl'
-                    onClick={showModalCreate}
-                >
-                    <PlusOutlined /> {'  '}
-                    Thêm
-                </button>
-            </div>
-            <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
-                {/* Filter */}
-                <div className='flex gap-4 px-10 mb-4'>
-                    <Input
-                        size='large'
-                        className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
-                        type='text'
-                        placeholder='Từ khóa tìm kiếm...'
-                        value={filterInput}
-                        onChange={handleFilterChange}
-                    />
-                    <button
-                        className='px-6 py-1 mr-2 text-xl text-white bg-black rounded-2xl'
-                        onClick={handleApplyFilter}
-                    >
-                        Tìm kiếm
-                    </button>
-                    {filterInput && (
-                        <button
-                            className='px-6 py-1 mr-2 text-xl text-white bg-red-600 rounded-2xl'
-                            onClick={handleClearFilter}
-                        >
-                            Xóa
-                        </button>
-                    )}
+        <Fragment>
+            {loading && (
+                <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50'>
+                    <Loading />
                 </div>
-                {/* Table */}
-                <table {...getTableProps()} className='w-full'>
-                    <thead>
-                        {headerGroups.map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((column) => (
-                                    <th
-                                        key={column.id}
-                                        className='h-24 text-left bg-[#f4f6f8] py-5 px-10 text-2xl'
-                                    >
-                                        {column.render('Header')}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                            prepareRow(row);
-                            return (
-                                <tr
-                                    key={row.id}
-                                    className='border-gray-200 border-y-2 hover:bg-[#f4f6f8] text-2xl text-gray-500'
-                                >
-                                    {row.cells.map((cell) => (
-                                        <td key={cell.column.id} className='h-24 px-10 py-5'>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {/* Page */}
-                <div className='flex items-center justify-between px-10 mt-5 text-2xl'>
-                    <span className='text-black'>
-                        Trang {page} / {totalPages}
-                    </span>
-                    <div className='flex gap-4 text-gray-500'>
-                        <DoubleLeftOutlined
-                            onClick={handleGoToFirstPage}
-                            className={`p-3 rounded-xl ${
-                                isFirstPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
+            )}
+            <div className='flex flex-col w-full'>
+                <div className='flex items-center justify-between my-10'>
+                    <h1 className='text-4xl font-bold '>Danh sách nhà kho</h1>
+                    <button
+                        className='px-6 py-5 mr-2 text-xl text-white bg-green-600 rounded-2xl'
+                        onClick={showModalCreate}
+                    >
+                        <PlusOutlined /> {'  '}
+                        Thêm
+                    </button>
+                </div>
+                <div className='py-5 bg-white shadow-sm rounded-xl h-fit'>
+                    {/* Filter */}
+                    <div className='flex gap-4 px-10 mb-4'>
+                        <Input
+                            size='large'
+                            className='w-[300px] px-4 py-5 text-2xl border rounded-2xl'
+                            type='text'
+                            placeholder='Nhập vào tên hoặc địa chỉ'
+                            value={filterInput}
+                            onChange={handleFilterChange}
                         />
-                        <LeftOutlined
-                            onClick={() => !isFirstPage && setPage((prev) => prev - 1)}
-                            className={`p-3 rounded-xl ${
-                                isFirstPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
-                        />
-                        <RightOutlined
-                            onClick={() => !isLastPage && setPage((prev) => prev + 1)}
-                            className={`p-3 rounded-xl ${
-                                isLastPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
-                        />
-                        <DoubleRightOutlined
-                            onClick={handleGoToLastPage}
-                            className={`p-3 rounded-xl ${
-                                isLastPage
-                                    ? 'text-gray-300 cursor-not-allowed'
-                                    : 'border-2 border-gray-200 shadow-sm hover:bg-gray-100'
-                            }`}
+                        <Select
+                            defaultValue='all'
+                            onChange={handleActiveFilterChange}
+                            style={{ width: 150, height: 50 }}
+                            options={[
+                                { label: 'Tất cả', value: 'all' },
+                                { label: 'Kích hoạt', value: 'true' },
+                                { label: 'Không kích hoạt', value: 'false' }
+                            ]}
                         />
                     </div>
-                </div>
-                {/* Modal */}
-                <WarehouseModalDetail
-                    isVisible={isModalVisible}
-                    onCancel={handleCancel}
-                    warehouse={selectedWarehouse}
-                />
+                    {/* Table */}
+                    <table {...getTableProps()} className='w-full'>
+                        <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((column) => (
+                                        <th
+                                            key={column.id}
+                                            className='h-24 text-left bg-[#f4f6f8] py-5 px-10 text-2xl'
+                                        >
+                                            {column.render('Header')}
+                                        </th>
+                                    ))}
+                                </tr>
+                            ))}
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                            {rows.map((row) => {
+                                prepareRow(row);
+                                return (
+                                    <tr
+                                        key={row.id}
+                                        className='border-gray-200 border-y-2 hover:bg-[#f4f6f8] text-2xl text-gray-500'
+                                    >
+                                        {row.cells.map((cell) => (
+                                            <td key={cell.column.id} className='h-24 px-10 py-5'>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    {/* Page */}
+                    <div className='flex items-center justify-center px-10 mt-5 text-2xl'>
+                        <div className='flex gap-4 text-gray-500'>
+                            <Pagination
+                                current={page}
+                                pageSize={limit}
+                                total={total}
+                                onChange={handlePageChange}
+                                showSizeChanger
+                                locale={vietnameseLocale}
+                            />
+                        </div>
+                    </div>
+                    {/* Modal */}
+                    <WarehouseModalDetail
+                        isVisible={isModalVisible}
+                        onCancel={handleCancel}
+                        warehouse={selectedWarehouse}
+                    />
 
-                <WarehouseModalCreate isVisible={isModalCreate} onCancel={handleCancel} />
+                    <WarehouseModalCreate isVisible={isModalCreate} onCancel={handleCancel} />
+                </div>
             </div>
-        </div>
+        </Fragment>
     );
 };
 
