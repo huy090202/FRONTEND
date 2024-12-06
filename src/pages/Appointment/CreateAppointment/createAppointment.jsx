@@ -236,8 +236,6 @@ const CreateAppointment = () => {
         } catch (error) {
             if (error.response && error.response.data) {
                 toast.error(error.response.data.message || 'Đã xảy ra lỗi');
-            } else {
-                toast.error('Đã xảy ra lỗi, vui lòng thử lại!');
             }
         } finally {
             setLoading(false);
