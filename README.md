@@ -1,4 +1,4 @@
-# MAINTENANCE-FRONTEND (Hệ thống bảo dưỡng xe máy - front end)
+# FRONTEND
 
 # Công nghệ chính đã được sử dụng
 
@@ -18,7 +18,7 @@ Mã nguồn dự án đang chạy tốt với node version 21.7.1
 
 ```
 cd existing_repo
-git remote add origin https://github.com/huy090202/MAINTENANCE-FRONTEND.git
+git remote add origin https://github.com/huy090202/FRONTEND.git
 git branch -M main
 git push -uf origin main
 
