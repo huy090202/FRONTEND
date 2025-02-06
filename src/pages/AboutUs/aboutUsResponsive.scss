@@ -1,0 +1,112 @@
+.section-intro-container {
+    .intro-left {
+        .intro-image-1 {
+            width: 500px;
+            height: 150px;
+        }
+
+        .intro-image-2 {
+            width: 500px;
+            height: 350px;
+        }
+
+        .intro-image-3 {
+            width: 250px;
+            height: 510px;
+        }
+    }
+
+    .intro-right {
+        width: 50%;
+        height: 400px;
+    }
+}
+
+// Mobile
+@media only screen and (max-width: 740px) {
+    .section-intro-container {
+        padding: 0 20px;
+        margin-bottom: 230px !important;
+
+        .intro-left {
+            .intro-image-1 {
+                width: 250px;
+                height: 150px;
+            }
+
+            .intro-image-2 {
+                width: 250px;
+                height: 300px;
+            }
+
+            .intro-image-3 {
+                width: 130px;
+                height: 466px;
+            }
+        }
+
+        .intro-right {
+            width: 84%;
+            height: 400px;
+            right: 8%;
+            top: 60%;
+            padding: 30px;
+
+            .intro-content {
+                padding: 40px 0 20px 0;
+            }
+        }
+    }
+
+    .section-originalStyle-container {
+        padding: 0 20px;
+
+        .section-originalStyle-top {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 10px;
+        }
+
+        .section-originalStyle-bottom {
+            gap: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+// Tablet
+@media only screen and (min-width: 740px) and (max-width: 1030px) {
+    .section-intro-container {
+        margin-bottom: 280px !important;
+
+        .intro-left {
+            .intro-image-1 {
+                width: 620px;
+                height: 150px;
+            }
+
+            .intro-image-2 {
+                width: 620px;
+                height: 350px;
+            }
+
+            .intro-image-3 {
+                width: 300px;
+                height: 515px;
+            }
+        }
+
+        .intro-right {
+            top: 85%;
+            right: 5%;
+            width: 90%;
+            height: 300px;
+            padding: 60px 0 0 0;
+
+            .intro-content {
+                padding: 40px 60px 20px;
+            }
+        }
+    }
+}

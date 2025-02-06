@@ -1,0 +1,12 @@
+export { default as authReducer } from '~/redux/slice/authSlice';
+export { default as userReducer } from '~/redux/slice/userSlice';
+export { default as motorReducer } from '~/redux/slice/motorSlice';
+export { default as maintenanceReducer } from '~/redux/slice/maintenanceSlice';
+export { default as partReducer } from '~/redux/slice/partSlice';
+export { default as cartReducer } from '~/redux/slice/cartSlice';
+export { default as orderReducer } from '~/redux/slice/orderSlice';
+export { default as appointmentReducer } from '~/redux/slice/appointmentSlice';
+export { default as categoryReducer } from '~/redux/slice/categorySlice';
+export { default as manufacturerReducer } from '~/redux/slice/manufacturerSlice';
+export { default as warehouseReducer } from '~/redux/slice/warehouseSlice';
+export { default as invoiceReducer } from '~/redux/slice/invoiceSlice';
